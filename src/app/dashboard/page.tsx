@@ -8,7 +8,7 @@ import { supabase } from "@/src/lib/supabase";
 type Decision = {
   processo: string;
   relator: string;
-  data: string; // ISO
+  data: string; // ISO ou vazio
   tribunal: "STJ" | "STF";
   ementa: string;
 };
@@ -90,60 +90,11 @@ export default function DashboardPage() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-
-  const decisions: Decision[] = useMemo(
-    () => [
-      {
-        processo: "AREsp 2.123.456/SP",
-        relator: "Min. Maria Helena",
-        data: "2026-03-10",
-        tribunal: "STJ",
-        ementa:
-          "Responsabilidade civil. Falha na prestação do serviço. Ônus da prova e critérios de quantificação do dano.",
-      },
-      {
-        processo: "AgRg no RE 1.987.654/DF",
-        relator: "Min. João Almeida",
-        data: "2026-03-08",
-        tribunal: "STF",
-        ementa:
-          "Liberdade de expressão. Limites constitucionais. Análise de proporcionalidade e vedação ao excesso na restrição de direitos.",
-      },
-      {
-        processo: "REsp 1.654.321/RS",
-        relator: "Min. Carlos Duarte",
-        data: "2026-03-05",
-        tribunal: "STJ",
-        ementa:
-          "Direito processual. Teoria da causa madura. Requisitos. Fundamentação suficiente e efetividade da prestação jurisdicional.",
-      },
-      {
-        processo: "HC 216.789/RJ",
-        relator: "Min. Ana Ferreira",
-        data: "2026-03-03",
-        tribunal: "STF",
-        ementa:
-          "Habeas corpus. Razoabilidade do prazo. Fundamentação idônea da decisão constritiva. Constrangimento ilegal.",
-      },
-      {
-        processo: "AgInt no REsp 3.021.100/BA",
-        relator: "Min. Pedro Santos",
-        data: "2026-02-28",
-        tribunal: "STJ",
-        ementa:
-          "Contratos. Revisão de cláusulas. Requisitos e demonstração de onerosidade excessiva. Manutenção do equilíbrio contratual.",
-      },
-      {
-        processo: "ADI 7.123/AL",
-        relator: "Min. Ricardo Nascimento",
-        data: "2026-02-23",
-        tribunal: "STF",
-        ementa:
-          "Controle concentrado. Inconstitucionalidade formal e material. Parâmetros de proteção de direitos fundamentais e devido processo legislativo.",
-      },
-    ],
-    []
-  );
+  const [totalSTJ, setTotalSTJ] = useState<number | null>(null);
+  const [totalSTF, setTotalSTF] = useState<number | null>(null);
+  const [recentRows, setRecentRows] = useState<Decision[]>([]);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   const activeAlerts = useMemo(
     () => [
@@ -153,27 +104,15 @@ export default function DashboardPage() {
     []
   );
 
-  const totalSTJ = useMemo(
-    () => decisions.filter((d) => d.tribunal === "STJ").length,
-    [decisions]
-  );
-  const totalSTF = useMemo(
-    () => decisions.filter((d) => d.tribunal === "STF").length,
-    [decisions]
-  );
-
   const filteredDecisions = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) {
-      // Mostra mais recentes primeiro.
-      return [...decisions].sort(
-        (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
-      );
+      return recentRows;
     }
 
     const match = (value: string) => value.toLowerCase().includes(q);
 
-    return [...decisions]
+    return recentRows
       .filter((d) => {
         return (
           match(d.processo) ||
@@ -182,10 +121,12 @@ export default function DashboardPage() {
           match(d.ementa)
         );
       })
-      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
-  }, [decisions, search]);
-
-  const recentDecisions = useMemo(() => filteredDecisions.slice(0, 8), [filteredDecisions]);
+      .sort((a, b) => {
+        const ta = a.data ? new Date(a.data).getTime() : 0;
+        const tb = b.data ? new Date(b.data).getTime() : 0;
+        return tb - ta;
+      });
+  }, [recentRows, search]);
 
   useEffect(() => {
     let isMounted = true;
@@ -225,6 +166,60 @@ export default function DashboardPage() {
       subscription.unsubscribe();
     };
   }, [router]);
+
+  useEffect(() => {
+    if (checkingAuth) return;
+
+    let cancelled = false;
+
+    (async () => {
+      setDashboardLoading(true);
+      setDashboardError(null);
+
+      const [stjCountRes, stfCountRes, recentRes] = await Promise.all([
+        supabase.from("stj_decisions").select("*", { count: "exact", head: true }),
+        supabase.from("stf_decisions").select("*", { count: "exact", head: true }),
+        supabase
+          .from("stj_decisions")
+          .select("processo, relator, data_julgamento, ementa")
+          .order("data_julgamento", { ascending: false })
+          .limit(10),
+      ]);
+
+      if (cancelled) return;
+
+      if (stjCountRes.error || stfCountRes.error || recentRes.error) {
+        const msg =
+          stjCountRes.error?.message ??
+          stfCountRes.error?.message ??
+          recentRes.error?.message ??
+          "Erro ao carregar o painel";
+        setDashboardError(msg);
+        setTotalSTJ(0);
+        setTotalSTF(0);
+        setRecentRows([]);
+        setDashboardLoading(false);
+        return;
+      }
+
+      setTotalSTJ(stjCountRes.count ?? 0);
+      setTotalSTF(stfCountRes.count ?? 0);
+      setRecentRows(
+        (recentRes.data ?? []).map((row) => ({
+          processo: row.processo,
+          relator: row.relator?.trim() ? row.relator : "—",
+          data: row.data_julgamento ?? "",
+          tribunal: "STJ" as const,
+          ementa: row.ementa?.trim() ? row.ementa : "—",
+        }))
+      );
+      setDashboardLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [checkingAuth]);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -306,9 +301,13 @@ export default function DashboardPage() {
             />
           </div>
           <div className="mt-3 text-xs text-white/60">
-            {search.trim()
-              ? `${filteredDecisions.length} resultado(s) encontrado(s)`
-              : `Mostrando ${recentDecisions.length} decisões recentes`}
+            {dashboardError ? (
+              <span className="text-amber-200/90">{dashboardError}</span>
+            ) : search.trim() ? (
+              `${filteredDecisions.length} resultado(s) encontrado(s)`
+            ) : (
+              `Mostrando ${filteredDecisions.length} decisões recentes`
+            )}
           </div>
         </section>
 
@@ -317,7 +316,9 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs uppercase tracking-wide text-white/60">Total STJ</div>
-                <div className="mt-2 text-3xl font-extrabold">{totalSTJ}</div>
+                <div className="mt-2 text-3xl font-extrabold">
+                  {dashboardLoading ? "…" : totalSTJ ?? "—"}
+                </div>
               </div>
               <div className="h-10 w-10 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center">
                 <span className="text-blue-200 font-bold">STJ</span>
@@ -329,7 +330,9 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs uppercase tracking-wide text-white/60">Total STF</div>
-                <div className="mt-2 text-3xl font-extrabold">{totalSTF}</div>
+                <div className="mt-2 text-3xl font-extrabold">
+                  {dashboardLoading ? "…" : totalSTF ?? "—"}
+                </div>
               </div>
               <div className="h-10 w-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center">
                 <span className="text-indigo-200 font-bold">STF</span>
@@ -390,14 +393,22 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {recentDecisions.length === 0 ? (
+                {dashboardLoading ? (
                   <tr>
                     <td colSpan={5} className="py-10 px-5 text-center text-white/70">
-                      Nenhuma decisão encontrada para sua busca.
+                      Carregando decisões…
+                    </td>
+                  </tr>
+                ) : filteredDecisions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-10 px-5 text-center text-white/70">
+                      {search.trim()
+                        ? "Nenhuma decisão encontrada para sua busca."
+                        : "Nenhuma decisão cadastrada."}
                     </td>
                   </tr>
                 ) : (
-                  recentDecisions.map((d) => (
+                  filteredDecisions.map((d) => (
                     <tr
                       key={d.processo}
                       className="border-t border-white/5 hover:bg-white/5 transition-colors"
@@ -409,7 +420,9 @@ export default function DashboardPage() {
                         {d.relator}
                       </td>
                       <td className="py-4 px-5 whitespace-nowrap text-white/75">
-                        {new Date(d.data).toLocaleDateString("pt-BR")}
+                        {d.data
+                          ? new Date(d.data).toLocaleDateString("pt-BR")
+                          : "—"}
                       </td>
                       <td className="py-4 px-5 whitespace-nowrap">
                         <span

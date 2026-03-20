@@ -3,8 +3,13 @@ import { syncStjDecisions } from "@/src/lib/stj-sync";
 
 export async function POST() {
   try {
-    const { inserted } = await syncStjDecisions();
-    return NextResponse.json({ success: true, inserted });
+    const { inserted, datasetsSucceeded, failed } = await syncStjDecisions();
+    return NextResponse.json({
+      success: true,
+      inserted,
+      datasetsSucceeded,
+      failed,
+    });
   } catch (error) {
     console.error("[/api/sync-stj]", error);
     const message =

@@ -169,25 +169,47 @@ async function fetchEspelhoJsonArray(resourceUrl: string): Promise<StjEspelhoRec
 
 const UPSERT_BATCH = 200;
 
+export type StjSyncDatasetFailure = {
+  datasetId: string;
+  error: string;
+};
+
+export type StjSyncResult = {
+  /** Linhas afetadas pelo upsert (inserções + atualizações). */
+  inserted: number;
+  /** Quantidade de datasets CKAN processados sem erro. */
+  datasetsSucceeded: number;
+  /** Datasets que falharam (ex.: HTTP 520, JSON ausente), com mensagem. */
+  failed: StjSyncDatasetFailure[];
+};
+
 /**
  * Sincroniza espelhos de acórdãos dos 10 datasets STJ (resource JSON mais recente por dataset)
  * para a tabela `stj_decisions`, usando a service role (ignora RLS).
- * Retorna o número de linhas afetadas pelo upsert (inserções + atualizações).
+ * Datasets individuais que falharem são ignorados; o restante segue.
  */
-export async function syncStjDecisions(): Promise<{ inserted: number }> {
+export async function syncStjDecisions(): Promise<StjSyncResult> {
   const supabase = getSupabaseServiceClient();
   const rows: StjDecisionRow[] = [];
+  const failed: StjSyncDatasetFailure[] = [];
+  let datasetsSucceeded = 0;
 
   for (const datasetId of STJ_ESPELHO_DATASET_IDS) {
-    const resources = await fetchPackageShow(datasetId);
-    const latest = pickLatestJsonResource(resources);
-    if (!latest?.url) {
-      throw new Error(`Nenhum resource JSON encontrado em ${datasetId}`);
-    }
-    const records = await fetchEspelhoJsonArray(latest.url);
-    for (const rec of records) {
-      const row = mapStjRecordToRow(rec);
-      if (row) rows.push(row);
+    try {
+      const resources = await fetchPackageShow(datasetId);
+      const latest = pickLatestJsonResource(resources);
+      if (!latest?.url) {
+        throw new Error(`Nenhum resource JSON encontrado em ${datasetId}`);
+      }
+      const records = await fetchEspelhoJsonArray(latest.url);
+      for (const rec of records) {
+        const row = mapStjRecordToRow(rec);
+        if (row) rows.push(row);
+      }
+      datasetsSucceeded++;
+    } catch (e) {
+      const error = e instanceof Error ? e.message : String(e);
+      failed.push({ datasetId, error });
     }
   }
 
@@ -211,5 +233,5 @@ export async function syncStjDecisions(): Promise<{ inserted: number }> {
     affected += data?.length ?? batch.length;
   }
 
-  return { inserted: affected };
+  return { inserted: affected, datasetsSucceeded, failed };
 }
