@@ -67,24 +67,28 @@ function getSupabaseServiceClient(): SupabaseClient {
   });
 }
 
-function pickLatestJsonResource(resources: CkanResource[]): CkanResource | null {
-  const jsonResources = resources.filter((r) => {
+function pickAllJsonResources(resources: CkanResource[]): CkanResource[] {
+  return resources.filter((r) => {
     const fmt = (r.format ?? "").trim().toUpperCase();
     const url = (r.url ?? "").trim();
     return fmt === "JSON" && url.length > 0;
   });
-  if (jsonResources.length === 0) return null;
-  return jsonResources.reduce((best, cur) => {
-    const tCur = Date.parse(cur.created ?? "") || 0;
-    const tBest = Date.parse(best.created ?? "") || 0;
-    return tCur >= tBest ? cur : best;
+}
+
+/** Resources JSON cujo `created` cai na janela dos últimos `days` dias (relógio, 24h cada). */
+function filterJsonResourcesLastDays(resources: CkanResource[], days: number): CkanResource[] {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return pickAllJsonResources(resources).filter((r) => {
+    const t = Date.parse(r.created ?? "");
+    if (Number.isNaN(t)) return false;
+    return t >= cutoff;
   });
 }
 
 async function fetchPackageShow(datasetId: string): Promise<CkanResource[]> {
   const u = new URL(`${CKAN_BASE}/package_show`);
   u.searchParams.set("id", datasetId);
-  const res = await fetch(u.toString(), { next: { revalidate: 0 } });
+  const res = await fetch(u.toString(), { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`CKAN package_show failed for ${datasetId}: ${res.status}`);
   }
@@ -159,7 +163,7 @@ export function mapStjRecordToRow(r: StjEspelhoRecord): StjDecisionRow | null {
 }
 
 async function fetchEspelhoJsonArray(resourceUrl: string): Promise<StjEspelhoRecord[]> {
-  const res = await fetch(resourceUrl, { next: { revalidate: 0 } });
+  const res = await fetch(resourceUrl, { cache: "no-store" });
   if (!res.ok) {
     throw new Error(`Download JSON failed: ${res.status} ${resourceUrl}`);
   }
@@ -172,41 +176,66 @@ const UPSERT_BATCH = 200;
 export type StjSyncDatasetFailure = {
   datasetId: string;
   error: string;
+  resourceUrl?: string;
 };
 
 export type StjSyncResult = {
   /** Linhas afetadas pelo upsert (inserções + atualizações). */
   inserted: number;
-  /** Quantidade de datasets CKAN processados sem erro. */
+  /** Datasets em que todos os resources alvo foram processados sem erro. */
   datasetsSucceeded: number;
-  /** Datasets que falharam (ex.: HTTP 520, JSON ausente), com mensagem. */
+  /** Falhas por dataset ou por resource JSON. */
   failed: StjSyncDatasetFailure[];
+  /** Quantidade de arquivos JSON baixados e parseados com sucesso. */
+  jsonResourcesProcessed: number;
 };
 
-/**
- * Sincroniza espelhos de acórdãos dos 10 datasets STJ (resource JSON mais recente por dataset)
- * para a tabela `stj_decisions`, usando a service role (ignora RLS).
- * Datasets individuais que falharem são ignorados; o restante segue.
- */
-export async function syncStjDecisions(): Promise<StjSyncResult> {
+async function syncStjDecisionsInternal(opts: {
+  incremental: boolean;
+  incrementalDays: number;
+}): Promise<StjSyncResult> {
   const supabase = getSupabaseServiceClient();
   const rows: StjDecisionRow[] = [];
   const failed: StjSyncDatasetFailure[] = [];
   let datasetsSucceeded = 0;
+  let jsonResourcesProcessed = 0;
 
   for (const datasetId of STJ_ESPELHO_DATASET_IDS) {
     try {
       const resources = await fetchPackageShow(datasetId);
-      const latest = pickLatestJsonResource(resources);
-      if (!latest?.url) {
+      const jsonList = opts.incremental
+        ? filterJsonResourcesLastDays(resources, opts.incrementalDays)
+        : pickAllJsonResources(resources);
+
+      if (jsonList.length === 0) {
+        if (opts.incremental) {
+          datasetsSucceeded++;
+          continue;
+        }
         throw new Error(`Nenhum resource JSON encontrado em ${datasetId}`);
       }
-      const records = await fetchEspelhoJsonArray(latest.url);
-      for (const rec of records) {
-        const row = mapStjRecordToRow(rec);
-        if (row) rows.push(row);
+
+      let anyResourceFailed = false;
+      for (const res of jsonList) {
+        const url = (res.url ?? "").trim();
+        if (!url) continue;
+        try {
+          const records = await fetchEspelhoJsonArray(url);
+          jsonResourcesProcessed++;
+          for (const rec of records) {
+            const row = mapStjRecordToRow(rec);
+            if (row) rows.push(row);
+          }
+        } catch (e) {
+          anyResourceFailed = true;
+          const error = e instanceof Error ? e.message : String(e);
+          failed.push({ datasetId, resourceUrl: url, error });
+        }
       }
-      datasetsSucceeded++;
+
+      if (!anyResourceFailed) {
+        datasetsSucceeded++;
+      }
     } catch (e) {
       const error = e instanceof Error ? e.message : String(e);
       failed.push({ datasetId, error });
@@ -233,5 +262,25 @@ export async function syncStjDecisions(): Promise<StjSyncResult> {
     affected += data?.length ?? batch.length;
   }
 
-  return { inserted: affected, datasetsSucceeded, failed };
+  return {
+    inserted: affected,
+    datasetsSucceeded,
+    failed,
+    jsonResourcesProcessed,
+  };
+}
+
+/**
+ * Carga histórica completa: para cada um dos 10 datasets, baixa **todos** os resources
+ * JSON (metadados) listados em `package_show` e faz upsert em `stj_decisions`.
+ */
+export async function syncStjDecisions(): Promise<StjSyncResult> {
+  return syncStjDecisionsInternal({ incremental: false, incrementalDays: 2 });
+}
+
+/**
+ * Sync incremental: apenas resources JSON cujo `created` no CKAN cai nos últimos `days` dias.
+ */
+export async function syncStjDecisionsIncremental(days = 2): Promise<StjSyncResult> {
+  return syncStjDecisionsInternal({ incremental: true, incrementalDays: days });
 }
