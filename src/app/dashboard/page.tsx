@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/src/lib/supabase";
 
@@ -275,6 +276,20 @@ export default function DashboardPage() {
           </div>
         </div>
       </header>
+
+      <section className="border-b border-amber-300/30 bg-gradient-to-r from-amber-400/20 via-yellow-300/20 to-blue-400/20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-medium text-amber-100">
+            Você está no plano Basic — Faça upgrade para o Plus por R$97/mês
+          </p>
+          <Link
+            href="/planos"
+            className="inline-flex items-center justify-center rounded-xl bg-amber-300 px-4 py-2 text-sm font-semibold text-[#061A33] transition-colors hover:bg-amber-200"
+          >
+            Fazer Upgrade
+          </Link>
+        </div>
+      </section>
 
       <main className="mx-auto max-w-6xl px-4 py-7">
         <section className="mb-6">
