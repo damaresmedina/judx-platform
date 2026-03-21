@@ -22,14 +22,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { inserted, datasetsSucceeded, failed, jsonResourcesProcessed } =
-      await syncStjDecisionsIncremental(2);
+    const {
+      inserted,
+      datasetsSucceeded,
+      failed,
+      jsonResourcesProcessed,
+      csvResourcesProcessed,
+    } = await syncStjDecisionsIncremental(2);
     return NextResponse.json({
       success: true,
       inserted,
       datasetsSucceeded,
       failed,
       jsonResourcesProcessed,
+      csvResourcesProcessed,
     });
   } catch (error) {
     console.error("[/api/cron-sync-stj]", error);
