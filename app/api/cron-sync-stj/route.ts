@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
       failed,
       jsonResourcesProcessed,
       csvResourcesProcessed,
+      zipFallbacksUsed,
     } = await syncStjDecisionsIncremental(2);
     return NextResponse.json({
       success: true,
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
       failed,
       jsonResourcesProcessed,
       csvResourcesProcessed,
+      zipFallbacksUsed,
     });
   } catch (error) {
     console.error("[/api/cron-sync-stj]", error);

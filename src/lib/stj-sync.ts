@@ -1,6 +1,49 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { strFromU8, unzipSync } from "fflate";
+import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
 const CKAN_BASE = "https://dadosabertos.web.stj.jus.br/api/3/action";
+
+/** Headers para aproximar requisições de um navegador (reduz bloqueios intermitentes no STJ). */
+const STJ_BROWSER_HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  Accept: "application/json, text/plain, */*",
+  "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+  Referer: "https://dadosabertos.web.stj.jus.br",
+  Connection: "keep-alive",
+};
+
+/** Pausa entre downloads de arquivos (resources) para não sobrecarregar o servidor. */
+const STJ_INTER_RESOURCE_DELAY_MS = 2000;
+
+/** Esperas (ms) antes de cada nova tentativa após HTTP 520: 1ª retentativa após 5s, 2ª após 15s, 3ª após 30s. */
+const STJ_520_RETRY_DELAYS_MS = [5000, 15000, 30000] as const;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * fetch com headers de browser; em 520, repete até 3 vezes com backoff 5s / 15s / 30s.
+ * Outros status não são reintentados aqui.
+ */
+async function fetchStjWithRetry(url: string, init: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(STJ_BROWSER_HEADERS);
+  if (init.headers) {
+    new Headers(init.headers).forEach((value, key) => {
+      headers.set(key, value);
+    });
+  }
+  let lastRes!: Response;
+  for (let attempt = 0; attempt <= STJ_520_RETRY_DELAYS_MS.length; attempt++) {
+    lastRes = await fetch(url, { ...init, cache: "no-store", headers });
+    if (lastRes.status !== 520) return lastRes;
+    if (attempt < STJ_520_RETRY_DELAYS_MS.length) {
+      await sleep(STJ_520_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+  return lastRes;
+}
 
 /** IDs CKAN dos 10 datasets de espelhos de acórdãos (Corte Especial, Seções e Turmas). */
 export const STJ_ESPELHO_DATASET_IDS = [
@@ -93,20 +136,6 @@ export type StjDecisionRow = {
   ramo_direito: string | null;
 };
 
-function getSupabaseServiceClient(): SupabaseClient {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url) {
-    throw new Error("Missing environment variable: NEXT_PUBLIC_SUPABASE_URL");
-  }
-  if (!key) {
-    throw new Error("Missing environment variable: SUPABASE_SERVICE_ROLE_KEY");
-  }
-  return createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
 /** Classe, UF e número normalizado a partir do texto do processo (ambos os formatos). */
 export function splitProcessoFields(raw: string | null | undefined): {
   classe: string;
@@ -168,6 +197,63 @@ function detectFormatFromResource(r: CkanResource): "json" | "csv" | null {
   return null;
 }
 
+function getDownloadBasename(url: string): string {
+  const last = url.split("/").pop() ?? "";
+  return last.split("?")[0] ?? "";
+}
+
+/** Extrai o identificador do dataset CKAN (`slug` ou UUID) a partir da URL de download de um resource. */
+export function extractStjDatasetKeyFromResourceUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split("/").filter(Boolean);
+    const i = parts.indexOf("dataset");
+    if (i === -1 || !parts[i + 1]) return null;
+    return parts[i + 1];
+  } catch {
+    return null;
+  }
+}
+
+function stemFromSyncableUrl(url: string): string | null {
+  const base = getDownloadBasename(url);
+  const m = base.match(/^(.+)\.(json|csv|zip)$/i);
+  return m ? m[1] : null;
+}
+
+function findZipResourceForStem(resources: CkanResource[], stem: string): CkanResource | null {
+  const target = `${stem.toLowerCase()}.zip`;
+  for (const r of resources) {
+    const u = (r.url ?? "").trim();
+    if (!u) continue;
+    if (getDownloadBasename(u).toLowerCase() === target) return r;
+  }
+  return null;
+}
+
+function shouldOfferJsonZipFallback(resource: CkanResource, url: string): boolean {
+  if (detectFormatFromResource(resource) === "json") return true;
+  const u = (resource.url ?? url).trim().toLowerCase();
+  return u.endsWith(".json");
+}
+
+function parseJsonRecordsFromZipBuffer(buf: ArrayBuffer): StjUnifiedInput[] {
+  const files = unzipSync(new Uint8Array(buf));
+  const unified: StjUnifiedInput[] = [];
+  for (const [name, data] of Object.entries(files)) {
+    const lower = name.toLowerCase();
+    if (!lower.endsWith(".json")) continue;
+    if (lower.includes("__macosx")) continue;
+    const text = strFromU8(data);
+    const trimmed = text.trimStart();
+    if (!trimmed) continue;
+    const raw = JSON.parse(text) as unknown;
+    const arr = normalizeToArray(raw);
+    unified.push(...arr.map(jsonRecordToUnified));
+  }
+  return unified;
+}
+
 function detectFormatFromResponse(contentType: string | null, url: string): "json" | "csv" | null {
   const ct = (contentType ?? "").toLowerCase();
   if (ct.includes("csv")) return "csv";
@@ -188,7 +274,7 @@ function sniffTextFormat(text: string): "json" | "csv" {
 async function fetchPackageShow(datasetId: string): Promise<CkanResource[]> {
   const u = new URL(`${CKAN_BASE}/package_show`);
   u.searchParams.set("id", datasetId);
-  const res = await fetch(u.toString(), { cache: "no-store" });
+  const res = await fetchStjWithRetry(u.toString());
   if (!res.ok) {
     throw new Error(`CKAN package_show failed for ${datasetId}: ${res.status}`);
   }
@@ -452,7 +538,7 @@ async function fetchResourceRecords(
   url: string,
   resource: CkanResource,
 ): Promise<{ unified: StjUnifiedInput[]; format: "json" | "csv" }> {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetchStjWithRetry(url);
   if (!res.ok) {
     throw new Error(`Download failed: ${res.status} ${url}`);
   }
@@ -484,6 +570,40 @@ async function fetchResourceRecords(
   return { unified: arr.map(jsonRecordToUnified), format: "json" };
 }
 
+async function fetchResourceRecordsWithZipFallback(
+  url: string,
+  resource: CkanResource,
+  allResources: CkanResource[],
+): Promise<{ unified: StjUnifiedInput[]; format: "json" | "csv"; usedZipFallback: boolean }> {
+  try {
+    const r = await fetchResourceRecords(url, resource);
+    return { ...r, usedZipFallback: false };
+  } catch (firstErr) {
+    if (!shouldOfferJsonZipFallback(resource, url)) throw firstErr;
+    const stem = stemFromSyncableUrl(url);
+    if (!stem) throw firstErr;
+    const zipRes = findZipResourceForStem(allResources, stem);
+    if (!zipRes) throw firstErr;
+    const zipUrl = (zipRes.url ?? "").trim();
+    if (!zipUrl) throw firstErr;
+    const zipHttp = await fetchStjWithRetry(zipUrl);
+    if (!zipHttp.ok) {
+      const msg = firstErr instanceof Error ? firstErr.message : String(firstErr);
+      throw new Error(`${msg} | Fallback ZIP: HTTP ${zipHttp.status} ${zipUrl}`);
+    }
+    const buf = await zipHttp.arrayBuffer();
+    let unified: StjUnifiedInput[];
+    try {
+      unified = parseJsonRecordsFromZipBuffer(buf);
+    } catch (zipParseErr) {
+      const msg = firstErr instanceof Error ? firstErr.message : String(firstErr);
+      const z = zipParseErr instanceof Error ? zipParseErr.message : String(zipParseErr);
+      throw new Error(`${msg} | Fallback ZIP: leitura dos JSONs (${z})`);
+    }
+    return { unified, format: "json", usedZipFallback: true };
+  }
+}
+
 const UPSERT_BATCH = 200;
 
 export type StjSyncDatasetFailure = {
@@ -500,6 +620,8 @@ export type StjSyncResult = {
   jsonResourcesProcessed: number;
   /** Arquivos CSV processados com sucesso. */
   csvResourcesProcessed: number;
+  /** JSON obtidos via ZIP equivalente (após falha do download direto do .json). */
+  zipFallbacksUsed: number;
 };
 
 async function syncStjDecisionsInternal(opts: {
@@ -512,6 +634,7 @@ async function syncStjDecisionsInternal(opts: {
   let datasetsSucceeded = 0;
   let jsonResourcesProcessed = 0;
   let csvResourcesProcessed = 0;
+  let zipFallbacksUsed = 0;
 
   for (const datasetId of STJ_ESPELHO_DATASET_IDS) {
     try {
@@ -529,13 +652,23 @@ async function syncStjDecisionsInternal(opts: {
       }
 
       let anyResourceFailed = false;
+      let firstDownloadInDataset = true;
       for (const res of list) {
         const url = (res.url ?? "").trim();
         if (!url) continue;
+        if (!firstDownloadInDataset) await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+        firstDownloadInDataset = false;
         try {
-          const { unified, format } = await fetchResourceRecords(url, res);
+          const { unified, format, usedZipFallback } = await fetchResourceRecordsWithZipFallback(
+            url,
+            res,
+            resources,
+          );
           if (format === "csv") csvResourcesProcessed++;
-          else jsonResourcesProcessed++;
+          else {
+            jsonResourcesProcessed++;
+            if (usedZipFallback) zipFallbacksUsed++;
+          }
           for (const u of unified) {
             const row = mapUnifiedToRow(u);
             if (row) rows.push(row);
@@ -582,6 +715,124 @@ async function syncStjDecisionsInternal(opts: {
     failed,
     jsonResourcesProcessed,
     csvResourcesProcessed,
+    zipFallbacksUsed,
+  };
+}
+
+export type StjFailedUrlRetryResult = {
+  url: string;
+  ok: boolean;
+  error?: string;
+  viaZipFallback?: boolean;
+  /** Registros lidos do arquivo (antes do mapa para `stj_decisions`). */
+  recordsParsed?: number;
+};
+
+export type StjFailedUrlsSyncResult = {
+  inserted: number;
+  results: StjFailedUrlRetryResult[];
+  jsonResourcesProcessed: number;
+  csvResourcesProcessed: number;
+  zipFallbacksUsed: number;
+};
+
+async function ingestStjResourceUrlForRetry(
+  url: string,
+  packageCache: Map<string, CkanResource[]>,
+): Promise<{ unified: StjUnifiedInput[]; format: "json" | "csv"; usedZipFallback: boolean }> {
+  const u = url.trim();
+  if (u.toLowerCase().endsWith(".zip")) {
+    const res = await fetchStjWithRetry(u);
+    if (!res.ok) {
+      throw new Error(`Download failed: ${res.status} ${u}`);
+    }
+    const buf = await res.arrayBuffer();
+    const unified = parseJsonRecordsFromZipBuffer(buf);
+    return { unified, format: "json", usedZipFallback: false };
+  }
+
+  const datasetKey = extractStjDatasetKeyFromResourceUrl(u);
+  if (!datasetKey) {
+    throw new Error("URL inválida: não foi possível identificar o dataset (trecho /dataset/.../).");
+  }
+
+  let pkg = packageCache.get(datasetKey);
+  if (!pkg) {
+    pkg = await fetchPackageShow(datasetKey);
+    packageCache.set(datasetKey, pkg);
+  }
+
+  const resMeta = pkg.find((r) => (r.url ?? "").trim() === u) ?? { url: u };
+  return fetchResourceRecordsWithZipFallback(u, resMeta, pkg);
+}
+
+/**
+ * Reprocessa apenas URLs que falharam (JSON/CSV ou ZIP direto), com o mesmo fallback ZIP dos JSON.
+ * Útil para completar cargas sem refazer todos os datasets.
+ */
+export async function syncStjDecisionsFromFailedUrls(urls: string[]): Promise<StjFailedUrlsSyncResult> {
+  const supabase = getSupabaseServiceClient();
+  const uniqueUrls = [...new Set(urls.map((x) => x.trim()).filter(Boolean))];
+  const rows: StjDecisionRow[] = [];
+  const results: StjFailedUrlRetryResult[] = [];
+  let jsonResourcesProcessed = 0;
+  let csvResourcesProcessed = 0;
+  let zipFallbacksUsed = 0;
+  const packageCache = new Map<string, CkanResource[]>();
+
+  let first = true;
+  for (const url of uniqueUrls) {
+    if (!first) await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+    first = false;
+    try {
+      const { unified, format, usedZipFallback } = await ingestStjResourceUrlForRetry(url, packageCache);
+      if (format === "csv") csvResourcesProcessed++;
+      else {
+        jsonResourcesProcessed++;
+        if (usedZipFallback) zipFallbacksUsed++;
+      }
+      for (const uni of unified) {
+        const row = mapUnifiedToRow(uni);
+        if (row) rows.push(row);
+      }
+      results.push({
+        url,
+        ok: true,
+        viaZipFallback: usedZipFallback,
+        recordsParsed: unified.length,
+      });
+    } catch (e) {
+      const error = e instanceof Error ? e.message : String(e);
+      results.push({ url, ok: false, error });
+    }
+  }
+
+  const uniqueByRegistro = new Map<string, StjDecisionRow>();
+  for (const row of rows) {
+    uniqueByRegistro.set(row.numero_registro, row);
+  }
+  const deduped = [...uniqueByRegistro.values()];
+
+  let affected = 0;
+  for (let i = 0; i < deduped.length; i += UPSERT_BATCH) {
+    const batch = deduped.slice(i, i + UPSERT_BATCH);
+    const { data, error } = await supabase
+      .from("stj_decisions")
+      .upsert(batch, { onConflict: "numero_registro", ignoreDuplicates: false })
+      .select("numero_registro");
+
+    if (error) {
+      throw new Error(`Supabase upsert stj_decisions: ${error.message}`);
+    }
+    affected += data?.length ?? batch.length;
+  }
+
+  return {
+    inserted: affected,
+    results,
+    jsonResourcesProcessed,
+    csvResourcesProcessed,
+    zipFallbacksUsed,
   };
 }
 

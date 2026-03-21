@@ -9,6 +9,7 @@ export async function POST() {
       failed,
       jsonResourcesProcessed,
       csvResourcesProcessed,
+      zipFallbacksUsed,
     } = await syncStjDecisions();
     return NextResponse.json({
       success: true,
@@ -17,6 +18,7 @@ export async function POST() {
       failed,
       jsonResourcesProcessed,
       csvResourcesProcessed,
+      zipFallbacksUsed,
     });
   } catch (error) {
     console.error("[/api/sync-stj]", error);

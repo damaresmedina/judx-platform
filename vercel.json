@@ -2,7 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/cron-sync-stj",
+      "path": "/api/backup",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron-sync-stj-datasets",
       "schedule": "0 9 * * *"
     }
   ]

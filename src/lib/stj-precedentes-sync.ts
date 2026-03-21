@@ -1,0 +1,161 @@
+import { fetchStjWithRetries, sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/lib/stj-fetch";
+import { fetchPackageShow } from "@/src/lib/stj-ckan";
+import { csvGet, parseCsv } from "@/src/lib/stj-csv";
+import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
+
+export const STJ_PRECEDENTES_DATASET_ID = "precedentes-qualificados" as const;
+
+const UPSERT_BATCH = 300;
+
+function parseOptionalInt(s: string): number | null {
+  const t = s.trim().replace(/\./g, "").replace(",", ".");
+  if (!t) return null;
+  const n = Number.parseInt(t, 10);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Datas comuns nos CSVs: DD/MM/YYYY ou ISO. */
+export function parseOptionalDate(s: string): string | null {
+  const raw = s.trim();
+  if (!raw) return null;
+  const oneLine = raw.split(/\r?\n/)[0]?.trim() ?? "";
+  if (!oneLine) return null;
+  const m = oneLine.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) {
+    const dd = m[1].padStart(2, "0");
+    const mm = m[2].padStart(2, "0");
+    return `${m[3]}-${mm}-${dd}`;
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(oneLine)) return oneLine.slice(0, 10);
+  return null;
+}
+
+export type StjPrecedentesTemasRow = {
+  sequencial_precedente: number;
+  tipo_precedente: string | null;
+  numero_precedente: string | null;
+  ministro_relator: string | null;
+  leading_case: string | null;
+  origem_uf: string | null;
+  tribunal_origem: string | null;
+  tipo_justica_origem: string | null;
+  quantidade_processos_suspenso_na_origem: number | null;
+  data_julgamento: string | null;
+  data_afetacao: string | null;
+  situacao_processo_stf: string | null;
+};
+
+export type StjPrecedentesProcessosRow = {
+  numero_registro: string;
+  sequencial_precedente: number;
+  processo: string | null;
+};
+
+export type StjPrecedentesSyncResult = {
+  success: boolean;
+  temasUpserted: number;
+  processosUpserted: number;
+  durationMs: number;
+  error?: string;
+};
+
+function mapTemasRow(row: Record<string, string>): StjPrecedentesTemasRow | null {
+  const seq = parseOptionalInt(csvGet(row, "sequencialprecedente"));
+  if (seq == null) return null;
+  const q = parseOptionalInt(
+    csvGet(row, "quantidadeprocessossuspensonaorigem", "quantidade_processos_suspenso_na_origem"),
+  );
+  return {
+    sequencial_precedente: seq,
+    tipo_precedente: csvGet(row, "tipoprecedente") || null,
+    numero_precedente: csvGet(row, "numeroprecedente") || null,
+    ministro_relator: csvGet(row, "ministrorelator") || null,
+    leading_case: csvGet(row, "leadingcase") || null,
+    origem_uf: csvGet(row, "origemuf") || null,
+    tribunal_origem: csvGet(row, "tribunalorigem") || null,
+    tipo_justica_origem: csvGet(row, "tipojusticaorigem") || null,
+    quantidade_processos_suspenso_na_origem: q,
+    data_julgamento: parseOptionalDate(csvGet(row, "datajulgamento")),
+    data_afetacao: parseOptionalDate(csvGet(row, "dataprimeiraafetacao", "dataafetacao")),
+    situacao_processo_stf:
+      csvGet(row, "situacaoprocessostf", "situacao") || null,
+  };
+}
+
+function mapProcessosRow(row: Record<string, string>): StjPrecedentesProcessosRow | null {
+  const seq = parseOptionalInt(csvGet(row, "sequencialprecedente"));
+  const nr = csvGet(row, "numeroregistro");
+  if (seq == null || !nr) return null;
+  return {
+    numero_registro: nr,
+    sequencial_precedente: seq,
+    processo: csvGet(row, "processo") || null,
+  };
+}
+
+export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
+  const started = Date.now();
+  try {
+    const resources = await fetchPackageShow(STJ_PRECEDENTES_DATASET_ID);
+    const lowerName = (r: { name?: string | null }) => (r.name ?? "").trim().toLowerCase();
+    const temasRes = resources.find((r) => lowerName(r) === "temas.csv" || lowerName(r).endsWith("temas.csv"));
+    const procRes = resources.find(
+      (r) => lowerName(r) === "processos.csv" || lowerName(r).endsWith("processos.csv"),
+    );
+    const temasUrl = (temasRes?.url ?? "").trim();
+    const procUrl = (procRes?.url ?? "").trim();
+    if (!temasUrl || !procUrl) {
+      throw new Error("Temas.csv ou Processos.csv não encontrados no dataset.");
+    }
+
+    const temasText = await (await fetchStjWithRetries(temasUrl)).text();
+    await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+    const procText = await (await fetchStjWithRetries(procUrl)).text();
+
+    const temasRows = parseCsv(temasText).map(mapTemasRow).filter((x): x is StjPrecedentesTemasRow => x != null);
+    const procRows = parseCsv(procText).map(mapProcessosRow).filter((x): x is StjPrecedentesProcessosRow => x != null);
+
+    const supabase = getSupabaseServiceClient();
+
+    let temasUpserted = 0;
+    for (let i = 0; i < temasRows.length; i += UPSERT_BATCH) {
+      const batch = temasRows.slice(i, i + UPSERT_BATCH);
+      const { data, error } = await supabase
+        .from("stj_precedentes_temas")
+        .upsert(batch, { onConflict: "sequencial_precedente", ignoreDuplicates: false })
+        .select("sequencial_precedente");
+      if (error) throw new Error(`Supabase upsert stj_precedentes_temas: ${error.message}`);
+      temasUpserted += data?.length ?? batch.length;
+    }
+
+    let processosUpserted = 0;
+    for (let i = 0; i < procRows.length; i += UPSERT_BATCH) {
+      const batch = procRows.slice(i, i + UPSERT_BATCH);
+      const { data, error } = await supabase
+        .from("stj_precedentes_processos")
+        .upsert(batch, {
+          onConflict: "numero_registro,sequencial_precedente",
+          ignoreDuplicates: false,
+        })
+        .select("numero_registro");
+      if (error) throw new Error(`Supabase upsert stj_precedentes_processos: ${error.message}`);
+      processosUpserted += data?.length ?? batch.length;
+    }
+
+    return {
+      success: true,
+      temasUpserted,
+      processosUpserted,
+      durationMs: Date.now() - started,
+    };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return {
+      success: false,
+      temasUpserted: 0,
+      processosUpserted: 0,
+      durationMs: Date.now() - started,
+      error: msg,
+    };
+  }
+}
