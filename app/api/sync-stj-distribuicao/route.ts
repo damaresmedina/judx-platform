@@ -1,9 +1,42 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { syncStjDistribuicao } from "@/src/lib/stj-distribuicao-sync";
 
-export async function POST() {
+/** Uma ata por invocação; ajuste no plano Vercel se algum JSON for muito pesado. */
+export const maxDuration = 120;
+
+function parseOffset(request: NextRequest): number {
+  const q = request.nextUrl.searchParams.get("offset");
+  if (q !== null && q !== "") {
+    const n = Number(q);
+    if (!Number.isNaN(n) && Number.isFinite(n)) {
+      return Math.trunc(n);
+    }
+  }
+  return 0;
+}
+
+export async function POST(request: NextRequest) {
   try {
-    const result = await syncStjDistribuicao();
+    let offset = parseOffset(request);
+    const raw = await request.text();
+    if (raw.trim()) {
+      try {
+        const body = JSON.parse(raw) as unknown;
+        if (body && typeof body === "object" && "offset" in body) {
+          const o = (body as { offset?: unknown }).offset;
+          if (typeof o === "number" && Number.isFinite(o)) {
+            offset = Math.trunc(o);
+          }
+        }
+      } catch {
+        // corpo não-JSON: mantém offset da query
+      }
+    }
+
+    const result = await syncStjDistribuicao({ offset });
+    if (result.invalidOffset) {
+      return NextResponse.json(result, { status: 400 });
+    }
     return NextResponse.json(result);
   } catch (error) {
     console.error("[/api/sync-stj-distribuicao]", error);

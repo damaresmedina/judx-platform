@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { syncStjDecisionsIncremental } from "@/src/lib/stj-sync";
 import { syncStjDecisoesDj } from "@/src/lib/stj-dj-sync";
 import { syncStjPrecedentes } from "@/src/lib/stj-precedentes-sync";
-import { syncStjDistribuicao } from "@/src/lib/stj-distribuicao-sync";
+import { syncStjDistribuicaoAll } from "@/src/lib/stj-distribuicao-sync";
 import { sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/lib/stj-fetch";
 
 function unauthorized() {
@@ -15,6 +15,8 @@ function unauthorized() {
  *
  * Agendamento típico em vercel.json: `0 9 * * *` (UTC) ≈ 06:00 America/Sao_Paulo.
  */
+export const maxDuration = 300;
+
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
     steps.precedentes = precedentes;
 
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
-    const distribuicao = await syncStjDistribuicao();
+    const distribuicao = await syncStjDistribuicaoAll();
     steps.distribuicao = distribuicao;
 
     const ok =

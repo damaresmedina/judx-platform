@@ -216,6 +216,10 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
           ignoreDuplicates: true,
         })
         .select("numero_registro");
+      console.log("UPSERT processos resultado:", {
+        error: error?.message,
+        dataLength: data?.length,
+      });
       if (error) throw new Error(`Supabase upsert stj_precedentes_processos: ${error.message}`);
       processosUpserted += data == null ? batch.length : data.length;
     }

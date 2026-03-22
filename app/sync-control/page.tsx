@@ -7,11 +7,43 @@ type JobState =
   | { status: "running" }
   | { status: "done"; ok: boolean; durationMs: number; summary: string; raw: string };
 
+type DistJobState =
+  | { status: "idle" }
+  | { status: "running"; current: number; total: number | null }
+  | { status: "done"; ok: boolean; durationMs: number; summary: string; raw: string };
+
 async function postJson(path: string): Promise<{ durationMs: number; text: string }> {
   const t0 = performance.now();
   const res = await fetch(path, { method: "POST" });
   const text = await res.text();
   return { durationMs: Math.round(performance.now() - t0), text };
+}
+
+type DistribApiJson = {
+  success?: boolean;
+  inserted?: number;
+  totalFiles?: number;
+  fileIndex?: number;
+  resourcesProcessed?: number;
+  failed?: { error: string }[];
+  invalidOffset?: boolean;
+};
+
+async function postDistribOffset(offset: number): Promise<{ ok: boolean; status: number; json: DistribApiJson; text: string }> {
+  const res = await fetch("/api/sync-stj-distribuicao", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ offset }),
+  });
+  const text = await res.text();
+  let json: DistribApiJson = {};
+  try {
+    json = JSON.parse(text) as DistribApiJson;
+  } catch {
+    /* ignore */
+  }
+  const ok = res.ok;
+  return { ok, status: res.status, json, text };
 }
 
 function formatDjSummary(text: string): string {
@@ -45,18 +77,13 @@ function formatPrecedentesSummary(text: string): string {
   }
 }
 
-function formatDistribSummary(text: string): string {
-  try {
-    const j = JSON.parse(text) as {
-      inserted?: number;
-      resourcesProcessed?: number;
-      failed?: { error: string }[];
-    };
-    const fails = j.failed?.length ?? 0;
-    return `Inseridos/atualizados: ${j.inserted ?? "—"} · Arquivos: ${j.resourcesProcessed ?? "—"} · Falhas: ${fails}`;
-  } catch {
-    return text.slice(0, 500);
-  }
+function formatDistribFullSummary(parts: {
+  totalFiles: number;
+  inserted: number;
+  fileErrors: number;
+  failDetails: number;
+}): string {
+  return `Inseridos/atualizados: ${parts.inserted} · Arquivos: ${parts.totalFiles} · Arquivos com erro: ${parts.fileErrors} · Entradas em falhas: ${parts.failDetails}`;
 }
 
 function formatBackupSummary(text: string): string {
@@ -108,8 +135,95 @@ export default function SyncControlPage() {
   const [espelhos, setEspelhos] = useState<JobState>({ status: "idle" });
   const [dj, setDj] = useState<JobState>({ status: "idle" });
   const [precedentes, setPrecedentes] = useState<JobState>({ status: "idle" });
-  const [dist, setDist] = useState<JobState>({ status: "idle" });
+  const [dist, setDist] = useState<DistJobState>({ status: "idle" });
   const [backup, setBackup] = useState<JobState>({ status: "idle" });
+
+  async function runDistrib() {
+    const t0 = performance.now();
+    setDist({ status: "running", current: 1, total: null });
+    const rawParts: string[] = [];
+    try {
+      let totalInserted = 0;
+      let totalFiles = 0;
+      let fileErrors = 0;
+      let failDetails = 0;
+
+      for (let offset = 0; offset === 0 || offset < totalFiles; offset++) {
+        if (totalFiles > 0) {
+          setDist({ status: "running", current: offset + 1, total: totalFiles });
+        } else {
+          setDist({ status: "running", current: 1, total: null });
+        }
+
+        const { ok, status, json, text } = await postDistribOffset(offset);
+        rawParts.push(text);
+
+        if (status === 400 && json.invalidOffset) {
+          setDist({
+            status: "done",
+            ok: false,
+            durationMs: Math.round(performance.now() - t0),
+            summary: json.failed?.[0]?.error ?? "Requisição inválida.",
+            raw: rawParts.join("\n---\n"),
+          });
+          return;
+        }
+
+        if (!ok) {
+          setDist({
+            status: "done",
+            ok: false,
+            durationMs: Math.round(performance.now() - t0),
+            summary: `HTTP ${status}: ${text.slice(0, 400)}`,
+            raw: rawParts.join("\n---\n"),
+          });
+          return;
+        }
+
+        const T = json.totalFiles ?? 0;
+        if (offset === 0) {
+          totalFiles = T;
+          if (totalFiles > 0) {
+            setDist({ status: "running", current: 1, total: totalFiles });
+          }
+        }
+
+        totalInserted += json.inserted ?? 0;
+        const nFail = json.failed?.length ?? 0;
+        failDetails += nFail;
+        const chunkOk = json.success !== false && nFail === 0;
+        if (!chunkOk) fileErrors++;
+
+        if (totalFiles === 0) {
+          break;
+        }
+      }
+
+      const durationMs = Math.round(performance.now() - t0);
+      const summary = formatDistribFullSummary({
+        totalFiles,
+        inserted: totalInserted,
+        fileErrors,
+        failDetails,
+      });
+      setDist({
+        status: "done",
+        ok: fileErrors === 0 && failDetails === 0,
+        durationMs,
+        summary,
+        raw: rawParts.join("\n---\n"),
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro de rede";
+      setDist({
+        status: "done",
+        ok: false,
+        durationMs: Math.round(performance.now() - t0),
+        summary: msg,
+        raw: rawParts.join("\n---\n"),
+      });
+    }
+  }
 
   async function run(
     path: string,
@@ -174,12 +288,7 @@ export default function SyncControlPage() {
             state={precedentes}
             onClick={() => run("/api/sync-stj-precedentes", setPrecedentes, formatPrecedentesSummary)}
           />
-          <JobButton
-            label="Atas de distribuição (stj_distribuicao)"
-            path="/api/sync-stj-distribuicao"
-            state={dist}
-            onClick={() => run("/api/sync-stj-distribuicao", setDist, formatDistribSummary)}
-          />
+          <DistribJobButton state={dist} onRun={runDistrib} />
           <JobButton
             label="Backup JSON (Storage backups/)"
             path="/api/backup"
@@ -188,6 +297,57 @@ export default function SyncControlPage() {
           />
         </section>
       </div>
+    </div>
+  );
+}
+
+function DistribJobButton(props: { state: DistJobState; onRun: () => void }) {
+  const loading = props.state.status === "running";
+  const elapsedMs = useElapsedMs(loading);
+  const progress =
+    props.state.status === "running"
+      ? props.state.total != null
+        ? `Processando arquivo ${props.state.current} de ${props.state.total}…`
+        : `Processando arquivo ${props.state.current}…`
+      : null;
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">Atas de distribuição (stj_distribuicao)</p>
+          <p className="mt-0.5 text-xs text-zinc-500">/api/sync-stj-distribuicao (uma ata por requisição, offset no JSON)</p>
+          <p className="mt-0.5 text-xs text-zinc-400">
+            Lote completo (manual): <span className="font-mono">/api/sync-stj-distribuicao-all</span>
+          </p>
+          {loading && progress && (
+            <p className="mt-1 font-mono text-xs tabular-nums text-zinc-600">
+              {progress} {(elapsedMs / 1000).toFixed(1)} s
+            </p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={props.onRun}
+          disabled={loading}
+          className="inline-flex h-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900 px-3 text-xs font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Executando…" : "Executar"}
+        </button>
+      </div>
+      {props.state.status === "done" && (
+        <div className="mt-3 border-t border-zinc-100 pt-3">
+          <p className={`text-sm ${props.state.ok ? "text-emerald-700" : "text-red-700"}`}>
+            {props.state.ok ? "Concluído" : "Falha ou avisos"} · {props.state.durationMs} ms
+          </p>
+          <p className="mt-1 text-xs text-zinc-700">{props.state.summary}</p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs text-zinc-500">JSON bruto</summary>
+            <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-zinc-950 p-2 text-[10px] text-zinc-100">
+              {props.state.raw}
+            </pre>
+          </details>
+        </div>
+      )}
     </div>
   );
 }
