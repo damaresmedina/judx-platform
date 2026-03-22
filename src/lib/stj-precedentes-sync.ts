@@ -1,25 +1,18 @@
 import { fetchStjWithRetries, sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/lib/stj-fetch";
-import { fetchPackageShow } from "@/src/lib/stj-ckan";
 import { csvGet, parseCsv } from "@/src/lib/stj-csv";
 import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
 export const STJ_PRECEDENTES_DATASET_ID = "precedentes-qualificados" as const;
+
+/** URL estável do CSV de temas (resource STJ / dados abertos; não confundir com dicionario-temas.csv). */
+export const STJ_PRECEDENTES_TEMAS_CSV_URL =
+  "https://dadosabertos.web.stj.jus.br/dataset/4238da2f-c07b-4c1a-b345-4402accacdcf/resource/df29da13-7d6b-41ba-ad96-cd1a5bbd191c/download/temas.csv" as const;
 
 /** URL estável do CSV de processos (resource STJ / dados abertos). */
 export const STJ_PRECEDENTES_PROCESSOS_CSV_URL =
   "https://dadosabertos.web.stj.jus.br/dataset/4238da2f-c07b-4c1a-b345-4402accacdcf/resource/7ed21202-0049-4fcb-aa7c-48d810d3c499/download/processos.csv" as const;
 
 const CSV_SEP = "," as const;
-
-async function resolveTemasCsvUrlFromCkan(): Promise<string> {
-  const resources = await fetchPackageShow(STJ_PRECEDENTES_DATASET_ID);
-  const temasRes = resources.find((r) => (r.name ?? "").trim().toLowerCase().includes("temas"));
-  const url = (temasRes?.url ?? "").trim();
-  if (!url) {
-    throw new Error('Nenhum resource com "temas" no nome encontrado em precedentes-qualificados (CKAN).');
-  }
-  return url;
-}
 
 const UPSERT_BATCH = 300;
 
@@ -130,7 +123,7 @@ function dedupeProcessosRows(rows: StjPrecedentesProcessosRow[]): StjPrecedentes
 export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
   const started = Date.now();
   try {
-    const temasUrl = await resolveTemasCsvUrlFromCkan();
+    const temasUrl = STJ_PRECEDENTES_TEMAS_CSV_URL;
     const procUrl = STJ_PRECEDENTES_PROCESSOS_CSV_URL;
 
     const temasText = await (await fetchStjWithRetries(temasUrl)).text();
