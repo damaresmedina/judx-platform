@@ -22,11 +22,11 @@ export function parseCsvLine(line: string, sep: string): string[] {
   return out;
 }
 
-export function parseCsv(text: string): Record<string, string>[] {
+export function parseCsv(text: string, separator?: string): Record<string, string>[] {
   const normalized = text.replace(/^\ufeff/, "");
   const lines = normalized.split(/\r?\n/).filter((l) => l.length > 0);
   if (lines.length === 0) return [];
-  const sep = lines[0].includes(";") ? ";" : ",";
+  const sep = separator ?? (lines[0].includes(";") ? ";" : ",");
   const headers = parseCsvLine(lines[0], sep).map((h) =>
     h.trim().replace(/^\ufeff/, "").toLowerCase(),
   );

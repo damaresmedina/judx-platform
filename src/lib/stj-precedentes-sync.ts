@@ -5,6 +5,22 @@ import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
 export const STJ_PRECEDENTES_DATASET_ID = "precedentes-qualificados" as const;
 
+/** URL estável do CSV de processos (resource STJ / dados abertos). */
+export const STJ_PRECEDENTES_PROCESSOS_CSV_URL =
+  "https://dadosabertos.web.stj.jus.br/dataset/4238da2f-c07b-4c1a-b345-4402accacdcf/resource/7ed21202-0049-4fcb-aa7c-48d810d3c499/download/processos.csv" as const;
+
+const CSV_SEP = "," as const;
+
+async function resolveTemasCsvUrlFromCkan(): Promise<string> {
+  const resources = await fetchPackageShow(STJ_PRECEDENTES_DATASET_ID);
+  const temasRes = resources.find((r) => (r.name ?? "").trim().toLowerCase().includes("temas"));
+  const url = (temasRes?.url ?? "").trim();
+  if (!url) {
+    throw new Error('Nenhum resource com "temas" no nome encontrado em precedentes-qualificados (CKAN).');
+  }
+  return url;
+}
+
 const UPSERT_BATCH = 300;
 
 function parseOptionalInt(s: string): number | null {
@@ -96,24 +112,19 @@ function mapProcessosRow(row: Record<string, string>): StjPrecedentesProcessosRo
 export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
   const started = Date.now();
   try {
-    const resources = await fetchPackageShow(STJ_PRECEDENTES_DATASET_ID);
-    const lowerName = (r: { name?: string | null }) => (r.name ?? "").trim().toLowerCase();
-    const temasRes = resources.find((r) => lowerName(r) === "temas.csv" || lowerName(r).endsWith("temas.csv"));
-    const procRes = resources.find(
-      (r) => lowerName(r) === "processos.csv" || lowerName(r).endsWith("processos.csv"),
-    );
-    const temasUrl = (temasRes?.url ?? "").trim();
-    const procUrl = (procRes?.url ?? "").trim();
-    if (!temasUrl || !procUrl) {
-      throw new Error("Temas.csv ou Processos.csv não encontrados no dataset.");
-    }
+    const temasUrl = await resolveTemasCsvUrlFromCkan();
+    const procUrl = STJ_PRECEDENTES_PROCESSOS_CSV_URL;
 
     const temasText = await (await fetchStjWithRetries(temasUrl)).text();
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
     const procText = await (await fetchStjWithRetries(procUrl)).text();
 
-    const temasRows = parseCsv(temasText).map(mapTemasRow).filter((x): x is StjPrecedentesTemasRow => x != null);
-    const procRows = parseCsv(procText).map(mapProcessosRow).filter((x): x is StjPrecedentesProcessosRow => x != null);
+    const temasRows = parseCsv(temasText, CSV_SEP)
+      .map(mapTemasRow)
+      .filter((x): x is StjPrecedentesTemasRow => x != null);
+    const procRows = parseCsv(procText, CSV_SEP)
+      .map(mapProcessosRow)
+      .filter((x): x is StjPrecedentesProcessosRow => x != null);
 
     const supabase = getSupabaseServiceClient();
 
