@@ -4,6 +4,16 @@ import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
 export const STJ_DISTRIBUICAO_DATASET_ID = "atas-de-distribuicao" as const;
 
+/** ID do package no portal (aparece nas URLs de download). */
+export const STJ_DISTRIBUICAO_PACKAGE_ID = "6328ba8d-930a-4c35-90ee-c91bf3fef5cb" as const;
+
+/**
+ * URL direta do primeiro arquivo JSON do dataset (ata20230630.json), igual à informada pelo CKAN.
+ * Usada como fallback se `package_show` falhar (evita depender só da API lenta).
+ */
+export const STJ_DISTRIBUICAO_FIRST_ATA_URL =
+  "https://dadosabertos.web.stj.jus.br/dataset/6328ba8d-930a-4c35-90ee-c91bf3fef5cb/resource/7abb9668-ec1b-4b61-90f3-874fd0fbe2c0/download/ata20230630.json" as const;
+
 const UPSERT_BATCH = 300;
 
 export type StjDistribuicaoRow = {
@@ -80,10 +90,27 @@ export type StjDistribuicaoAllSyncResult = {
 };
 
 export async function listStjDistribuicaoAtaResources(): Promise<CkanResource[]> {
-  const resources = await fetchPackageShow(STJ_DISTRIBUICAO_DATASET_ID);
-  return resources.filter(isAtaJsonResource).sort((a, b) =>
-    (a.name ?? "").localeCompare(b.name ?? "", "pt-BR"),
-  );
+  try {
+    const resources = await fetchPackageShow(STJ_DISTRIBUICAO_DATASET_ID);
+    const list = resources.filter(isAtaJsonResource).sort((a, b) =>
+      (a.name ?? "").localeCompare(b.name ?? "", "pt-BR"),
+    );
+    if (list.length > 0) return list;
+  } catch (e) {
+    console.warn(
+      "[stj-distribuicao] CKAN package_show falhou; usando apenas o primeiro ata (URL fixa).",
+      e,
+    );
+    return [
+      {
+        name: "ata20230630.json",
+        format: "JSON",
+        mimetype: "application/json",
+        url: STJ_DISTRIBUICAO_FIRST_ATA_URL,
+      },
+    ];
+  }
+  return [];
 }
 
 async function syncStjDistribuicaoFromList(

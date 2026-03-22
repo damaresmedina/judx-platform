@@ -12,7 +12,8 @@ export const STJ_BROWSER_HEADERS: Record<string, string> = {
 export const STJ_INTER_RESOURCE_DELAY_MS = 2000;
 
 const STJ_FETCH_MAX_ATTEMPTS = 3;
-const STJ_FETCH_RETRY_BASE_MS = 1000;
+/** Base do backoff entre tentativas (exportado para retries alinhados ao `fetchStjWithRetries`). */
+export const STJ_FETCH_RETRY_BASE_MS = 1000;
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
