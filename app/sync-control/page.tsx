@@ -144,59 +144,88 @@ export default function SyncControlPage() {
     const rawParts: string[] = [];
     try {
       let totalInserted = 0;
-      let totalFiles = 0;
       let fileErrors = 0;
       let failDetails = 0;
 
-      for (let offset = 0; offset === 0 || offset < totalFiles; offset++) {
-        if (totalFiles > 0) {
-          setDist({ status: "running", current: offset + 1, total: totalFiles });
-        } else {
-          setDist({ status: "running", current: 1, total: null });
-        }
-
-        const { ok, status, json, text } = await postDistribOffset(offset);
-        rawParts.push(text);
-
-        if (status === 400 && json.invalidOffset) {
-          setDist({
-            status: "done",
-            ok: false,
-            durationMs: Math.round(performance.now() - t0),
-            summary: json.failed?.[0]?.error ?? "Requisição inválida.",
-            raw: rawParts.join("\n---\n"),
-          });
-          return;
-        }
-
-        if (!ok) {
-          setDist({
-            status: "done",
-            ok: false,
-            durationMs: Math.round(performance.now() - t0),
-            summary: `HTTP ${status}: ${text.slice(0, 400)}`,
-            raw: rawParts.join("\n---\n"),
-          });
-          return;
-        }
-
-        const T = json.totalFiles ?? 0;
-        if (offset === 0) {
-          totalFiles = T;
-          if (totalFiles > 0) {
-            setDist({ status: "running", current: 1, total: totalFiles });
-          }
-        }
-
+      const accumulate = (json: DistribApiJson) => {
         totalInserted += json.inserted ?? 0;
         const nFail = json.failed?.length ?? 0;
         failDetails += nFail;
         const chunkOk = json.success !== false && nFail === 0;
         if (!chunkOk) fileErrors++;
+      };
 
-        if (totalFiles === 0) {
-          break;
+      const parseTotalFiles = (json: DistribApiJson): number => {
+        const t = json.totalFiles;
+        if (typeof t === "number" && Number.isFinite(t)) return Math.max(0, Math.trunc(t));
+        if (typeof t === "string" && t.trim() !== "") {
+          const n = Number(t);
+          if (Number.isFinite(n)) return Math.max(0, Math.trunc(n));
         }
+        return 0;
+      };
+
+      const abort = (summary: string) => {
+        setDist({
+          status: "done",
+          ok: false,
+          durationMs: Math.round(performance.now() - t0),
+          summary,
+          raw: rawParts.join("\n---\n"),
+        });
+      };
+
+      // 1) POST { offset: 0 } — resposta traz totalFiles
+      const r0 = await postDistribOffset(0);
+      rawParts.push(r0.text);
+
+      if (r0.status === 400 && r0.json.invalidOffset) {
+        abort(r0.json.failed?.[0]?.error ?? "Requisição inválida.");
+        return;
+      }
+      if (!r0.ok) {
+        abort(`HTTP ${r0.status}: ${r0.text.slice(0, 400)}`);
+        return;
+      }
+
+      const totalFiles = parseTotalFiles(r0.json);
+      accumulate(r0.json);
+
+      if (totalFiles === 0) {
+        const durationMs = Math.round(performance.now() - t0);
+        setDist({
+          status: "done",
+          ok: fileErrors === 0 && failDetails === 0,
+          durationMs,
+          summary: formatDistribFullSummary({
+            totalFiles: 0,
+            inserted: totalInserted,
+            fileErrors,
+            failDetails,
+          }),
+          raw: rawParts.join("\n---\n"),
+        });
+        return;
+      }
+
+      setDist({ status: "running", current: 1, total: totalFiles });
+
+      // 2) POST { offset: 1 } … { offset: totalFiles - 1 }
+      for (let offset = 1; offset < totalFiles; offset++) {
+        setDist({ status: "running", current: offset + 1, total: totalFiles });
+        const { ok, status, json, text } = await postDistribOffset(offset);
+        rawParts.push(text);
+
+        if (status === 400 && json.invalidOffset) {
+          abort(json.failed?.[0]?.error ?? "Requisição inválida.");
+          return;
+        }
+        if (!ok) {
+          abort(`HTTP ${status}: ${text.slice(0, 400)}`);
+          return;
+        }
+
+        accumulate(json);
       }
 
       const durationMs = Math.round(performance.now() - t0);
