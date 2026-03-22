@@ -168,7 +168,7 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
         .from("stj_precedentes_processos")
         .upsert(batch, {
           onConflict: "numero_registro,sequencial_precedente",
-          ignoreDuplicates: false,
+          ignoreDuplicates: true,
         })
         .select("numero_registro");
       if (error) throw new Error(`Supabase upsert stj_precedentes_processos: ${error.message}`);
