@@ -22,11 +22,16 @@ export function parseCsvLine(line: string, sep: string): string[] {
   return out;
 }
 
+/** Primeira linha não vazia: `;` no cabeçalho indica CSV brasileiro comum; senão vírgula. */
+export function detectCsvSeparator(firstNonEmptyLine: string): string {
+  return firstNonEmptyLine.includes(";") ? ";" : ",";
+}
+
 export function parseCsv(text: string, separator?: string): Record<string, string>[] {
   const normalized = text.replace(/^\ufeff/, "");
   const lines = normalized.split(/\r?\n/).filter((l) => l.length > 0);
   if (lines.length === 0) return [];
-  const sep = separator ?? (lines[0].includes(";") ? ";" : ",");
+  const sep = separator ?? detectCsvSeparator(lines[0]);
   const headers = parseCsvLine(lines[0], sep).map((h) =>
     h.trim().replace(/^\ufeff/, "").toLowerCase(),
   );

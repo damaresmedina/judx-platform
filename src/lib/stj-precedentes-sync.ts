@@ -1,18 +1,24 @@
 import { fetchStjWithRetries, sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/lib/stj-fetch";
-import { csvGet, parseCsv } from "@/src/lib/stj-csv";
+import { csvGet, detectCsvSeparator, parseCsv } from "@/src/lib/stj-csv";
 import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
-export const STJ_PRECEDENTES_DATASET_ID = "precedentes-qualificados" as const;
+/**
+ * URLs fixas de download (resource STJ). Não usar CKAN `package_show` — o API costuma bloquear
+ * requisições server-side; o fetch usa `fetchStjWithRetries` + headers de navegador em stj-fetch.
+ */
 
-/** URL estável do CSV de temas (resource STJ / dados abertos; não confundir com dicionario-temas.csv). */
+/** CSV de temas (resource listado no portal; não confundir com dicionario-temas.csv). */
 export const STJ_PRECEDENTES_TEMAS_CSV_URL =
   "https://dadosabertos.web.stj.jus.br/dataset/4238da2f-c07b-4c1a-b345-4402accacdcf/resource/df29da13-7d6b-41ba-ad96-cd1a5bbd191c/download/temas.csv" as const;
 
-/** URL estável do CSV de processos (resource STJ / dados abertos). */
 export const STJ_PRECEDENTES_PROCESSOS_CSV_URL =
   "https://dadosabertos.web.stj.jus.br/dataset/4238da2f-c07b-4c1a-b345-4402accacdcf/resource/7ed21202-0049-4fcb-aa7c-48d810d3c499/download/processos.csv" as const;
 
-const CSV_SEP = "," as const;
+const STJ_PRECEDENTES_CSV_FETCH: RequestInit = {
+  headers: {
+    Accept: "text/csv,text/plain,application/csv,*/*;q=0.8",
+  },
+};
 
 const UPSERT_BATCH = 300;
 
@@ -92,13 +98,14 @@ function mapTemasRow(row: Record<string, string>): StjPrecedentesTemasRow | null
 }
 
 function mapProcessosRow(row: Record<string, string>): StjPrecedentesProcessosRow | null {
-  const seq = parseOptionalInt(csvGet(row, "sequencialprecedente"));
-  const nr = csvGet(row, "numeroregistro");
+  // Cabeçalhos do CSV STJ (parseCsv guarda chaves em minúsculas; csvGet aceita o nome original).
+  const seq = parseOptionalInt(csvGet(row, "sequencialPrecedente", "sequencial_precedente"));
+  const nr = csvGet(row, "numeroRegistro", "numero_registro");
   if (seq == null || !nr) return null;
   return {
     numero_registro: nr,
     sequencial_precedente: seq,
-    processo: csvGet(row, "processo") || null,
+    processo: csvGet(row, "Processo", "processo") || null,
   };
 }
 
@@ -126,20 +133,62 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
     const temasUrl = STJ_PRECEDENTES_TEMAS_CSV_URL;
     const procUrl = STJ_PRECEDENTES_PROCESSOS_CSV_URL;
 
-    const temasText = await (await fetchStjWithRetries(temasUrl)).text();
+    const temasRes = await fetchStjWithRetries(temasUrl, STJ_PRECEDENTES_CSV_FETCH);
+    const temasText = await temasRes.text();
+    console.log("[stj-precedentes] download temas.csv", {
+      url: temasUrl,
+      status: temasRes.status,
+      ok: temasRes.ok,
+      bodyLength: temasText.length,
+    });
+
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
-    const procText = await (await fetchStjWithRetries(procUrl)).text();
+
+    const procRes = await fetchStjWithRetries(procUrl, STJ_PRECEDENTES_CSV_FETCH);
+    const procText = await procRes.text();
+    console.log("[stj-precedentes] download processos.csv", {
+      url: procUrl,
+      status: procRes.status,
+      ok: procRes.ok,
+      bodyLength: procText.length,
+    });
+
+    const temasNorm = temasText.replace(/^\ufeff/, "");
+    const temasFirstLine = temasNorm.split(/\r?\n/).find((l) => l.length > 0) ?? "";
+    const temasSep = detectCsvSeparator(temasFirstLine);
+    const temasParsed = parseCsv(temasText);
+    console.log("[stj-precedentes] parse temas.csv", {
+      dataRows: temasParsed.length,
+      sep: temasSep,
+    });
+
+    const procNorm = procText.replace(/^\ufeff/, "");
+    const procFirstLine = procNorm.split(/\r?\n/).find((l) => l.length > 0) ?? "";
+    const procSep = detectCsvSeparator(procFirstLine);
+    const procParsed = parseCsv(procText);
+    const procLineCount = procNorm.split(/\r?\n/).filter((l) => l.length > 0).length;
+    console.log("[stj-precedentes] parse processos.csv", {
+      nonEmptyLines: procLineCount,
+      dataRows: procParsed.length,
+      sep: procSep,
+      headerKeysSample: procParsed[0] ? Object.keys(procParsed[0]).slice(0, 12) : [],
+    });
+    console.log("[stj-precedentes] processos.csv primeiras 2 linhas parseadas", procParsed.slice(0, 2));
 
     const temasRows = dedupeTemasRows(
-      parseCsv(temasText, CSV_SEP)
+      temasParsed
         .map(mapTemasRow)
         .filter((x): x is StjPrecedentesTemasRow => x != null),
     );
     const procRows = dedupeProcessosRows(
-      parseCsv(procText, CSV_SEP)
+      procParsed
         .map(mapProcessosRow)
         .filter((x): x is StjPrecedentesProcessosRow => x != null),
     );
+    console.log("[stj-precedentes] mapeamento", {
+      temasRows: temasRows.length,
+      processosRows: procRows.length,
+    });
 
     const supabase = getSupabaseServiceClient();
 
@@ -151,7 +200,7 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
         .upsert(batch, { onConflict: "sequencial_precedente", ignoreDuplicates: false })
         .select("sequencial_precedente");
       if (error) throw new Error(`Supabase upsert stj_precedentes_temas: ${error.message}`);
-      temasUpserted += data?.length ?? batch.length;
+      temasUpserted += data == null ? batch.length : data.length;
     }
 
     let processosUpserted = 0;
@@ -165,7 +214,7 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
         })
         .select("numero_registro");
       if (error) throw new Error(`Supabase upsert stj_precedentes_processos: ${error.message}`);
-      processosUpserted += data?.length ?? batch.length;
+      processosUpserted += data == null ? batch.length : data.length;
     }
 
     return {
