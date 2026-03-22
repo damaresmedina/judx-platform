@@ -109,6 +109,24 @@ function mapProcessosRow(row: Record<string, string>): StjPrecedentesProcessosRo
   };
 }
 
+/** CSV pode repetir a mesma chave; Postgres não permite ON CONFLICT com a mesma linha duas vezes no batch. */
+function dedupeTemasRows(rows: StjPrecedentesTemasRow[]): StjPrecedentesTemasRow[] {
+  const bySeq = new Map<number, StjPrecedentesTemasRow>();
+  for (const row of rows) {
+    bySeq.set(row.sequencial_precedente, row);
+  }
+  return [...bySeq.values()];
+}
+
+function dedupeProcessosRows(rows: StjPrecedentesProcessosRow[]): StjPrecedentesProcessosRow[] {
+  const byKey = new Map<string, StjPrecedentesProcessosRow>();
+  for (const row of rows) {
+    const key = `${row.numero_registro}\0${row.sequencial_precedente}`;
+    byKey.set(key, row);
+  }
+  return [...byKey.values()];
+}
+
 export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
   const started = Date.now();
   try {
@@ -119,12 +137,16 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
     const procText = await (await fetchStjWithRetries(procUrl)).text();
 
-    const temasRows = parseCsv(temasText, CSV_SEP)
-      .map(mapTemasRow)
-      .filter((x): x is StjPrecedentesTemasRow => x != null);
-    const procRows = parseCsv(procText, CSV_SEP)
-      .map(mapProcessosRow)
-      .filter((x): x is StjPrecedentesProcessosRow => x != null);
+    const temasRows = dedupeTemasRows(
+      parseCsv(temasText, CSV_SEP)
+        .map(mapTemasRow)
+        .filter((x): x is StjPrecedentesTemasRow => x != null),
+    );
+    const procRows = dedupeProcessosRows(
+      parseCsv(procText, CSV_SEP)
+        .map(mapProcessosRow)
+        .filter((x): x is StjPrecedentesProcessosRow => x != null),
+    );
 
     const supabase = getSupabaseServiceClient();
 
