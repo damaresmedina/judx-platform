@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
           const o = (body as { offset?: unknown }).offset;
           if (typeof o === "number" && Number.isFinite(o)) {
             offset = Math.trunc(o);
+          } else if (typeof o === "string" && o.trim() !== "") {
+            const n = Number(o);
+            if (!Number.isNaN(n) && Number.isFinite(n)) offset = Math.trunc(n);
           }
         }
       } catch {

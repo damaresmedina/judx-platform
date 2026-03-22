@@ -22,7 +22,7 @@ async function postJson(path: string): Promise<{ durationMs: number; text: strin
 type DistribApiJson = {
   success?: boolean;
   inserted?: number;
-  totalFiles?: number;
+  totalFiles?: number | string;
   fileIndex?: number;
   resourcesProcessed?: number;
   failed?: { error: string }[];
@@ -140,7 +140,6 @@ export default function SyncControlPage() {
 
   async function runDistrib() {
     const t0 = performance.now();
-    setDist({ status: "running", current: 1, total: null });
     const rawParts: string[] = [];
     try {
       let totalInserted = 0;
@@ -175,44 +174,16 @@ export default function SyncControlPage() {
         });
       };
 
-      // 1) POST { offset: 0 } — resposta traz totalFiles
-      const r0 = await postDistribOffset(0);
-      rawParts.push(r0.text);
+      let totalFiles = 0;
 
-      if (r0.status === 400 && r0.json.invalidOffset) {
-        abort(r0.json.failed?.[0]?.error ?? "Requisição inválida.");
-        return;
-      }
-      if (!r0.ok) {
-        abort(`HTTP ${r0.status}: ${r0.text.slice(0, 400)}`);
-        return;
-      }
-
-      const totalFiles = parseTotalFiles(r0.json);
-      accumulate(r0.json);
-
-      if (totalFiles === 0) {
-        const durationMs = Math.round(performance.now() - t0);
+      // offset 0..totalFiles-1: a primeira resposta define totalFiles (lista CKAN).
+      for (let offset = 0; ; offset++) {
         setDist({
-          status: "done",
-          ok: fileErrors === 0 && failDetails === 0,
-          durationMs,
-          summary: formatDistribFullSummary({
-            totalFiles: 0,
-            inserted: totalInserted,
-            fileErrors,
-            failDetails,
-          }),
-          raw: rawParts.join("\n---\n"),
+          status: "running",
+          current: offset + 1,
+          total: totalFiles > 0 ? totalFiles : null,
         });
-        return;
-      }
 
-      setDist({ status: "running", current: 1, total: totalFiles });
-
-      // 2) POST { offset: 1 } … { offset: totalFiles - 1 }
-      for (let offset = 1; offset < totalFiles; offset++) {
-        setDist({ status: "running", current: offset + 1, total: totalFiles });
         const { ok, status, json, text } = await postDistribOffset(offset);
         rawParts.push(text);
 
@@ -225,7 +196,31 @@ export default function SyncControlPage() {
           return;
         }
 
+        if (offset === 0) {
+          totalFiles = parseTotalFiles(json);
+          accumulate(json);
+          if (totalFiles === 0) {
+            const durationMs = Math.round(performance.now() - t0);
+            setDist({
+              status: "done",
+              ok: fileErrors === 0 && failDetails === 0,
+              durationMs,
+              summary: formatDistribFullSummary({
+                totalFiles: 0,
+                inserted: totalInserted,
+                fileErrors,
+                failDetails,
+              }),
+              raw: rawParts.join("\n---\n"),
+            });
+            return;
+          }
+          if (totalFiles === 1) break;
+          continue;
+        }
+
         accumulate(json);
+        if (offset + 1 >= totalFiles) break;
       }
 
       const durationMs = Math.round(performance.now() - t0);

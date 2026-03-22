@@ -2,9 +2,13 @@ import { fetchStjWithRetries, sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/l
 import { fetchPackageShow, type CkanResource } from "@/src/lib/stj-ckan";
 import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
 
+/** Slug do dataset no CKAN (referência humana). */
 export const STJ_DISTRIBUICAO_DATASET_ID = "atas-de-distribuicao" as const;
 
-/** ID do package no portal (aparece nas URLs de download). */
+/**
+ * UUID do package no CKAN — usar em `package_show` (lookup por slug pode falhar no cache/API).
+ * Corresponde ao dataset "atas-de-distribuicao".
+ */
 export const STJ_DISTRIBUICAO_PACKAGE_ID = "6328ba8d-930a-4c35-90ee-c91bf3fef5cb" as const;
 
 /**
@@ -33,10 +37,23 @@ type AtaItem = {
   siglaClasse?: string | null;
 };
 
-function isAtaJsonResource(r: CkanResource): boolean {
+function isExcludedDistribDictionary(r: CkanResource): boolean {
   const name = (r.name ?? "").trim().toLowerCase();
-  if (name.includes("dicionario")) return false;
-  return /^ata\d+\.json$/.test(name);
+  const url = (r.url ?? "").trim().toLowerCase();
+  if (name === "dicionario-atadedistribuicao.csv") return true;
+  if (name.includes("dicionario-atadedistribuicao")) return true;
+  if (url.includes("dicionario-atadedistribuicao.csv")) return true;
+  return false;
+}
+
+/** Inclui atas JSON: nome começa com "ata" ou URL termina em ".json", exceto o dicionário CSV. */
+function isAtaJsonResource(r: CkanResource): boolean {
+  if (isExcludedDistribDictionary(r)) return false;
+  const name = (r.name ?? "").trim().toLowerCase();
+  const url = (r.url ?? "").trim().toLowerCase();
+  const nameOk = name.startsWith("ata");
+  const urlOk = url.endsWith(".json");
+  return nameOk || urlOk;
 }
 
 function mapAtaItem(it: AtaItem): StjDistribuicaoRow | null {
@@ -91,7 +108,7 @@ export type StjDistribuicaoAllSyncResult = {
 
 export async function listStjDistribuicaoAtaResources(): Promise<CkanResource[]> {
   try {
-    const resources = await fetchPackageShow(STJ_DISTRIBUICAO_DATASET_ID);
+    const resources = await fetchPackageShow(STJ_DISTRIBUICAO_PACKAGE_ID);
     const list = resources.filter(isAtaJsonResource).sort((a, b) =>
       (a.name ?? "").localeCompare(b.name ?? "", "pt-BR"),
     );
@@ -224,7 +241,7 @@ export async function syncStjDistribuicao(opts?: { offset?: number }): Promise<S
       totalFiles: 0,
       fileIndex: offset,
       fileName: null,
-      failed: [{ error: "Nenhum resource ata*.json encontrado no dataset." }],
+      failed: [{ error: "Nenhum resource de ata JSON encontrado no dataset." }],
       durationMs: Date.now() - started,
     };
   }
@@ -268,7 +285,7 @@ export async function syncStjDistribuicaoAll(): Promise<StjDistribuicaoAllSyncRe
       inserted: 0,
       filesSucceeded: 0,
       filesFailed: 0,
-      failed: [{ error: "Nenhum resource ata*.json encontrado no dataset." }],
+      failed: [{ error: "Nenhum resource de ata JSON encontrado no dataset." }],
       fileResults: [],
       durationMs: Date.now() - started,
     };
