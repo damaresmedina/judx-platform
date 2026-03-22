@@ -62,7 +62,7 @@ export type StjPrecedentesTemasRow = {
 
 export type StjPrecedentesProcessosRow = {
   numero_registro: string;
-  sequencial_precedente: number;
+  sequencial_precedente: string;
   processo: string | null;
 };
 
@@ -98,14 +98,14 @@ function mapTemasRow(row: Record<string, string>): StjPrecedentesTemasRow | null
 }
 
 function mapProcessosRow(row: Record<string, string>): StjPrecedentesProcessosRow | null {
-  // Cabeçalhos do CSV STJ (parseCsv guarda chaves em minúsculas; csvGet aceita o nome original).
-  const seq = parseOptionalInt(csvGet(row, "sequencialPrecedente", "sequencial_precedente"));
-  const nr = csvGet(row, "numeroRegistro", "numero_registro");
-  if (seq == null || !nr) return null;
+  // parseCsv: cabeçalhos em minúsculas → sequencialprecedente, numeroregistro, processo
+  const seq = csvGet(row, "sequencialprecedente");
+  const nr = csvGet(row, "numeroregistro");
+  if (!seq || !nr) return null;
   return {
     numero_registro: nr,
     sequencial_precedente: seq,
-    processo: csvGet(row, "Processo", "processo") || null,
+    processo: csvGet(row, "processo") || null,
   };
 }
 
