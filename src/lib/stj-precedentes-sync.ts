@@ -175,15 +175,18 @@ export async function syncStjPrecedentes(): Promise<StjPrecedentesSyncResult> {
     });
     console.log("[stj-precedentes] processos.csv primeiras 2 linhas parseadas", procParsed.slice(0, 2));
 
+    const processosRows = procParsed.map(mapProcessosRow);
+    console.log("PROCESSOS CSV primeiras linhas:", procParsed.slice(0, 3));
+    console.log("PROCESSOS mapeados:", processosRows.slice(0, 3));
+    console.log("PROCESSOS total antes upsert:", processosRows.length);
+
     const temasRows = dedupeTemasRows(
       temasParsed
         .map(mapTemasRow)
         .filter((x): x is StjPrecedentesTemasRow => x != null),
     );
     const procRows = dedupeProcessosRows(
-      procParsed
-        .map(mapProcessosRow)
-        .filter((x): x is StjPrecedentesProcessosRow => x != null),
+      processosRows.filter((x): x is StjPrecedentesProcessosRow => x != null),
     );
     console.log("[stj-precedentes] mapeamento", {
       temasRows: temasRows.length,
