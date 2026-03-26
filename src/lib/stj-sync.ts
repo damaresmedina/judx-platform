@@ -830,3 +830,358 @@ export async function syncStjDecisions(): Promise<StjSyncResult> {
 export async function syncStjDecisionsIncremental(days = 2): Promise<StjSyncResult> {
   return syncStjDecisionsInternal({ incremental: true, incrementalDays: days });
 }
+
+// ────────────────────────────────────────────────────────────
+// Módulo 5 — syncStjMovimentacao
+// ────────────────────────────────────────────────────────────
+
+const STJ_MOVIMENTACAO_DATASET_ID = "movimentacao-processual";
+
+export type StjMovimentacaoRow = {
+  numero_processo: string;
+  data_movimentacao: string | null;
+  tipo_movimentacao: string | null;
+  descricao: string | null;
+  orgao: string | null;
+  ambiente: string | null;
+  source_file: string;
+  fetched_at: string;
+};
+
+export type StjMovimentacaoSyncResult = {
+  resources_processed: number;
+  rows_inserted: number;
+  errors: number;
+};
+
+/**
+ * Parses a single XML file from the movimentacao-processual dataset.
+ * The XML follows the CNJ Datajud schema with <ns2:processo> elements
+ * containing <movimento> children.
+ */
+function parseMovimentacaoXml(xml: string, sourceFile: string): StjMovimentacaoRow[] {
+  const rows: StjMovimentacaoRow[] = [];
+  const now = new Date().toISOString();
+
+  // Extract each processo block
+  const processoRegex = /<ns2:processo>([\s\S]*?)<\/ns2:processo>/g;
+  let processoMatch: RegExpExecArray | null;
+
+  while ((processoMatch = processoRegex.exec(xml)) !== null) {
+    const bloco = processoMatch[1];
+
+    // Extract numero from dadosBasicos
+    const numMatch = bloco.match(/numero="(\d+)"/);
+    const numero = numMatch ? numMatch[1] : null;
+    if (!numero) continue;
+
+    // Extract orgaoJulgador name
+    const orgaoMatch = bloco.match(/nomeOrgao="([^"]+)"/);
+    const orgao = orgaoMatch ? orgaoMatch[1] : null;
+
+    // Extract each movimento
+    const movRegex = /<movimento\s+dataHora="(\d+)"[^>]*>[\s\S]*?<movimentoNacional\s+codigoNacional="(\d+)"[^/]*\/>[\s\S]*?<\/movimento>/g;
+    let movMatch: RegExpExecArray | null;
+
+    while ((movMatch = movRegex.exec(bloco)) !== null) {
+      const dataRaw = movMatch[1];
+      // dataHora format: YYYYMMDDHHmmss
+      const dataFormatted = dataRaw.length >= 8
+        ? `${dataRaw.slice(0, 4)}-${dataRaw.slice(4, 6)}-${dataRaw.slice(6, 8)}`
+        : null;
+
+      const codigoNacional = movMatch[2];
+
+      // Detect ambiente from orgao name
+      let ambiente: string | null = null;
+      if (orgao) {
+        if (/virtual/i.test(orgao)) ambiente = "virtual";
+        else if (/presencial|plen[aá]rio(?!\s*virtual)/i.test(orgao)) ambiente = "presencial";
+      }
+
+      rows.push({
+        numero_processo: numero,
+        data_movimentacao: dataFormatted,
+        tipo_movimentacao: codigoNacional,
+        descricao: null, // CNJ code — would need lookup table for description
+        orgao,
+        ambiente,
+        source_file: sourceFile,
+        fetched_at: now,
+      });
+    }
+  }
+
+  return rows;
+}
+
+/**
+ * Sync movimentacao-processual from CKAN STJ.
+ * Downloads ZIP files, extracts XMLs, parses movimentos, and upserts to stj_movimentacao.
+ * @param limit — max number of ZIP resources to process (0 = all).
+ */
+export async function syncStjMovimentacao(limit = 0): Promise<StjMovimentacaoSyncResult> {
+  const supabase = getSupabaseServiceClient();
+  let resources_processed = 0;
+  let rows_inserted = 0;
+  let errors = 0;
+
+  console.log("[stj-sync] syncStjMovimentacao started");
+
+  const allResources = await fetchPackageShow(STJ_MOVIMENTACAO_DATASET_ID);
+  const zipResources = allResources.filter((r) => {
+    const url = (r.url ?? "").toLowerCase();
+    return url.endsWith(".zip");
+  });
+
+  const toProcess = limit > 0 ? zipResources.slice(-limit) : zipResources;
+  console.log(`[stj-sync] movimentacao: ${toProcess.length} ZIP resources to process`);
+
+  for (const resource of toProcess) {
+    const url = (resource.url ?? "").trim();
+    if (!url) continue;
+
+    try {
+      const res = await fetchStjWithRetry(url);
+      if (!res.ok) {
+        console.warn(`[stj-sync] movimentacao HTTP ${res.status}: ${url}`);
+        errors++;
+        continue;
+      }
+
+      const buf = await res.arrayBuffer();
+      const files = unzipSync(new Uint8Array(buf));
+      const sourceFile = getDownloadBasename(url);
+
+      const allRows: StjMovimentacaoRow[] = [];
+
+      for (const [name, data] of Object.entries(files)) {
+        if (!name.toLowerCase().endsWith(".xml")) continue;
+        if (name.includes("__MACOSX")) continue;
+        const xml = strFromU8(data);
+        const parsed = parseMovimentacaoXml(xml, sourceFile);
+        allRows.push(...parsed);
+      }
+
+      // Batch insert
+      for (let i = 0; i < allRows.length; i += UPSERT_BATCH) {
+        const batch = allRows.slice(i, i + UPSERT_BATCH);
+        const { error } = await supabase.from("stj_movimentacao").insert(batch);
+        if (error) {
+          console.error(`[stj-sync] insert stj_movimentacao: ${error.message}`);
+          errors++;
+        } else {
+          rows_inserted += batch.length;
+        }
+      }
+
+      resources_processed++;
+      console.log(`[stj-sync] movimentacao ${sourceFile}: ${allRows.length} rows`);
+
+      if (resources_processed < toProcess.length) {
+        await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`[stj-sync] movimentacao error: ${msg} (${url})`);
+      errors++;
+    }
+  }
+
+  console.log(`[stj-sync] syncStjMovimentacao done: ${resources_processed} resources, ${rows_inserted} rows, ${errors} errors`);
+  return { resources_processed, rows_inserted, errors };
+}
+
+// ────────────────────────────────────────────────────────────
+// Módulo 6 — syncStjIntegras
+// ────────────────────────────────────────────────────────────
+
+const STJ_INTEGRAS_DATASET_ID = "integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica";
+
+export type StjIntegraRow = {
+  numero_registro: string;
+  processo: string | null;
+  data_decisao: string | null;
+  orgao_julgador: string | null;
+  relator: string | null;
+  partes_raw: string | null;
+  inteiro_teor_texto: string | null;
+  source_file: string;
+  fetched_at: string;
+};
+
+export type StjIntegrasSyncResult = {
+  resources_processed: number;
+  rows_upserted: number;
+  errors: number;
+};
+
+/** Metadados JSON do dataset integras — corresponde a um arquivo metadadosYYYYMMDD.json */
+type IntegrasMetadataRecord = {
+  SeqDocumento: number;
+  dataPublicacao: string | null;
+  tipoDocumento: string | null;
+  numeroRegistro: string;
+  processo: string | null;
+  dataRecebimento: string | null;
+  dataDistribuição: string | null;
+  NM_MINISTRO: string | null;
+  recurso: string | null;
+  teor: string | null;
+  descricaoMonocratica: string | null;
+  assuntos: string | null;
+};
+
+/**
+ * Sync integras-de-decisoes-terminativas from CKAN STJ.
+ * Downloads metadados JSON files and corresponding ZIP files with TXT inteiro teor.
+ * Upserts to stj_integras by numero_registro.
+ * @param limit — max number of metadados resources to process (0 = all).
+ */
+export async function syncStjIntegras(limit = 0): Promise<StjIntegrasSyncResult> {
+  const supabase = getSupabaseServiceClient();
+  let resources_processed = 0;
+  let rows_upserted = 0;
+  let errors = 0;
+
+  console.log("[stj-sync] syncStjIntegras started");
+
+  const allResources = await fetchPackageShow(STJ_INTEGRAS_DATASET_ID);
+
+  // Metadados JSON files (named metadadosYYYYMMDD.json)
+  const metadadosResources = allResources.filter((r) => {
+    const name = (r.name ?? "").toLowerCase();
+    const url = (r.url ?? "").toLowerCase();
+    return (name.startsWith("metadados") || url.includes("metadados")) &&
+      (r.format === "JSON" || url.endsWith(".json"));
+  });
+
+  // ZIP files with inteiro teor TXT (named YYYYMMDD.zip or textosYYYYMMDD.zip)
+  const zipResources = allResources.filter((r) => {
+    const url = (r.url ?? "").toLowerCase();
+    const name = (r.name ?? "").toLowerCase();
+    return (url.endsWith(".zip") || r.format === "ZIP") &&
+      !name.includes("metadados") && !name.includes("dicionario");
+  });
+
+  const toProcess = limit > 0 ? metadadosResources.slice(-limit) : metadadosResources;
+  console.log(`[stj-sync] integras: ${toProcess.length} metadados + ${zipResources.length} ZIPs available`);
+
+  for (const resource of toProcess) {
+    const url = (resource.url ?? "").trim();
+    if (!url) continue;
+
+    try {
+      const res = await fetchStjWithRetry(url);
+      if (!res.ok) {
+        console.warn(`[stj-sync] integras metadata HTTP ${res.status}: ${url}`);
+        errors++;
+        continue;
+      }
+
+      const records = (await res.json()) as IntegrasMetadataRecord[];
+      if (!Array.isArray(records) || records.length === 0) {
+        console.warn(`[stj-sync] integras: empty or invalid JSON from ${url}`);
+        continue;
+      }
+
+      const sourceFile = getDownloadBasename(url);
+
+      // Try to find and load corresponding ZIP for inteiro teor
+      const dateMatch = sourceFile.match(/(\d{6,8})/);
+      const dateStem = dateMatch ? dateMatch[1] : null;
+      let textsMap: Map<string, string> | null = null;
+
+      if (dateStem) {
+        // Find ZIP matching this date
+        const matchingZip = zipResources.find((r) => {
+          const zUrl = (r.url ?? "").toLowerCase();
+          const zName = (r.name ?? "").toLowerCase();
+          return zUrl.includes(dateStem) || zName.includes(dateStem);
+        });
+
+        if (matchingZip?.url) {
+          try {
+            const zipRes = await fetchStjWithRetry(matchingZip.url.trim());
+            if (zipRes.ok) {
+              const buf = await zipRes.arrayBuffer();
+              const files = unzipSync(new Uint8Array(buf));
+              textsMap = new Map();
+              for (const [name, data] of Object.entries(files)) {
+                if (name.includes("__MACOSX")) continue;
+                // File name is SeqDocumento.txt
+                const baseName = name.replace(/^.*\//, "").replace(/\.txt$/i, "");
+                textsMap.set(baseName, strFromU8(data));
+              }
+              console.log(`[stj-sync] integras: loaded ZIP with ${textsMap.size} texts for ${dateStem}`);
+            }
+          } catch (zipErr) {
+            console.warn(`[stj-sync] integras: failed to load ZIP for ${dateStem}`);
+          }
+        }
+      }
+
+      const now = new Date().toISOString();
+      const rows: StjIntegraRow[] = [];
+
+      for (const rec of records) {
+        if (!rec.numeroRegistro) continue;
+
+        // Get inteiro teor from ZIP if available
+        const seqKey = String(rec.SeqDocumento);
+        const inteiroTeor = textsMap?.get(seqKey) ?? null;
+
+        // Extract partes_raw from inteiro teor header (first ~500 chars typically contain parties)
+        let partesRaw: string | null = null;
+        if (inteiroTeor) {
+          const headerEnd = inteiroTeor.indexOf("EMENTA");
+          if (headerEnd > 0) {
+            partesRaw = inteiroTeor.substring(0, headerEnd).trim();
+          } else {
+            partesRaw = inteiroTeor.substring(0, 500).trim();
+          }
+        }
+
+        rows.push({
+          numero_registro: rec.numeroRegistro,
+          processo: rec.processo ?? null,
+          data_decisao: rec.dataPublicacao ?? null,
+          orgao_julgador: null, // not in metadados — inferred from inteiro teor header
+          relator: rec.NM_MINISTRO ?? null,
+          partes_raw: partesRaw,
+          inteiro_teor_texto: inteiroTeor,
+          source_file: sourceFile,
+          fetched_at: now,
+        });
+      }
+
+      // Upsert by numero_registro
+      for (let i = 0; i < rows.length; i += UPSERT_BATCH) {
+        const batch = rows.slice(i, i + UPSERT_BATCH);
+        const { error } = await supabase
+          .from("stj_integras")
+          .upsert(batch, { onConflict: "numero_registro", ignoreDuplicates: false });
+        if (error) {
+          console.error(`[stj-sync] upsert stj_integras: ${error.message}`);
+          errors++;
+        } else {
+          rows_upserted += batch.length;
+        }
+      }
+
+      resources_processed++;
+      console.log(`[stj-sync] integras ${sourceFile}: ${rows.length} records (${textsMap?.size ?? 0} texts)`);
+
+      if (resources_processed < toProcess.length) {
+        await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(`[stj-sync] integras error: ${msg} (${url})`);
+      errors++;
+    }
+  }
+
+  console.log(`[stj-sync] syncStjIntegras done: ${resources_processed} resources, ${rows_upserted} rows, ${errors} errors`);
+  return { resources_processed, rows_upserted, errors };
+}
