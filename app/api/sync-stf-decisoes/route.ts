@@ -27,8 +27,10 @@ export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const year = url.searchParams.get("year") ?? undefined;
+    const limitParam = url.searchParams.get("limit");
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
-    const result = await syncStfDecisoes(year);
+    const result = await syncStfDecisoes(year, limit);
 
     return NextResponse.json({
       success: result.errors === 0,

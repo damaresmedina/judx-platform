@@ -71,48 +71,86 @@ export type StjDjSyncResult = {
   success: boolean;
   inserted: number;
   resourcesProcessed: number;
+  totalFiles: number;
+  fileIndex: number;
+  fileName: string | null;
   failed: StjDjSyncFailure[];
+  durationMs: number;
+  /** true quando `offset` está fora de 0..totalFiles-1 */
+  invalidOffset?: boolean;
+};
+
+export type StjDjAllSyncResult = {
+  success: boolean;
+  totalFiles: number;
+  inserted: number;
+  filesSucceeded: number;
+  filesFailed: number;
+  failed: StjDjSyncFailure[];
+  fileResults: Array<{ fileIndex: number; fileName: string | null; inserted: number; success: boolean }>;
   durationMs: number;
 };
 
-export async function syncStjDecisoesDj(): Promise<StjDjSyncResult> {
+export async function listStjDjMetadadosResources(): Promise<CkanResource[]> {
+  const resources = await fetchPackageShow(STJ_DJ_DATASET_ID);
+  return resources
+    .filter(isMetadadosJsonResource)
+    .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "", "pt-BR"));
+}
+
+async function syncStjDecisoesDjFromList(
+  list: CkanResource[],
+  offset: number,
+): Promise<StjDjSyncResult> {
   const started = Date.now();
   const failed: StjDjSyncFailure[] = [];
-  let resourcesProcessed = 0;
-  const rows: StjDecisaoDjRow[] = [];
+  const totalFiles = list.length;
 
-  const resources = await fetchPackageShow(STJ_DJ_DATASET_ID);
-  const list = resources.filter(isMetadadosJsonResource);
-  if (list.length === 0) {
+  const res = list[offset];
+  const fileName = res.name ?? null;
+  const url = (res.url ?? "").trim();
+  const rows: StjDecisaoDjRow[] = [];
+  let resourcesProcessed = 0;
+
+  if (!url) {
+    failed.push({ name: fileName ?? undefined, error: "Resource sem URL." });
     return {
       success: false,
       inserted: 0,
       resourcesProcessed: 0,
-      failed: [{ error: "Nenhum resource metadados*.json encontrado no dataset." }],
+      totalFiles,
+      fileIndex: offset,
+      fileName,
+      failed,
       durationMs: Date.now() - started,
     };
   }
 
-  let first = true;
-  for (const res of list) {
-    const url = (res.url ?? "").trim();
-    if (!url) continue;
-    if (!first) await sleep(STJ_INTER_RESOURCE_DELAY_MS);
-    first = false;
-    try {
-      const http = await fetchStjWithRetries(url);
-      const text = await http.text();
-      const raw = JSON.parse(text) as unknown;
-      const arr = normalizeToArray(raw);
-      for (const rec of arr) {
-        const row = mapMetadataToRow(rec);
-        if (row) rows.push(row);
-      }
-      resourcesProcessed++;
-    } catch (e) {
-      const error = e instanceof Error ? e.message : String(e);
-      failed.push({ resourceUrl: url, name: res.name ?? undefined, error });
+  if (offset > 0) await sleep(STJ_INTER_RESOURCE_DELAY_MS);
+
+  try {
+    const http = await fetchStjWithRetries(url);
+    const text = await http.text();
+    const raw = JSON.parse(text) as unknown;
+    const arr = normalizeToArray(raw);
+    for (const rec of arr) {
+      const row = mapMetadataToRow(rec);
+      if (row) rows.push(row);
     }
+    resourcesProcessed = 1;
+  } catch (e) {
+    const error = e instanceof Error ? e.message : String(e);
+    failed.push({ resourceUrl: url, name: fileName ?? undefined, error });
+    return {
+      success: false,
+      inserted: 0,
+      resourcesProcessed: 0,
+      totalFiles,
+      fileIndex: offset,
+      fileName,
+      failed,
+      durationMs: Date.now() - started,
+    };
   }
 
   const supabase = getSupabaseServiceClient();
@@ -139,7 +177,106 @@ export async function syncStjDecisoesDj(): Promise<StjDjSyncResult> {
     success: failed.length === 0,
     inserted,
     resourcesProcessed,
+    totalFiles,
+    fileIndex: offset,
+    fileName,
     failed,
+    durationMs: Date.now() - started,
+  };
+}
+
+/**
+ * Processa um único arquivo metadados*.json. `offset` é o índice na lista ordenada (0, 1, 2…).
+ */
+export async function syncStjDecisoesDj(opts?: { offset?: number }): Promise<StjDjSyncResult> {
+  const started = Date.now();
+  const offset = opts?.offset ?? 0;
+
+  const list = await listStjDjMetadadosResources();
+  const totalFiles = list.length;
+
+  if (totalFiles === 0) {
+    return {
+      success: false,
+      inserted: 0,
+      resourcesProcessed: 0,
+      totalFiles: 0,
+      fileIndex: offset,
+      fileName: null,
+      failed: [{ error: "Nenhum resource metadados*.json encontrado no dataset." }],
+      durationMs: Date.now() - started,
+    };
+  }
+
+  if (offset < 0 || offset >= totalFiles) {
+    return {
+      success: false,
+      inserted: 0,
+      resourcesProcessed: 0,
+      totalFiles,
+      fileIndex: offset,
+      fileName: null,
+      failed: [
+        {
+          error: `offset inválido (${offset}). Use um inteiro entre 0 e ${totalFiles - 1}.`,
+        },
+      ],
+      durationMs: Date.now() - started,
+      invalidOffset: true,
+    };
+  }
+
+  return syncStjDecisoesDjFromList(list, offset);
+}
+
+/** Processa todos os metadados em sequência (uma execução por arquivo). */
+export async function syncStjDecisoesDjAll(): Promise<StjDjAllSyncResult> {
+  const started = Date.now();
+  const list = await listStjDjMetadadosResources();
+  const totalFiles = list.length;
+  const failed: StjDjSyncFailure[] = [];
+  const fileResults: StjDjAllSyncResult["fileResults"] = [];
+
+  if (totalFiles === 0) {
+    return {
+      success: false,
+      totalFiles: 0,
+      inserted: 0,
+      filesSucceeded: 0,
+      filesFailed: 0,
+      failed: [{ error: "Nenhum resource metadados*.json encontrado no dataset." }],
+      fileResults: [],
+      durationMs: Date.now() - started,
+    };
+  }
+
+  let inserted = 0;
+  let filesSucceeded = 0;
+  let filesFailed = 0;
+
+  for (let i = 0; i < totalFiles; i++) {
+    const one = await syncStjDecisoesDjFromList(list, i);
+    inserted += one.inserted;
+    failed.push(...one.failed);
+    const ok = one.success && one.failed.length === 0;
+    if (ok) filesSucceeded++;
+    else filesFailed++;
+    fileResults.push({
+      fileIndex: one.fileIndex,
+      fileName: one.fileName,
+      inserted: one.inserted,
+      success: ok,
+    });
+  }
+
+  return {
+    success: filesFailed === 0,
+    totalFiles,
+    inserted,
+    filesSucceeded,
+    filesFailed,
+    failed,
+    fileResults,
     durationMs: Date.now() - started,
   };
 }

@@ -46,20 +46,40 @@ async function postDistribOffset(offset: number): Promise<{ ok: boolean; status:
   return { ok, status: res.status, json, text };
 }
 
-function formatDjSummary(text: string): string {
+function formatDjFullSummary(parts: {
+  totalFiles: number;
+  inserted: number;
+  fileErrors: number;
+  failDetails: number;
+}): string {
+  return `Inseridos/atualizados: ${parts.inserted} · Arquivos: ${parts.totalFiles} · Arquivos com erro: ${parts.fileErrors} · Entradas em falhas: ${parts.failDetails}`;
+}
+
+type DjApiJson = {
+  success?: boolean;
+  inserted?: number;
+  totalFiles?: number | string;
+  fileIndex?: number;
+  resourcesProcessed?: number;
+  failed?: { error: string }[];
+  invalidOffset?: boolean;
+};
+
+async function postDjOffset(offset: number): Promise<{ ok: boolean; status: number; json: DjApiJson; text: string }> {
+  const res = await fetch("/api/sync-stj-dj", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ offset }),
+  });
+  const text = await res.text();
+  let json: DjApiJson = {};
   try {
-    const j = JSON.parse(text) as {
-      success?: boolean;
-      inserted?: number;
-      resourcesProcessed?: number;
-      failed?: { error: string }[];
-      durationMs?: number;
-    };
-    const fails = j.failed?.length ?? 0;
-    return `Inseridos/atualizados: ${j.inserted ?? "—"} · Arquivos: ${j.resourcesProcessed ?? "—"} · Falhas: ${fails}`;
+    json = JSON.parse(text) as DjApiJson;
   } catch {
-    return text.slice(0, 500);
+    /* ignore */
   }
+  const ok = res.ok;
+  return { ok, status: res.status, json, text };
 }
 
 function formatPrecedentesSummary(text: string): string {
@@ -133,10 +153,120 @@ function formatEspelhosSummary(text: string): string {
 
 export default function SyncControlPage() {
   const [espelhos, setEspelhos] = useState<JobState>({ status: "idle" });
-  const [dj, setDj] = useState<JobState>({ status: "idle" });
+  const [dj, setDj] = useState<DistJobState>({ status: "idle" });
   const [precedentes, setPrecedentes] = useState<JobState>({ status: "idle" });
   const [dist, setDist] = useState<DistJobState>({ status: "idle" });
   const [backup, setBackup] = useState<JobState>({ status: "idle" });
+
+  async function runDj() {
+    const t0 = performance.now();
+    const rawParts: string[] = [];
+    try {
+      let totalInserted = 0;
+      let fileErrors = 0;
+      let failDetails = 0;
+
+      const accumulate = (json: DjApiJson) => {
+        totalInserted += json.inserted ?? 0;
+        const nFail = json.failed?.length ?? 0;
+        failDetails += nFail;
+        const chunkOk = json.success !== false && nFail === 0;
+        if (!chunkOk) fileErrors++;
+      };
+
+      const parseTotalFiles = (json: DjApiJson): number => {
+        const t = json.totalFiles;
+        if (typeof t === "number" && Number.isFinite(t)) return Math.max(0, Math.trunc(t));
+        if (typeof t === "string" && t.trim() !== "") {
+          const n = Number(t);
+          if (Number.isFinite(n)) return Math.max(0, Math.trunc(n));
+        }
+        return 0;
+      };
+
+      const abort = (summary: string) => {
+        setDj({
+          status: "done",
+          ok: false,
+          durationMs: Math.round(performance.now() - t0),
+          summary,
+          raw: rawParts.join("\n---\n"),
+        });
+      };
+
+      let totalFiles = 0;
+
+      for (let offset = 0; ; offset++) {
+        setDj({
+          status: "running",
+          current: offset + 1,
+          total: totalFiles > 0 ? totalFiles : null,
+        });
+
+        const { ok, status, json, text } = await postDjOffset(offset);
+        rawParts.push(text);
+
+        if (status === 400 && json.invalidOffset) {
+          abort(json.failed?.[0]?.error ?? "Requisição inválida.");
+          return;
+        }
+        if (!ok) {
+          abort(`HTTP ${status}: ${text.slice(0, 400)}`);
+          return;
+        }
+
+        if (offset === 0) {
+          totalFiles = parseTotalFiles(json);
+          accumulate(json);
+          if (totalFiles === 0) {
+            const durationMs = Math.round(performance.now() - t0);
+            setDj({
+              status: "done",
+              ok: fileErrors === 0 && failDetails === 0,
+              durationMs,
+              summary: formatDjFullSummary({
+                totalFiles: 0,
+                inserted: totalInserted,
+                fileErrors,
+                failDetails,
+              }),
+              raw: rawParts.join("\n---\n"),
+            });
+            return;
+          }
+          if (totalFiles === 1) break;
+          continue;
+        }
+
+        accumulate(json);
+        if (offset + 1 >= totalFiles) break;
+      }
+
+      const durationMs = Math.round(performance.now() - t0);
+      const summary = formatDjFullSummary({
+        totalFiles,
+        inserted: totalInserted,
+        fileErrors,
+        failDetails,
+      });
+      setDj({
+        status: "done",
+        ok: fileErrors === 0 && failDetails === 0,
+        durationMs,
+        summary,
+        raw: rawParts.join("\n---\n"),
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro de rede";
+      setDj({
+        status: "done",
+        ok: false,
+        durationMs: Math.round(performance.now() - t0),
+        summary: msg,
+        raw: rawParts.join("\n---\n"),
+      });
+    }
+  }
 
   async function runDistrib() {
     const t0 = performance.now();
@@ -300,12 +430,7 @@ export default function SyncControlPage() {
             state={espelhos}
             onClick={() => run("/api/sync-stj", setEspelhos, formatEspelhosSummary)}
           />
-          <JobButton
-            label="DJ — íntegras do Diário (stj_decisoes_dj)"
-            path="/api/sync-stj-dj"
-            state={dj}
-            onClick={() => run("/api/sync-stj-dj", setDj, formatDjSummary)}
-          />
+          <DjJobButton state={dj} onRun={runDj} />
           <JobButton
             label="Precedentes qualificados (temas + processos)"
             path="/api/sync-stj-precedentes"
@@ -321,6 +446,54 @@ export default function SyncControlPage() {
           />
         </section>
       </div>
+    </div>
+  );
+}
+
+function DjJobButton(props: { state: DistJobState; onRun: () => void }) {
+  const loading = props.state.status === "running";
+  const elapsedMs = useElapsedMs(loading);
+  const progress =
+    props.state.status === "running"
+      ? props.state.total != null
+        ? `Processando arquivo ${props.state.current} de ${props.state.total}…`
+        : `Processando arquivo ${props.state.current}…`
+      : null;
+  return (
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium">DJ — íntegras do Diário (stj_decisoes_dj)</p>
+          <p className="mt-0.5 text-xs text-zinc-500">/api/sync-stj-dj (um metadados*.json por requisição, offset no JSON)</p>
+          {loading && progress && (
+            <p className="mt-1 font-mono text-xs tabular-nums text-zinc-600">
+              {progress} {(elapsedMs / 1000).toFixed(1)} s
+            </p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={props.onRun}
+          disabled={loading}
+          className="inline-flex h-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900 px-3 text-xs font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Executando…" : "Executar"}
+        </button>
+      </div>
+      {props.state.status === "done" && (
+        <div className="mt-3 border-t border-zinc-100 pt-3">
+          <p className={`text-sm ${props.state.ok ? "text-emerald-700" : "text-red-700"}`}>
+            {props.state.ok ? "Concluído" : "Falha ou avisos"} · {props.state.durationMs} ms
+          </p>
+          <p className="mt-1 text-xs text-zinc-700">{props.state.summary}</p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs text-zinc-500">JSON bruto</summary>
+            <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-zinc-950 p-2 text-[10px] text-zinc-100">
+              {props.state.raw}
+            </pre>
+          </details>
+        </div>
+      )}
     </div>
   );
 }

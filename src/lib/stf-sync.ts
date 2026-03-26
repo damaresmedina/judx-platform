@@ -12,9 +12,8 @@ const LOG_PREFIX = "[stf-sync]";
 
 const QLIK_APP_ID = "023307ab-d927-4144-aabb-831b360515bb";
 const QLIK_WS_URL = `wss://transparencia.stf.jus.br/app/${QLIK_APP_ID}`;
-const QLIK_OBJ_DECISOES = "UbMrYBg";
-const QLIK_OBJ_PARTES = "pRRETQ";
-const QLIK_PAGE_SIZE = 1000;
+// Qlik Engine limit: max 10.000 cells per page. With 20 cols → max 499 rows.
+const QLIK_PAGE_SIZE = 400;
 
 const PORTAL_BASE = "https://portal.stf.jus.br/processos";
 const REPGERAL_BASE = "https://sistemas.stf.jus.br/repgeral/votacao";
@@ -62,16 +61,17 @@ type QlikMessage = {
 };
 
 /**
- * Opens a Qlik Engine session, fetches all rows from a hypercube object
- * in pages of `pageSize`, and calls `onPage` for each page.
+ * Opens a Qlik Engine session and fetches all rows by creating ad-hoc
+ * session hypercubes with qInitialDataFetch (the only method that reliably
+ * returns data from the STF Qlik server).
  *
- * Returns total rows fetched. Closes the WebSocket when done.
+ * Paginates by creating new session objects with incrementing qTop offsets.
  */
 async function qlikFetchAllPages(
-  objectId: string,
+  fieldDefs: string[],
   pageSize: number,
   onPage: (rows: QlikCell[][], colCount: number) => Promise<void>,
-  options?: { yearFilter?: string },
+  maxRows?: number,
 ): Promise<{ totalRows: number; totalCols: number }> {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(QLIK_WS_URL, {
@@ -84,7 +84,6 @@ async function qlikFetchAllPages(
 
     let msgId = 0;
     let appHandle = -1;
-    let objHandle = -1;
     let totalRows = 0;
     let totalCols = 0;
     let rowsFetched = 0;
@@ -99,7 +98,7 @@ async function qlikFetchAllPages(
     const timeout = setTimeout(() => {
       if (!closed) {
         closed = true;
-        console.warn(`${LOG_PREFIX} Qlik timeout after 10 min for object ${objectId}`);
+        console.warn(`${LOG_PREFIX} Qlik timeout after 10 min`);
         ws.close();
         resolve({ totalRows: rowsFetched, totalCols });
       }
@@ -114,83 +113,62 @@ async function qlikFetchAllPages(
       }
     };
 
-    // State machine IDs
-    let idOpenDoc = -1;
-    let idGetObj = -1;
-    let idGetLayout = -1;
-    let idSelectYear = -1;
-    let idGetData = -1;
+    // Creates a new session object at the given offset and reads data from layout
+    const fetchPage = (offset: number) => {
+      send("CreateSessionObject", appHandle, [{
+        qInfo: { qType: "judx-page" },
+        qHyperCubeDef: {
+          qDimensions: fieldDefs.map((f) => ({ qDef: { qFieldDefs: [f] } })),
+          qMeasures: [],
+          qInitialDataFetch: [{
+            qLeft: 0,
+            qTop: offset,
+            qWidth: fieldDefs.length,
+            qHeight: Math.min(pageSize, (maxRows ? Math.min(totalRows, maxRows) : totalRows) - offset),
+          }],
+        },
+      }]);
+    };
 
     ws.on("open", () => {
-      idOpenDoc = send("OpenDoc", -1, [QLIK_APP_ID]);
+      send("OpenDoc", -1, [QLIK_APP_ID]);
     });
 
-    ws.on("message", async (data) => {
-      const msg: QlikMessage = JSON.parse(data.toString());
-      if (!msg.id) return; // skip notifications
+    ws.on("message", (rawData) => {
+      const msg: QlikMessage = JSON.parse(rawData.toString());
+      if (!msg.id) return;
 
-      try {
-        if (msg.id === idOpenDoc) {
+      (async () => {
+        // OpenDoc response
+        if (msg.result?.qReturn && (msg.result.qReturn as Record<string, unknown>).qType === "Doc") {
           if (msg.error) throw new Error(`OpenDoc: ${msg.error.message}`);
-          appHandle = (msg.result?.qReturn as Record<string, unknown>)?.qHandle as number ?? 1;
-
-          // Apply year filter if requested
-          if (options?.yearFilter) {
-            idSelectYear = send("GetField", appHandle, { qFieldName: "[Ano decisão]" });
-          } else {
-            idGetObj = send("GetObject", appHandle, { qId: objectId });
-          }
+          appHandle = (msg.result.qReturn as Record<string, unknown>).qHandle as number;
+          // First page — fetch at offset 0
+          fetchPage(0);
+          return;
         }
 
-        if (msg.id === idSelectYear) {
-          const fieldHandle = (msg.result?.qReturn as Record<string, unknown>)?.qHandle as number;
-          if (fieldHandle) {
-            idSelectYear = send("SelectMatch", fieldHandle, { qMatch: options!.yearFilter!, qSoftLock: false });
-            // After select, re-assign idSelectYear to catch the result
-            // Actually SelectMatch returns on a new id, we need a different approach
-            // Let's just get the object after a short delay
-            await sleep(500);
-          }
-          idGetObj = send("GetObject", appHandle, { qId: objectId });
+        // CreateSessionObject response
+        if (msg.result?.qReturn && (msg.result.qReturn as Record<string, unknown>).qType === "GenericObject") {
+          const objHandle = (msg.result.qReturn as Record<string, unknown>).qHandle as number;
+          send("GetLayout", objHandle, {});
+          return;
         }
 
-        if (msg.id === idGetObj) {
-          if (msg.error) throw new Error(`GetObject ${objectId}: ${msg.error.message}`);
-          objHandle = (msg.result?.qReturn as Record<string, unknown>)?.qHandle as number ?? 2;
-          idGetLayout = send("GetLayout", objHandle, {});
-        }
-
-        if (msg.id === idGetLayout) {
-          if (msg.error) throw new Error(`GetLayout: ${msg.error.message}`);
-          const layout = msg.result?.qLayout as Record<string, unknown> | undefined;
-          const hc = layout?.qHyperCube as Record<string, unknown> | undefined;
+        // GetLayout response (contains data in qDataPages via qInitialDataFetch)
+        if (msg.result?.qLayout) {
+          const hc = (msg.result.qLayout as Record<string, unknown>).qHyperCube as Record<string, unknown> | undefined;
           if (!hc) throw new Error("No HyperCube in layout");
 
           const size = hc.qSize as { qcy: number; qcx: number };
-          totalRows = size.qcy;
-          totalCols = size.qcx;
-
-          const dims = (hc.qDimensionInfo as Array<{ qFallbackTitle: string }>) || [];
-          console.log(
-            `${LOG_PREFIX} Object ${objectId}: ${totalRows} rows x ${totalCols} cols. Dims: ${dims.map((d) => d.qFallbackTitle).join(", ")}`,
-          );
-
           if (totalRows === 0) {
-            finish();
-            return;
+            totalRows = size.qcy;
+            totalCols = size.qcx;
+            console.log(`${LOG_PREFIX} Session HC: ${totalRows} rows x ${totalCols} cols`);
           }
 
-          // Fetch first page
-          idGetData = send("GetHyperCubeData", objHandle, {
-            qPath: "/qHyperCubeDef",
-            qPages: [{ qLeft: 0, qTop: 0, qWidth: totalCols, qHeight: Math.min(pageSize, totalRows) }],
-          });
-        }
-
-        if (msg.id === idGetData) {
-          if (msg.error) throw new Error(`GetHyperCubeData: ${msg.error.message}`);
-          const pages = msg.result as unknown as Array<{ qMatrix: QlikCell[][] }>;
-          const matrix = pages?.[0]?.qMatrix || [];
+          const dataPages = hc.qDataPages as Array<{ qMatrix: QlikCell[][] }> | undefined;
+          const matrix = dataPages?.[0]?.qMatrix || [];
 
           if (matrix.length === 0) {
             finish();
@@ -201,31 +179,38 @@ async function qlikFetchAllPages(
           rowsFetched += matrix.length;
 
           if (rowsFetched % 10000 < pageSize) {
-            console.log(`${LOG_PREFIX} ${objectId}: ${rowsFetched}/${totalRows} rows (${((rowsFetched / totalRows) * 100).toFixed(1)}%)`);
+            console.log(`${LOG_PREFIX} Progress: ${rowsFetched}/${totalRows} (${((rowsFetched / totalRows) * 100).toFixed(1)}%)`);
           }
 
-          if (rowsFetched >= totalRows || matrix.length < pageSize) {
+          const effectiveMax = maxRows ? Math.min(totalRows, maxRows) : totalRows;
+          if (rowsFetched >= effectiveMax || matrix.length < pageSize) {
             finish();
             return;
           }
 
-          // Fetch next page
-          idGetData = send("GetHyperCubeData", objHandle, {
-            qPath: "/qHyperCubeDef",
-            qPages: [{ qLeft: 0, qTop: rowsFetched, qWidth: totalCols, qHeight: Math.min(pageSize, totalRows - rowsFetched) }],
-          });
+          // Next page
+          fetchPage(rowsFetched);
+          return;
         }
-      } catch (err) {
+
+        // Error responses
+        if (msg.error) {
+          throw new Error(`Qlik API error: ${msg.error.message}`);
+        }
+      })().catch((err) => {
         const errMsg = err instanceof Error ? err.message : String(err);
         console.error(`${LOG_PREFIX} Qlik error: ${errMsg}`);
-        closed = true;
-        clearTimeout(timeout);
-        ws.close();
-        reject(new Error(errMsg));
-      }
+        if (!closed) {
+          closed = true;
+          clearTimeout(timeout);
+          ws.close();
+          reject(new Error(errMsg));
+        }
+      });
     });
 
     ws.on("error", (err) => {
+      console.error(`${LOG_PREFIX} WS error: ${err.message}`);
       if (!closed) {
         closed = true;
         clearTimeout(timeout);
@@ -233,7 +218,8 @@ async function qlikFetchAllPages(
       }
     });
 
-    ws.on("close", () => {
+    ws.on("close", (code) => {
+      console.log(`${LOG_PREFIX} WS closed: code=${code}, fetched=${rowsFetched}`);
       if (!closed) {
         closed = true;
         clearTimeout(timeout);
@@ -254,31 +240,34 @@ function cellText(cell: QlikCell | undefined): string | null {
 // Módulo 1 — syncStfDecisoes
 // ────────────────────────────────────────────────────────────
 
-/** Colunas do objeto UbMrYBg na ordem retornada pelo Qlik. */
-const DECISOES_COLS = [
-  "id_fato_decisao",
-  "processo",
-  "relator_atual",
-  "meio_processo",
-  "origem_decisao",
-  "ambiente_julgamento",
-  "data_autuacao",
-  "data_baixa",
-  "indicador_colegiado",
-  "ano_decisao",
-  "data_decisao",
-  "tipo_decisao",
-  "andamento_decisao",
-  "observacao_andamento",
-  "ramo_direito",
-  "assuntos_processo",
-  "indicador_tramitacao",
-  "orgao_julgador",
-  "descricao_procedencia",
-  "descricao_orgao_origem",
+/** Qlik field names → DB column names, in order. */
+const DECISOES_FIELDS = [
+  { qlik: "idFatoDecisao",                db: "id_fato_decisao" },
+  { qlik: "Processo",                     db: "processo" },
+  { qlik: "Relator atual",               db: "relator_atual" },
+  { qlik: "Meio Processo",               db: "meio_processo" },
+  { qlik: "Origem decisão",              db: "origem_decisao" },
+  { qlik: "Ambiente julgamento",          db: "ambiente_julgamento" },
+  { qlik: "Data de autuação",            db: "data_autuacao" },
+  { qlik: "Data baixa",                  db: "data_baixa" },
+  { qlik: "Indicador colegiado",          db: "indicador_colegiado" },
+  { qlik: "Ano da decisão",              db: "ano_decisao" },
+  { qlik: "Data da decisão",             db: "data_decisao" },
+  { qlik: "Tipo decisão",                db: "tipo_decisao" },
+  { qlik: "Andamento decisão",           db: "andamento_decisao" },
+  { qlik: "Observação do andamento",      db: "observacao_andamento" },
+  { qlik: "Ramo direito",                db: "ramo_direito" },
+  { qlik: "Assuntos do processo",         db: "assuntos_processo" },
+  { qlik: "Indicador de tramitação",     db: "indicador_tramitacao" },
+  { qlik: "Órgão julgador",              db: "orgao_julgador" },
+  { qlik: "Descrição Procedência Processo", db: "descricao_procedencia" },
+  { qlik: "Descrição Órgão Origem",       db: "descricao_orgao_origem" },
 ] as const;
 
-export type StfDecisionRow = Record<(typeof DECISOES_COLS)[number], string | null>;
+const DECISOES_QLIK_FIELDS = DECISOES_FIELDS.map((f) => f.qlik);
+const DECISOES_DB_COLS = DECISOES_FIELDS.map((f) => f.db);
+
+export type StfDecisionRow = Record<(typeof DECISOES_DB_COLS)[number], string | null>;
 
 export type StfDecisoesSyncResult = {
   fetched: number;
@@ -288,9 +277,10 @@ export type StfDecisoesSyncResult = {
 
 /**
  * Extrai decisões do STF via Qlik WebSocket e salva em stf_decisions.
- * @param yearFilter — se informado, filtra por ano da decisão (ex: "2024") para carga incremental.
+ * @param yearFilter — se informado, filtra por ano da decisão client-side (ex: "2024").
+ * @param limit — máximo de linhas a buscar do Qlik (0 = sem limite).
  */
-export async function syncStfDecisoes(yearFilter?: string): Promise<StfDecisoesSyncResult> {
+export async function syncStfDecisoes(yearFilter?: string, limit?: number): Promise<StfDecisoesSyncResult> {
   const supabase = getSupabaseServiceClient();
   let upserted = 0;
   let errors = 0;
@@ -298,18 +288,22 @@ export async function syncStfDecisoes(yearFilter?: string): Promise<StfDecisoesS
   console.log(`${LOG_PREFIX} syncStfDecisoes started${yearFilter ? ` (year=${yearFilter})` : " (full)"}`);
 
   const { totalRows } = await qlikFetchAllPages(
-    QLIK_OBJ_DECISOES,
+    DECISOES_QLIK_FIELDS as unknown as string[],
     QLIK_PAGE_SIZE,
     async (rows) => {
       const batch: Record<string, unknown>[] = [];
 
       for (const row of rows) {
         const record: Record<string, unknown> = { court_id: "STF" };
-        for (let i = 0; i < DECISOES_COLS.length && i < row.length; i++) {
-          record[DECISOES_COLS[i]] = cellText(row[i]);
+        for (let i = 0; i < DECISOES_DB_COLS.length && i < row.length; i++) {
+          record[DECISOES_DB_COLS[i]] = cellText(row[i]);
         }
 
         if (!record.processo) continue;
+
+        // Client-side year filter
+        if (yearFilter && record.ano_decisao !== yearFilter) continue;
+
         batch.push(record);
       }
 
@@ -330,7 +324,7 @@ export async function syncStfDecisoes(yearFilter?: string): Promise<StfDecisoesS
         }
       }
     },
-    yearFilter ? { yearFilter } : undefined,
+    limit || undefined,
   );
 
   console.log(`${LOG_PREFIX} syncStfDecisoes done: fetched=${totalRows}, upserted=${upserted}, errors=${errors}`);
@@ -341,15 +335,18 @@ export async function syncStfDecisoes(yearFilter?: string): Promise<StfDecisoesS
 // Módulo 2 — syncStfPartes
 // ────────────────────────────────────────────────────────────
 
-const PARTES_COLS = [
-  "processo",
-  "polo_ativo",
-  "polo_passivo",
-  "advogado_polo_ativo",
-  "advogado_polo_passivo",
+const PARTES_FIELDS = [
+  { qlik: "Processo",              db: "processo" },
+  { qlik: "Polo ativo",            db: "polo_ativo" },
+  { qlik: "Polo passivo",          db: "polo_passivo" },
+  { qlik: "Advogado polo ativo",   db: "advogado_polo_ativo" },
+  { qlik: "Advogado polo passivo", db: "advogado_polo_passivo" },
 ] as const;
 
-export type StfParteRow = Record<(typeof PARTES_COLS)[number], string | null>;
+const PARTES_QLIK_FIELDS = PARTES_FIELDS.map((f) => f.qlik);
+const PARTES_DB_COLS = PARTES_FIELDS.map((f) => f.db);
+
+export type StfParteRow = Record<(typeof PARTES_DB_COLS)[number], string | null>;
 
 export type StfPartesSyncResult = {
   fetched: number;
@@ -375,15 +372,15 @@ export async function syncStfPartes(): Promise<StfPartesSyncResult> {
   }
 
   const { totalRows } = await qlikFetchAllPages(
-    QLIK_OBJ_PARTES,
+    PARTES_QLIK_FIELDS as unknown as string[],
     QLIK_PAGE_SIZE,
     async (rows) => {
       const batch: Record<string, unknown>[] = [];
 
       for (const row of rows) {
         const record: Record<string, unknown> = { court_id: "STF" };
-        for (let i = 0; i < PARTES_COLS.length && i < row.length; i++) {
-          record[PARTES_COLS[i]] = cellText(row[i]);
+        for (let i = 0; i < PARTES_DB_COLS.length && i < row.length; i++) {
+          record[PARTES_DB_COLS[i]] = cellText(row[i]);
         }
 
         if (!record.processo) continue;
