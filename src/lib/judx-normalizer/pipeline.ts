@@ -20,6 +20,7 @@ import { slugify, normalizeJudgeName, normalizeOrganName, normalizeClassName, cl
 import { parseDate } from './shared/dates';
 import { isNonEmpty } from './shared/guards';
 import { type PipelineMode, isLayerActive } from './shared/pipeline-mode';
+import { assertCourtActive, assertSourceAllowed, assertModeAllowed, resolveCourtFromSource } from './shared/court-registry';
 
 // Adapters
 import { readStjDecisions, adaptStjDecision } from './adapters/stjDecisionsAdapter';
@@ -237,7 +238,7 @@ async function upsertEnvironmentEvent(
 
   try {
     const { error } = await client
-      .from('judx_environment_event')
+      .from('judx_judgment_environment_event')
       .upsert(row, { onConflict: 'case_id,event_type,to_environment' })
       .select('id');
 
@@ -697,6 +698,23 @@ export async function runNormalizationPipeline(options?: {
     errors: 0,
     inferences: 0,
   };
+
+  // -----------------------------------------------------------------
+  // Barrier: Court Registry validation (before ANY operation)
+  // -----------------------------------------------------------------
+  const sourcesToCheck = source === 'all'
+    ? ['stj_decisions', 'stj_decisoes_dj']
+    : [source];
+
+  for (const src of sourcesToCheck) {
+    const courtDef = resolveCourtFromSource(src);
+    if (!courtDef) {
+      throw new Error(`Fonte '${src}' não está registrada em nenhum tribunal do COURT_REGISTRY.`);
+    }
+    assertCourtActive(courtDef.id);
+    assertSourceAllowed(courtDef.id, src);
+    assertModeAllowed(courtDef.id, mode);
+  }
 
   logInfo(CTX, '=== Normalization pipeline started ===', {
     source,

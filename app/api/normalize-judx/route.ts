@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runNormalizationPipeline } from '@/src/lib/judx-normalizer';
 import type { PipelineMode } from '@/src/lib/judx-normalizer';
+import { COURT_REGISTRY, resolveCourtFromSource } from '@/src/lib/judx-normalizer/shared/court-registry';
 
 export const maxDuration = 300;
 
@@ -31,6 +32,20 @@ export async function GET(request: NextRequest) {
       | 'stj_decisoes_dj'
       | 'all'
       | null;
+
+    // Validate source against Court Registry before proceeding
+    const resolvedSource = source ?? 'all';
+    if (resolvedSource !== 'all') {
+      const courtDef = resolveCourtFromSource(resolvedSource);
+      if (!courtDef) {
+        const validSources = Object.values(COURT_REGISTRY).flatMap(c => c.allowedSources);
+        return NextResponse.json(
+          { success: false, error: `Fonte '${resolvedSource}' desconhecida. Fontes válidas: ${validSources.join(', ')}` },
+          { status: 400 },
+        );
+      }
+    }
+
     const limitParam = url.searchParams.get('limit');
     const dryRunParam = url.searchParams.get('dryRun');
     // mode: 'core' | 'events' | 'patterns' | 'advanced' — resolução progressiva
@@ -39,7 +54,7 @@ export async function GET(request: NextRequest) {
     const mode: PipelineMode = modeParam && validModes.includes(modeParam) ? modeParam : 'core';
 
     const result = await runNormalizationPipeline({
-      source: source ?? 'all',
+      source: resolvedSource,
       limit: limitParam ? parseInt(limitParam, 10) : undefined,
       dryRun: dryRunParam === 'true',
       mode,
