@@ -19,7 +19,6 @@ import { logInfo, logWarn, logError, logInference } from './shared/logger';
 import { slugify, normalizeJudgeName, normalizeOrganName, normalizeClassName, cleanText } from './shared/text';
 import { parseDate } from './shared/dates';
 import { isNonEmpty } from './shared/guards';
-import { recordSignature } from './shared/hashes';
 import { type PipelineMode, isLayerActive } from './shared/pipeline-mode';
 
 // Adapters
@@ -42,6 +41,26 @@ const CTX = 'pipeline';
 // Internal writer helpers (for tables without dedicated writer files)
 // ---------------------------------------------------------------------------
 
+// Maps adapter result values to judx_decision_result_enum
+const RESULT_TO_ENUM: Record<string, string> = {
+  negou_provimento: 'improcedente',
+  deu_provimento: 'procedente',
+  parcial_provimento: 'parcialmente_procedente',
+  nao_conhecido: 'nao_conhecido',
+  extinto: 'extinto_sem_resolucao',
+  prejudicado: 'prejudicado',
+  nao_informado: 'outro',
+};
+
+// Maps adapter kind values to judx_decision_kind_enum
+const KIND_TO_ENUM: Record<string, string> = {
+  acordao: 'acordao',
+  monocratica: 'monocratica',
+  colegiada: 'colegiada',
+  despacho: 'despacho',
+  nao_informado: 'outra',
+};
+
 async function upsertDecision(
   caseId: string,
   bundle: JudxBundle,
@@ -49,33 +68,46 @@ async function upsertDecision(
   const client = getJudxClient();
 
   const decidedAt = parseDate(bundle.decision.date);
+  const kind = KIND_TO_ENUM[bundle.decision.kind] ?? 'outra';
+  const result = RESULT_TO_ENUM[bundle.decision.result] ?? 'outro';
 
   const row: Record<string, unknown> = {
     case_id: caseId,
     decision_date: decidedAt,
-    decision_kind: bundle.decision.kind,
-    result: bundle.decision.result,
+    kind,
+    result,
     full_text: bundle.decision.fullText ?? null,
     excerpt: bundle.decision.excerpt ?? null,
-    environment: bundle.environment.inferred,
-    environment_confidence: bundle.environment.confidence,
-    environment_source: bundle.environment.source,
-    environment_evidence: bundle.environment.evidence,
-    source_table: bundle.sourceTable,
-    source_id: bundle.sourceId,
-    metadata: bundle.decision.metadata,
-    content_hash: recordSignature([
-      bundle.sourceTable,
-      bundle.sourceId,
-      bundle.decision.excerpt,
-      bundle.decision.result,
-    ]),
+    session_environment: bundle.environment.inferred,
+    metadata: {
+      ...bundle.decision.metadata,
+      source_table: bundle.sourceTable,
+      source_id: bundle.sourceId,
+      environment_confidence: bundle.environment.confidence,
+      environment_source: bundle.environment.source,
+      environment_evidence: bundle.environment.evidence,
+    },
   };
 
   try {
+    // Check for existing decision to avoid duplicates
+    if (decidedAt) {
+      const { data: existing } = await client
+        .from('judx_decision')
+        .select('id')
+        .eq('case_id', caseId)
+        .eq('decision_date', decidedAt)
+        .eq('kind', bundle.decision.kind)
+        .maybeSingle();
+
+      if (existing) {
+        return existing.id as string;
+      }
+    }
+
     const { data, error } = await client
       .from('judx_decision')
-      .upsert(row, { onConflict: 'case_id,content_hash' })
+      .insert(row)
       .select('id')
       .single();
 
