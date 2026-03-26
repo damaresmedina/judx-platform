@@ -44,6 +44,7 @@ export type StfDecisionRaw = {
   ambiente_julgamento: string | null;
   data_autuacao: string | null;
   data_baixa: string | null;
+  indicador_colegiado: string | null;
   ano_decisao: string | null;
   data_decisao: string | null;
   tipo_decisao: string | null;
