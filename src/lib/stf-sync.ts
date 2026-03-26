@@ -23,7 +23,18 @@ const BROWSER_HEADERS: Record<string, string> = {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   Accept: "text/html, application/json, */*",
   "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
-  Origin: "https://transparencia.stf.jus.br",
+  "Accept-Encoding": "identity",
+  Connection: "keep-alive",
+};
+
+// Headers específicos para o portal (diferente do Qlik/transparencia)
+const PORTAL_HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+  "Accept-Encoding": "identity",
+  Connection: "keep-alive",
 };
 
 const UPSERT_BATCH = 200;
@@ -468,7 +479,7 @@ export async function syncStfIncidente(incidente: number): Promise<StfIncidenteS
       const url = `${PORTAL_BASE}/${aba}.asp?incidente=${incidente}`;
       const res = await fetch(url, {
         headers: {
-          ...BROWSER_HEADERS,
+          ...PORTAL_HEADERS,
           Referer: `${PORTAL_BASE}/detalhe.asp?incidente=${incidente}`,
         },
       });

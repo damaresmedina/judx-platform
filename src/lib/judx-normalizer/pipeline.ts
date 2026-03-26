@@ -20,7 +20,7 @@ import { slugify, normalizeJudgeName, normalizeOrganName, normalizeClassName, cl
 import { parseDate } from './shared/dates';
 import { isNonEmpty } from './shared/guards';
 import { type PipelineMode, isLayerActive } from './shared/pipeline-mode';
-import { assertCourtActive, assertSourceAllowed, assertModeAllowed, resolveCourtFromSource } from './shared/court-registry';
+import { assertCourtActive, assertSourceAllowed, assertModeAllowed, assertSourceInspected, resolveCourtFromSource } from './shared/court-registry';
 
 // Adapters
 import { readStjDecisions, adaptStjDecision } from './adapters/stjDecisionsAdapter';
@@ -78,8 +78,6 @@ async function upsertDecision(
     decision_date: decidedAt,
     kind,
     result,
-    full_text: bundle.decision.fullText ?? null,
-    excerpt: bundle.decision.excerpt ?? null,
     session_environment: bundle.environment.inferred,
     metadata: {
       ...bundle.decision.metadata,
@@ -779,6 +777,7 @@ export async function runNormalizationPipeline(options?: {
     }
     assertCourtActive(courtDef.id);
     assertSourceAllowed(courtDef.id, src);
+    assertSourceInspected(src);
     assertModeAllowed(courtDef.id, mode);
   }
 

@@ -9,12 +9,7 @@ export interface UpsertDecisionData {
   kind: string;
   result: string;
   session_environment?: string;
-  full_text?: string | null;
-  excerpt?: string | null;
   metadata?: Record<string, unknown>;
-  observation_state?: string;
-  contradiction_flag?: boolean;
-  stability_flag?: boolean;
 }
 
 /**
@@ -53,12 +48,7 @@ export async function upsertDecision(data: UpsertDecisionData): Promise<string |
       kind: data.kind,
       result: data.result,
       session_environment: data.session_environment ?? null,
-      full_text: data.full_text ?? null,
-      excerpt: data.excerpt ?? null,
       metadata: data.metadata ?? null,
-      observation_state: data.observation_state ?? null,
-      contradiction_flag: data.contradiction_flag ?? false,
-      stability_flag: data.stability_flag ?? false,
     };
 
     const { data: result, error } = await client

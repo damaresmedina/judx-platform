@@ -12,7 +12,6 @@ export interface UpsertCaseData {
   phase?: string;
   decided_at?: string | null;
   state_involved?: boolean;
-  state_litigation_profile?: string | null;
   summary?: string | null;
   metadata?: Record<string, unknown>;
 }
@@ -34,7 +33,6 @@ export async function upsertCase(data: UpsertCaseData): Promise<string | null> {
     phase: data.phase ?? null,
     decided_at: data.decided_at ?? null,
     state_involved: data.state_involved ?? false,
-    state_litigation_profile: data.state_litigation_profile ?? null,
     summary: data.summary ?? null,
     metadata: data.metadata ?? null,
   };
