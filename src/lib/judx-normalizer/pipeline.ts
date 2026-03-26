@@ -423,26 +423,18 @@ async function processBundle(
 ): Promise<boolean> {
   // --- Rule 1: No data without context (court_id guaranteed by caller) ---
 
-  // Step 1: Upsert organ (if present)
-  let organId: string | null = null;
-  if (isNonEmpty(bundle.organName)) {
-    const normalized = normalizeOrganName(bundle.organName!);
-    organId = await upsertOrgan(courtId, bundle.organName!, slugify(normalized), null);
-  }
-
-  // Step 2: Upsert procedural class (if present)
-  let classId: string | null = null;
-  if (isNonEmpty(bundle.proceduralClassName)) {
-    const normalized = normalizeClassName(bundle.proceduralClassName!);
-    classId = await upsertProceduralClass(courtId, bundle.proceduralClassName!, slugify(normalized));
-  }
-
-  // Step 3: Upsert subject (if present — Rule 4: allow pre-taxonomic registration)
-  let subjectId: string | null = null;
-  if (isNonEmpty(bundle.subject)) {
-    const normalized = cleanText(bundle.subject);
-    subjectId = await upsertSubject(bundle.subject!, slugify(normalized));
-  }
+  // Steps 1-3: Upsert organ, class, subject in parallel (independent entities)
+  const [organId, classId, subjectId] = await Promise.all([
+    isNonEmpty(bundle.organName)
+      ? upsertOrgan(courtId, bundle.organName!, slugify(normalizeOrganName(bundle.organName!)), null)
+      : Promise.resolve(null),
+    isNonEmpty(bundle.proceduralClassName)
+      ? upsertProceduralClass(courtId, bundle.proceduralClassName!, slugify(normalizeClassName(bundle.proceduralClassName!)))
+      : Promise.resolve(null),
+    isNonEmpty(bundle.subject)
+      ? upsertSubject(bundle.subject!, slugify(cleanText(bundle.subject)))
+      : Promise.resolve(null),
+  ]);
 
   // Step 4: Upsert case (Rule 2: every decision MUST be linked to a case)
   const stateInvolved = bundle.latentSignals.some(

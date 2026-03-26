@@ -3,7 +3,7 @@
 export const COURT_STJ_ACRONYM = 'STJ';
 export const COURT_STF_ACRONYM = 'STF';
 export const PIPELINE_VERSION = 'judx-normalizer-v1';
-export const BATCH_SIZE = 200;
+export const BATCH_SIZE = 1000;
 export const DEFAULT_DECISION_KIND = 'acordao';
 export const DEFAULT_ENVIRONMENT = 'nao_informado';
 

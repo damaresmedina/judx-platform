@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { runNormalizationPipeline } from '@/src/lib/judx-normalizer';
 import type { PipelineMode } from '@/src/lib/judx-normalizer';
 import { COURT_REGISTRY, resolveCourtFromSource } from '@/src/lib/judx-normalizer/shared/court-registry';
+import { getSupabaseServiceClient } from '@/src/lib/supabase-service';
 
 export const maxDuration = 300;
 
@@ -44,6 +45,27 @@ export async function GET(request: NextRequest) {
           { success: false, error: `Fonte '${resolvedSource}' desconhecida. Fontes válidas: ${validSources.join(', ')}` },
           { status: 400 },
         );
+      }
+    }
+
+    // Check if STF normalization is complete (cron auto-stop)
+    if (resolvedSource === 'stf_decisions') {
+      const supabase = getSupabaseServiceClient();
+      const { count: stfRaw } = await supabase.from('stf_decisions').select('*', { count: 'exact', head: true });
+      const courtDef = resolveCourtFromSource('stf_decisions');
+      if (courtDef) {
+        const { data: courtRow } = await supabase.from('judx_court').select('id').eq('acronym', courtDef.judxPrefix).single();
+        if (courtRow) {
+          const { count: stfNormalized } = await supabase.from('judx_case').select('*', { count: 'exact', head: true }).eq('court_id', courtRow.id);
+          if (stfNormalized && stfRaw && stfNormalized >= stfRaw) {
+            return NextResponse.json({
+              success: true,
+              status: 'sealed_ready',
+              message: `STF normalization complete: ${stfNormalized}/${stfRaw} cases. Cron can be removed.`,
+              processed: 0, upserted: 0, errors: 0, inferences: 0,
+            });
+          }
+        }
       }
     }
 
