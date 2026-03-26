@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { syncStjDecisionsIncremental } from "@/src/lib/stj-sync";
-import { syncStjDecisoesDj } from "@/src/lib/stj-dj-sync";
+import { syncStjDecisoesDjAll } from "@/src/lib/stj-dj-sync";
 import { syncStjPrecedentes } from "@/src/lib/stj-precedentes-sync";
 import { syncStjDistribuicaoAll } from "@/src/lib/stj-distribuicao-sync";
 import { sleep, STJ_INTER_RESOURCE_DELAY_MS } from "@/src/lib/stj-fetch";
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     steps.espelhos = espelhos;
 
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
-    const dj = await syncStjDecisoesDj();
+    const dj = await syncStjDecisoesDjAll();
     steps.dj = dj;
 
     await sleep(STJ_INTER_RESOURCE_DELAY_MS);
