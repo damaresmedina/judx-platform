@@ -310,6 +310,7 @@ const DECISOES_FIELDS = [
   { qlik: "Órgão julgador",              db: "orgao_julgador" },
   { qlik: "Descrição Procedência Processo", db: "descricao_procedencia" },
   { qlik: "Descrição Órgão Origem",       db: "descricao_orgao_origem" },
+  { qlik: "Seq. Objeto Incidente",         db: "incidente" },
 ] as const;
 
 const DECISOES_QLIK_FIELDS = DECISOES_FIELDS.map((f) => f.qlik);

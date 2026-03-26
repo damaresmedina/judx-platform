@@ -55,6 +55,7 @@ export type StfDecisionRaw = {
   orgao_julgador: string | null;
   descricao_procedencia: string | null;
   descricao_orgao_origem: string | null;
+  incidente: string | null;
   court_id: string | null;
 };
 
