@@ -67,11 +67,14 @@ type QlikMessage = {
  *
  * Paginates by creating new session objects with incrementing qTop offsets.
  */
+type QlikSelection = { fieldName: string; value: string };
+
 async function qlikFetchAllPages(
   fieldDefs: string[],
   pageSize: number,
   onPage: (rows: QlikCell[][], colCount: number) => Promise<void>,
   maxRows?: number,
+  selection?: QlikSelection, // server-side field filter (e.g. Ano decisão = "2024")
 ): Promise<{ totalRows: number; totalCols: number }> {
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(QLIK_WS_URL, {
@@ -88,6 +91,7 @@ async function qlikFetchAllPages(
     let totalCols = 0;
     let rowsFetched = 0;
     let closed = false;
+    let selectionPending = false;
 
     const send = (method: string, handle: number, params: unknown): number => {
       const id = ++msgId;
@@ -115,6 +119,11 @@ async function qlikFetchAllPages(
 
     // Creates a new session object at the given offset and reads data from layout
     const fetchPage = (offset: number) => {
+      // On first page totalRows is still 0 (set after GetLayout), so use pageSize directly.
+      const effectiveMax = maxRows ? (totalRows > 0 ? Math.min(totalRows, maxRows) : maxRows) : (totalRows > 0 ? totalRows : Infinity);
+      const remaining = effectiveMax - offset;
+      const height = remaining <= 0 ? pageSize : Math.min(pageSize, remaining);
+
       send("CreateSessionObject", appHandle, [{
         qInfo: { qType: "judx-page" },
         qHyperCubeDef: {
@@ -124,7 +133,7 @@ async function qlikFetchAllPages(
             qLeft: 0,
             qTop: offset,
             qWidth: fieldDefs.length,
-            qHeight: Math.min(pageSize, (maxRows ? Math.min(totalRows, maxRows) : totalRows) - offset),
+            qHeight: height,
           }],
         },
       }]);
@@ -143,7 +152,36 @@ async function qlikFetchAllPages(
         if (msg.result?.qReturn && (msg.result.qReturn as Record<string, unknown>).qType === "Doc") {
           if (msg.error) throw new Error(`OpenDoc: ${msg.error.message}`);
           appHandle = (msg.result.qReturn as Record<string, unknown>).qHandle as number;
-          // First page — fetch at offset 0
+
+          // Apply server-side selection if requested
+          if (selection) {
+            selectionPending = true;
+            send("GetField", appHandle, [selection.fieldName]);
+          } else {
+            fetchPage(0);
+          }
+          return;
+        }
+
+        // GetField response — apply selection
+        if (selectionPending && msg.result?.qReturn && (msg.result.qReturn as Record<string, unknown>).qType === "Field") {
+          const fieldHandle = (msg.result.qReturn as Record<string, unknown>).qHandle as number;
+          const val = selection!.value;
+          const isNum = !isNaN(Number(val));
+          console.log(`${LOG_PREFIX} Applying selection: ${selection!.fieldName}=${val}`);
+          // Positional params: [qFieldValues[], qToggleMode, qSoftLock]
+          send("SelectValues", fieldHandle, [
+            [{ qText: val, qIsNumeric: isNum, qNumber: isNum ? Number(val) : 0 }],
+            false,
+            false,
+          ]);
+          return;
+        }
+
+        // SelectValues response — start fetching pages
+        if (selectionPending && msg.result?.qReturn === true) {
+          selectionPending = false;
+          console.log(`${LOG_PREFIX} Selection applied, fetching data...`);
           fetchPage(0);
           return;
         }
@@ -248,17 +286,16 @@ const DECISOES_FIELDS = [
   { qlik: "Meio Processo",               db: "meio_processo" },
   { qlik: "Origem decisão",              db: "origem_decisao" },
   { qlik: "Ambiente julgamento",          db: "ambiente_julgamento" },
-  { qlik: "Data de autuação",            db: "data_autuacao" },
-  { qlik: "Data baixa",                  db: "data_baixa" },
-  { qlik: "Indicador colegiado",          db: "indicador_colegiado" },
-  { qlik: "Ano da decisão",              db: "ano_decisao" },
-  { qlik: "Data da decisão",             db: "data_decisao" },
+  { qlik: "Data Autuação",               db: "data_autuacao" },
+  { qlik: "Data Baixa",                  db: "data_baixa" },
+  { qlik: "Ano decisão",                 db: "ano_decisao" },
+  { qlik: "Data decisão",                db: "data_decisao" },
   { qlik: "Tipo decisão",                db: "tipo_decisao" },
   { qlik: "Andamento decisão",           db: "andamento_decisao" },
-  { qlik: "Observação do andamento",      db: "observacao_andamento" },
-  { qlik: "Ramo direito",                db: "ramo_direito" },
-  { qlik: "Assuntos do processo",         db: "assuntos_processo" },
-  { qlik: "Indicador de tramitação",     db: "indicador_tramitacao" },
+  { qlik: "Observação decisão",           db: "observacao_andamento" },
+  { qlik: "Ramo Direito",                db: "ramo_direito" },
+  { qlik: "Assunto Concatenado",          db: "assuntos_processo" },
+  { qlik: "Processo em Tramitação",       db: "indicador_tramitacao" },
   { qlik: "Órgão julgador",              db: "orgao_julgador" },
   { qlik: "Descrição Procedência Processo", db: "descricao_procedencia" },
   { qlik: "Descrição Órgão Origem",       db: "descricao_orgao_origem" },
@@ -300,10 +337,6 @@ export async function syncStfDecisoes(yearFilter?: string, limit?: number): Prom
         }
 
         if (!record.processo) continue;
-
-        // Client-side year filter
-        if (yearFilter && record.ano_decisao !== yearFilter) continue;
-
         batch.push(record);
       }
 
@@ -325,6 +358,7 @@ export async function syncStfDecisoes(yearFilter?: string, limit?: number): Prom
       }
     },
     limit || undefined,
+    yearFilter ? { fieldName: "Ano decisão", value: yearFilter } : undefined,
   );
 
   console.log(`${LOG_PREFIX} syncStfDecisoes done: fetched=${totalRows}, upserted=${upserted}, errors=${errors}`);
