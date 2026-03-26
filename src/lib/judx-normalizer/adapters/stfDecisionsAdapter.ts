@@ -122,16 +122,45 @@ function inferResult(raw: StfDecisionRaw): string {
 /**
  * Infers decision kind from `tipo_decisao`.
  */
-function inferKind(tipodecisao: string | null | undefined): string {
+function inferKind(tipodecisao: string | null | undefined, origemDecisao: string | null | undefined): string {
   const tipo = safe(tipodecisao).toLowerCase();
+  const origem = safe(origemDecisao).toLowerCase();
 
-  if (/acórdão|acordao|colegiado/i.test(tipo)) return 'acordao';
-  if (/monocrát|monocrat|individual/i.test(tipo)) return 'monocratica';
-  if (/despacho/i.test(tipo)) return 'despacho';
-  if (/liminar|cautelar|tutela/i.test(tipo)) return 'liminar';
+  // STF Qlik values: "Decisão Final", "Decisão em recurso interno",
+  // "Decisão Interlocutória", "Decisão Liminar", "Decisão Rep. Geral", etc.
+  if (/acórdão|acordao/i.test(tipo)) return 'acordao';
+  if (/liminar/i.test(tipo)) return 'liminar';
+  if (/interlocutória|interlocutoria/i.test(tipo)) return 'interlocutoria';
+  if (/rep.*geral/i.test(tipo)) return 'repercussao_geral';
+  if (/sobrestamento/i.test(tipo)) return 'sobrestamento';
+  if (/recurso interno/i.test(tipo)) return 'recurso_interno';
+
+  // "Decisão Final" + origem MONOCRÁTICA = monocratica; + TURMA/PLENO = acordao
+  if (/final/i.test(tipo)) {
+    if (/monocrática|monocratica/i.test(origem)) return 'monocratica';
+    if (/turma|plen[aá]rio|seção|secao/i.test(origem)) return 'acordao';
+    return 'decisao_final';
+  }
+
+  // Plain "Decisão" — check origem
+  if (/^decisão$|^decisao$/i.test(tipo)) {
+    if (/monocrática|monocratica/i.test(origem)) return 'monocratica';
+    return 'decisao';
+  }
 
   if (tipo && tipo !== '-') return tipo.slice(0, 50);
-  return 'decisao'; // generic fallback for STF
+  return 'decisao';
+}
+
+/**
+ * Strips time portion from STF date strings.
+ * "01/02/2024 00:00:00" → "01/02/2024"
+ */
+function stripTime(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  const trimmed = dateStr.trim();
+  const match = trimmed.match(/^(\d{1,2}\/\d{1,2}\/\d{4})/);
+  return match ? match[1] : trimmed;
 }
 
 /**
@@ -171,14 +200,14 @@ export function adaptStfDecision(raw: StfDecisionRaw): JudxBundle {
   return {
     courtId: COURT_STF_ACRONYM,
     courtAcronym: COURT_STF_ACRONYM,
-    externalNumber: raw.id_fato_decisao,
+    externalNumber: raw.processo ?? raw.id_fato_decisao,
     organName: raw.orgao_julgador ?? null,
     proceduralClassName: extractClassFromProcesso(raw.processo),
     subject: raw.assuntos_processo ?? raw.ramo_direito ?? null,
 
     decision: {
-      date: raw.data_decisao ?? null,
-      kind: inferKind(raw.tipo_decisao),
+      date: stripTime(raw.data_decisao),
+      kind: inferKind(raw.tipo_decisao, raw.origem_decisao),
       result: inferResult(raw),
       fullText: null, // Qlik extraction does not carry full text
       excerpt: raw.observacao_andamento ?? null,

@@ -46,8 +46,8 @@ export function parseDate(value: string | number | null | undefined): string | n
   const trimmed = value.trim();
   if (trimmed === '') return null;
 
-  // dd/mm/yyyy or dd-mm-yyyy (Brazilian format)
-  const brMatch = trimmed.match(/^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})$/);
+  // dd/mm/yyyy or dd-mm-yyyy (Brazilian format), optionally with time HH:mm:ss
+  const brMatch = trimmed.match(/^(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?$/);
   if (brMatch) {
     const day = parseInt(brMatch[1], 10);
     const month = parseInt(brMatch[2], 10);
