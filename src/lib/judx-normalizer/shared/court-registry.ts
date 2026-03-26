@@ -36,7 +36,7 @@ export const COURT_REGISTRY: Record<CourtId, CourtDefinition> = {
     name: 'Supremo Tribunal Federal',
     sourceTable: 'stf_decisions',
     judxPrefix: 'STF',
-    status: 'pending', // adaptador ainda não criado — nenhuma operação autorizada
+    status: 'active', // adaptador criado em stfDecisionsAdapter.ts
     allowedSources: ['stf_decisions'],
     pipelineModes: ['core'], // só core autorizado por enquanto
     canCompareWith: [],

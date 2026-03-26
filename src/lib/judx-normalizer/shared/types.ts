@@ -34,6 +34,30 @@ export type StjDecisaoDjRaw = {
   url_inteiro_teor: string | null;
 };
 
+/** Row shape of the `stf_decisions` table (Qlik extraction). */
+export type StfDecisionRaw = {
+  id_fato_decisao: string;
+  processo: string | null;
+  relator_atual: string | null;
+  meio_processo: string | null;
+  origem_decisao: string | null;
+  ambiente_julgamento: string | null;
+  data_autuacao: string | null;
+  data_baixa: string | null;
+  ano_decisao: string | null;
+  data_decisao: string | null;
+  tipo_decisao: string | null;
+  andamento_decisao: string | null;
+  observacao_andamento: string | null;
+  ramo_direito: string | null;
+  assuntos_processo: string | null;
+  indicador_tramitacao: string | null;
+  orgao_julgador: string | null;
+  descricao_procedencia: string | null;
+  descricao_orgao_origem: string | null;
+  court_id: string | null;
+};
+
 // ---------------------------------------------------------------------------
 // Normalized ontological bundle
 // ---------------------------------------------------------------------------

@@ -14,7 +14,7 @@ import type {
   NormalizationResult,
 } from './shared/types';
 import { getJudxClient } from './shared/db';
-import { BATCH_SIZE, COURT_STJ_ACRONYM, PIPELINE_VERSION } from './shared/constants';
+import { BATCH_SIZE, COURT_STJ_ACRONYM, COURT_STF_ACRONYM, PIPELINE_VERSION } from './shared/constants';
 import { logInfo, logWarn, logError, logInference } from './shared/logger';
 import { slugify, normalizeJudgeName, normalizeOrganName, normalizeClassName, cleanText } from './shared/text';
 import { parseDate } from './shared/dates';
@@ -25,6 +25,7 @@ import { assertCourtActive, assertSourceAllowed, assertModeAllowed, resolveCourt
 // Adapters
 import { readStjDecisions, adaptStjDecision } from './adapters/stjDecisionsAdapter';
 import { readStjDecisoesDj, adaptStjDecisaoDj } from './adapters/stjDecisoesDjAdapter';
+import { readStfDecisions, adaptStfDecision } from './adapters/stfDecisionsAdapter';
 
 // Writers
 import { upsertCourt } from './writers/upsertCourt';
@@ -664,6 +665,71 @@ async function processStjDecisoesDj(
 }
 
 // ---------------------------------------------------------------------------
+// STF — completely isolated from STJ
+// ---------------------------------------------------------------------------
+
+async function processStfDecisions(
+  courtId: string,
+  batchSize: number,
+  limit: number,
+  dryRun: boolean,
+  result: NormalizationResult,
+  mode: PipelineMode,
+): Promise<void> {
+  logInfo(CTX, `Processing source: stf_decisions (batchSize=${batchSize}, limit=${limit}, dryRun=${dryRun})`);
+
+  let totalRead = 0;
+
+  for await (const batch of readStfDecisions(batchSize)) {
+    const effectiveBatch = limit > 0
+      ? batch.slice(0, Math.max(0, limit - totalRead))
+      : batch;
+
+    if (effectiveBatch.length === 0) break;
+
+    logInfo(CTX, `stf_decisions batch: ${effectiveBatch.length} records (offset=${totalRead})`);
+
+    for (const raw of effectiveBatch) {
+      result.processed++;
+      try {
+        const bundle = adaptStfDecision(raw);
+
+        if (dryRun) {
+          logInfo(CTX, `[DRY RUN] Would process: ${bundle.externalNumber}`, {
+            environment: bundle.environment.inferred,
+            judges: bundle.judges.length,
+          });
+          continue;
+        }
+
+        const ok = await processBundle(bundle, courtId, result, mode);
+        if (ok) {
+          result.upserted++;
+        } else {
+          result.errors++;
+        }
+      } catch (err: unknown) {
+        result.errors++;
+        const msg = err instanceof Error ? err.message : String(err);
+        logError(CTX, `Error processing stf_decisions record`, {
+          sourceId: raw.id_fato_decisao,
+          error: msg,
+        });
+      }
+    }
+
+    totalRead += effectiveBatch.length;
+
+    if (limit > 0 && totalRead >= limit) {
+      logInfo(CTX, `Reached limit of ${limit} records for stf_decisions`);
+      break;
+    }
+  }
+
+  logInfo(CTX, `Finished stf_decisions: read=${totalRead}`);
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -680,7 +746,7 @@ async function processStjDecisoesDj(
  * @param options.dryRun   If true, adapts and logs but does not write. Default: false
  */
 export async function runNormalizationPipeline(options?: {
-  source?: 'stj_decisions' | 'stj_decisoes_dj' | 'all';
+  source?: 'stj_decisions' | 'stj_decisoes_dj' | 'stf_decisions' | 'all';
   batchSize?: number;
   limit?: number;
   dryRun?: boolean;
@@ -729,21 +795,31 @@ export async function runNormalizationPipeline(options?: {
 
   try {
     // -----------------------------------------------------------------
-    // Step 1: Ensure court exists (Rule 1: no data without context)
+    // STJ pipeline (completely isolated from STF)
     // -----------------------------------------------------------------
-    logInfo(CTX, `Step 1: Ensuring court ${COURT_STJ_ACRONYM} exists`);
-    const courtId = await upsertCourt(COURT_STJ_ACRONYM);
-    logInfo(CTX, `Court resolved: ${COURT_STJ_ACRONYM} -> ${courtId}`);
+    if (source === 'stj_decisions' || source === 'stj_decisoes_dj' || source === 'all') {
+      logInfo(CTX, `Step 1: Ensuring court ${COURT_STJ_ACRONYM} exists`);
+      const stjCourtId = await upsertCourt(COURT_STJ_ACRONYM);
+      logInfo(CTX, `Court resolved: ${COURT_STJ_ACRONYM} -> ${stjCourtId}`);
 
-    // -----------------------------------------------------------------
-    // Step 2 + 3: Read from source tables and process batches
-    // -----------------------------------------------------------------
-    if (source === 'stj_decisions' || source === 'all') {
-      await processStjDecisions(courtId, batchSize, limit, dryRun, result, mode);
+      if (source === 'stj_decisions' || source === 'all') {
+        await processStjDecisions(stjCourtId, batchSize, limit, dryRun, result, mode);
+      }
+
+      if (source === 'stj_decisoes_dj' || source === 'all') {
+        await processStjDecisoesDj(stjCourtId, batchSize, limit, dryRun, result, mode);
+      }
     }
 
-    if (source === 'stj_decisoes_dj' || source === 'all') {
-      await processStjDecisoesDj(courtId, batchSize, limit, dryRun, result, mode);
+    // -----------------------------------------------------------------
+    // STF pipeline (completely isolated from STJ)
+    // -----------------------------------------------------------------
+    if (source === 'stf_decisions') {
+      logInfo(CTX, `Step 1: Ensuring court ${COURT_STF_ACRONYM} exists`);
+      const stfCourtId = await upsertCourt(COURT_STF_ACRONYM);
+      logInfo(CTX, `Court resolved: ${COURT_STF_ACRONYM} -> ${stfCourtId}`);
+
+      await processStfDecisions(stfCourtId, batchSize, limit, dryRun, result, mode);
     }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

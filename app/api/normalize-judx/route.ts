@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     const source = url.searchParams.get('source') as
       | 'stj_decisions'
       | 'stj_decisoes_dj'
+      | 'stf_decisions'
       | 'all'
       | null;
 
