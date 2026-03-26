@@ -1,5 +1,7 @@
+// Responsabilidade única: extração STJ → stj_*. Nunca aciona ICONS diretamente.
 import { strFromU8, unzipSync } from "fflate";
 import { getSupabaseServiceClient } from "@/src/lib/supabase-service";
+import { splitProcessoFields } from "@/src/lib/judx-normalizer/shared/text";
 
 const CKAN_BASE = "https://dadosabertos.web.stj.jus.br/api/3/action";
 
@@ -136,30 +138,8 @@ export type StjDecisionRow = {
   ramo_direito: string | null;
 };
 
-/** Classe, UF e número normalizado a partir do texto do processo (ambos os formatos). */
-export function splitProcessoFields(raw: string | null | undefined): {
-  classe: string;
-  uf: string | null;
-  processo: string;
-} {
-  const s = (raw ?? "").trim();
-  if (!s) return { classe: "", uf: null, processo: "" };
-
-  const ufMatch = s.match(/\/([A-Za-z]{2})\s*$/);
-  const uf = ufMatch ? ufMatch[1].toUpperCase() : null;
-
-  const firstDig = s.search(/\d/);
-  const classe = firstDig === -1 ? s.trim() : s.slice(0, firstDig).trim();
-
-  if (firstDig === -1) {
-    return { classe: classe || "", uf, processo: "" };
-  }
-
-  let rest = s.slice(firstDig);
-  rest = rest.replace(/\/[A-Za-z]{2}\s*$/i, "").trim();
-  const processo = rest.replace(/[^\d.]/g, "");
-  return { classe, uf, processo };
-}
+// Re-export splitProcessoFields from canonical location
+export { splitProcessoFields } from "@/src/lib/judx-normalizer/shared/text";
 
 function pickAllSyncableResources(resources: CkanResource[]): CkanResource[] {
   return resources.filter((r) => {
