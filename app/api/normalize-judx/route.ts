@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     const source = url.searchParams.get('source') as
       | 'stj_decisions'
       | 'stj_decisoes_dj'
-      | 'stf_decisions'
+      | 'stf_decisoes'
       | 'all'
       | null;
 
@@ -49,10 +49,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if STF normalization is complete (cron auto-stop)
-    if (resolvedSource === 'stf_decisions') {
+    if (resolvedSource === 'stf_decisoes') {
       const supabase = getSupabaseServiceClient();
-      const { count: stfRaw } = await supabase.from('stf_decisions').select('*', { count: 'exact', head: true });
-      const courtDef = resolveCourtFromSource('stf_decisions');
+      const { count: stfRaw } = await supabase.from('stf_decisoes').select('*', { count: 'exact', head: true });
+      const courtDef = resolveCourtFromSource('stf_decisoes');
       if (courtDef) {
         const { data: courtRow } = await supabase.from('judx_court').select('id').eq('acronym', courtDef.judxPrefix).single();
         if (courtRow) {

@@ -8,8 +8,6 @@
 //   4. Allow pre-taxonomic registration — unknown patterns are registered as-is
 
 import type {
-  StjDecisionRaw,
-  StjDecisaoDjRaw,
   JudxBundle,
   NormalizationResult,
 } from './shared/types';
@@ -25,7 +23,7 @@ import { assertCourtActive, assertSourceAllowed, assertModeAllowed, assertSource
 // Adapters
 import { readStjDecisions, adaptStjDecision } from './adapters/stjDecisionsAdapter';
 import { readStjDecisoesDj, adaptStjDecisaoDj } from './adapters/stjDecisoesDjAdapter';
-import { readStfDecisions, adaptStfDecision } from './adapters/stfDecisionsAdapter';
+import { readStfDecisoes, adaptStfDecisao } from './adapters/stfDecisionsAdapter';
 
 // Writers
 import { upsertCourt } from './writers/upsertCourt';
@@ -44,14 +42,24 @@ const CTX = 'pipeline';
 // ---------------------------------------------------------------------------
 
 // Maps adapter result values to judx_decision_result_enum
+// Maps adapter result values to judx_decision_result_enum
+// Includes both STJ (negou_provimento style) and STF (improcedente style) values
 const RESULT_TO_ENUM: Record<string, string> = {
+  // STJ adapter values
   negou_provimento: 'improcedente',
   deu_provimento: 'procedente',
   parcial_provimento: 'parcialmente_procedente',
-  nao_conhecido: 'nao_conhecido',
   extinto: 'extinto_sem_resolucao',
-  prejudicado: 'prejudicado',
   nao_informado: 'outro',
+  // STF adapter values (already match enum names)
+  procedente: 'procedente',
+  improcedente: 'improcedente',
+  parcialmente_procedente: 'parcialmente_procedente',
+  nao_conhecido: 'nao_conhecido',
+  prejudicado: 'prejudicado',
+  deferido: 'deferido',
+  indeferido: 'indeferido',
+  sobrestado: 'sobrestado',
 };
 
 // Maps adapter kind values to judx_decision_kind_enum
@@ -60,6 +68,7 @@ const KIND_TO_ENUM: Record<string, string> = {
   monocratica: 'monocratica',
   colegiada: 'colegiada',
   despacho: 'despacho',
+  decisao_interlocutoria: 'decisao_interlocutoria',
   nao_informado: 'outra',
 };
 
@@ -658,7 +667,7 @@ async function processStjDecisoesDj(
 // STF — completely isolated from STJ
 // ---------------------------------------------------------------------------
 
-async function processStfDecisions(
+async function processStfDecisoes(
   courtId: string,
   batchSize: number,
   limit: number,
@@ -666,23 +675,23 @@ async function processStfDecisions(
   result: NormalizationResult,
   mode: PipelineMode,
 ): Promise<void> {
-  logInfo(CTX, `Processing source: stf_decisions (batchSize=${batchSize}, limit=${limit}, dryRun=${dryRun})`);
+  logInfo(CTX, `Processing source: stf_decisoes (batchSize=${batchSize}, limit=${limit}, dryRun=${dryRun})`);
 
   let totalRead = 0;
 
-  for await (const batch of readStfDecisions(batchSize)) {
+  for await (const batch of readStfDecisoes(batchSize)) {
     const effectiveBatch = limit > 0
       ? batch.slice(0, Math.max(0, limit - totalRead))
       : batch;
 
     if (effectiveBatch.length === 0) break;
 
-    logInfo(CTX, `stf_decisions batch: ${effectiveBatch.length} records (offset=${totalRead})`);
+    logInfo(CTX, `stf_decisoes batch: ${effectiveBatch.length} records (offset=${totalRead})`);
 
     for (const raw of effectiveBatch) {
       result.processed++;
       try {
-        const bundle = adaptStfDecision(raw);
+        const bundle = adaptStfDecisao(raw);
 
         if (dryRun) {
           logInfo(CTX, `[DRY RUN] Would process: ${bundle.externalNumber}`, {
@@ -701,8 +710,8 @@ async function processStfDecisions(
       } catch (err: unknown) {
         result.errors++;
         const msg = err instanceof Error ? err.message : String(err);
-        logError(CTX, `Error processing stf_decisions record`, {
-          sourceId: raw.id_fato_decisao,
+        logError(CTX, `Error processing stf_decisoes record`, {
+          sourceId: String(raw.id),
           error: msg,
         });
       }
@@ -711,12 +720,12 @@ async function processStfDecisions(
     totalRead += effectiveBatch.length;
 
     if (limit > 0 && totalRead >= limit) {
-      logInfo(CTX, `Reached limit of ${limit} records for stf_decisions`);
+      logInfo(CTX, `Reached limit of ${limit} records for stf_decisoes`);
       break;
     }
   }
 
-  logInfo(CTX, `Finished stf_decisions: read=${totalRead}`);
+  logInfo(CTX, `Finished stf_decisoes: read=${totalRead}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -736,7 +745,7 @@ async function processStfDecisions(
  * @param options.dryRun   If true, adapts and logs but does not write. Default: false
  */
 export async function runNormalizationPipeline(options?: {
-  source?: 'stj_decisions' | 'stj_decisoes_dj' | 'stf_decisions' | 'all';
+  source?: 'stj_decisions' | 'stj_decisoes_dj' | 'stf_decisoes' | 'all';
   batchSize?: number;
   limit?: number;
   dryRun?: boolean;
@@ -805,12 +814,12 @@ export async function runNormalizationPipeline(options?: {
     // -----------------------------------------------------------------
     // STF pipeline (completely isolated from STJ)
     // -----------------------------------------------------------------
-    if (source === 'stf_decisions') {
+    if (source === 'stf_decisoes') {
       logInfo(CTX, `Step 1: Ensuring court ${COURT_STF_ACRONYM} exists`);
       const stfCourtId = await upsertCourt(COURT_STF_ACRONYM);
       logInfo(CTX, `Court resolved: ${COURT_STF_ACRONYM} -> ${stfCourtId}`);
 
-      await processStfDecisions(stfCourtId, batchSize, limit, dryRun, result, mode);
+      await processStfDecisoes(stfCourtId, batchSize, limit, dryRun, result, mode);
     }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

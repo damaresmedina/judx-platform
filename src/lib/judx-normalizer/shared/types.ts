@@ -34,30 +34,40 @@ export type StjDecisaoDjRaw = {
   url_inteiro_teor: string | null;
 };
 
-/** Row shape of the `stf_decisions` table (Qlik extraction). */
-export type StfDecisionRaw = {
-  id_fato_decisao: string;
-  processo: string | null;
-  relator_atual: string | null;
-  meio_processo: string | null;
-  origem_decisao: string | null;
-  ambiente_julgamento: string | null;
-  data_autuacao: string | null;
-  data_baixa: string | null;
-  indicador_colegiado: string | null;
-  ano_decisao: string | null;
-  data_decisao: string | null;
-  tipo_decisao: string | null;
-  andamento_decisao: string | null;
-  observacao_andamento: string | null;
-  ramo_direito: string | null;
-  assuntos_processo: string | null;
-  indicador_tramitacao: string | null;
+/** Row shape of the `stf_decisoes` table (372e + e7a4 datasets). */
+export type StfDecisaoRaw = {
+  id: number;
+  processo: string;
   orgao_julgador: string | null;
-  descricao_procedencia: string | null;
-  descricao_orgao_origem: string | null;
-  incidente: string | null;
-  court_id: string | null;
+  relator_decisao: string | null;
+  relator_atual: string | null;
+  data_autuacao: string | null;
+  data_decisao: string | null;
+  data_baixa: string | null;
+  grupo_origem: string | null;
+  tipo_classe: string | null;
+  classe: string | null;
+  ramo_direito: string | null;
+  assunto: string | null;
+  assunto_completo: string | null;
+  incidente: number | null;
+  link_processo: string | null;
+  cod_andamento: string | null;
+  subgrupo_andamento: string | null;
+  descricao_andamento: string | null;
+  observacao_andamento: string | null;
+  tipo_decisao: string | null;
+  preferencia_covid19: boolean | null;
+  preferencia_criminal: boolean | null;
+  sigla_ultimo_recurso: string | null;
+  recurso_interno_pendente: boolean | null;
+  em_tramitacao: boolean | null;
+  decisoes_virtual: boolean | null;
+  ambiente_julgamento: string | null;
+  indicador_colegiado: string | null;
+  id_fato_decisao: number | null;
+  raw_source: string | null;
+  created_at: string | null;
 };
 
 // ---------------------------------------------------------------------------
