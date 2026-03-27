@@ -1,0 +1,96 @@
+# JudX Platform — Instruções para o Claude Code
+
+## OBRIGATÓRIO A CADA INÍCIO DE SESSÃO
+
+Ao iniciar qualquer conversa neste projeto, SEMPRE execute nesta ordem:
+
+1. Leia este arquivo `CLAUDE.md`
+2. Leia `STATUS.md` — **este é o arquivo mais importante**. Contém a timeline completa do projeto, o estado atual de cada banco, processos em background, achados confirmados e próximos passos. Sem ele você não sabe onde estamos.
+3. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
+4. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md` — produção acadêmica prévia e voz autoral. Todo texto acadêmico (relatórios, papers, capítulos) deve usar a sintaxe descrita ali.
+5. Carregue as skills disponíveis em `skills/`
+6. Verifique processos em background: `wmic process where "name='node.exe'" get processid,commandline`
+7. **Ao final da sessão**: atualize `STATUS.md` com o que foi feito, o que mudou, e quais são os próximos passos. Isso garante continuidade entre sessões.
+
+O `STATUS.md` é a memória viva do projeto. É o que impede que cada sessão nova comece do zero. Trate-o como um diário de bordo — sempre leia antes de começar, sempre atualize antes de terminar.
+
+## Projeto
+
+JudX é um sistema observacional do comportamento institucional do direito brasileiro.
+- **Objeto**: padrões decisórios de STF e STJ
+- **Stack**: Next.js 16 + React 18 + TypeScript + Tailwind CSS
+- **Banco**: Supabase PostgreSQL (projeto `ejwyguskoiraredinqmb`)
+- **Deploy**: Vercel (judx-platform.vercel.app)
+- **Repo**: github.com/damaresmedina/judx-platform
+
+## Skills Disponíveis
+
+As skills estão em `skills/` e devem ser consultadas automaticamente:
+
+| Skill | Pasta | Quando usar |
+|---|---|---|
+| **judx-query** | `skills/judx-query/` | Qualquer query SQL, análise de banco, verificação de dados |
+| **judx-extract** | `skills/judx-extract/` | Extração de dados STF/STJ, pipelines, CKAN, Datajud |
+| **judx-report** | `skills/judx-report/` | Gerar relatórios Word/PDF |
+| **icons-deploy** | `skills/icons-deploy/` | Deploy icons.org.br |
+| **judx-deploy** | `skills/judx-deploy/` | Deploy judx-platform |
+| **judx-history** | `skills/judx-history/` | Buscar em conversas anteriores |
+
+## Bancos de Dados
+
+```
+JudX:  postgresql://postgres:Zb9cHoRww7WxgT0C@db.ejwyguskoiraredinqmb.supabase.co:5432/postgres
+ICONS: postgresql://postgres:RHuQvsf4shpsPRjP@db.hetuhkhhppxjliiaerlu.supabase.co:6543/postgres
+```
+
+**REGRA ABSOLUTA**: JudX e ICONS são projetos completamente separados. Nunca compartilham dados, código ou infraestrutura.
+
+## Estrutura do Projeto
+
+```
+judx-platform/
+├── CLAUDE.md                    ← Este arquivo
+├── PROTOCOLO_JUDX.md            ← Protocolo canônico (v1.1)
+├── skills/                      ← Skills do Claude Code
+│   ├── judx-query/SKILL.md
+│   ├── judx-extract/SKILL.md
+│   ├── judx-report/SKILL.md
+│   ├── icons-deploy/SKILL.md
+│   ├── judx-deploy/SKILL.md
+│   └── judx-history/SKILL.md
+├── scripts/                     ← Pipelines de extração
+│   ├── run-stf-pipeline-fast.mjs
+│   ├── fetch-stf-partes-safe.mjs
+│   ├── fetch-stj-temas.mjs
+│   ├── fetch-stj-rede-minima.mjs
+│   ├── stj-contramostra-pipeline.mjs
+│   └── stj-contramostra-datajud.mjs
+├── logs/                        ← Logs de pipelines em background
+├── app/                         ← Next.js App Router
+├── src/lib/                     ← Utilitários
+├── public/                      ← Landing pages
+└── supabase/migrations/         ← Migrações SQL
+```
+
+## Corpus Atual (27/03/2026)
+
+| Tabela | Registros | Status |
+|---|---|---|
+| stf_decisoes | 169.851 | Completo |
+| judx_case | 139.737 | Completo |
+| judx_decision | 224.887 | Completo |
+| stf_partes | ~140K+ | Em extração |
+| stj_temas | 1.420 | Completo |
+| stj_processos_semente | 2.509 | Completo |
+| stj_contramostra | 3.902 | Completo |
+
+## Regras de Trabalho
+
+1. **NUNCA criar nada sem confirmação explícita** — perguntar antes
+2. **Deploy só com confirmação** — nunca push/deploy automático
+3. **JudX e ICONS nunca se misturam** — dados, código, infra separados
+4. **NUNCA mexer no repo projus/icons** — sempre usar damaresmedina/*
+5. **Usar nomenclatura ICONS** para o banco ICONS (registro_jurisprudencial, ancora_normativa, etc.)
+6. **Protocolo mais recente** — atualmente PROTOCOLO_JUDX.md v1.1
+7. **Conteúdo > design** — rigor das informações sempre acima do design
+8. **Queries via node + pg** — arquivo tmp em C:\projetos\icons\, rodar, deletar

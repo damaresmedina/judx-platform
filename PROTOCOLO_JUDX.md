@@ -266,6 +266,35 @@ Ele não descreve apenas decisões. Torna visível a arquitetura pela qual o dir
 
 ---
 
-*PROTOCOLO_JUDX.md — versão 1.0*
-*Gerado em 26/03/2026 após auditoria completa do codebase e revisão arquitetural.*
+## XIV. ESTRATÉGIA STJ — AMOSTRA DE CONTRASTE (27/03/2026)
+
+### Princípio
+Não extrair o universo do STJ. Usar amostra de contraste para identificar
+onde e por que o tema repetitivo se forma.
+
+### Lógica
+Para cada tema repetitivo: pegar os processos-semente que levaram à afetação
++ processos similares não afetados. A diferença revela o padrão de formação.
+
+### Tamanho
+3-5 processos afetados + 3-5 não afetados por tema = ~14.000 processos total.
+Manejável. Estatisticamente suficiente para identificar padrões.
+
+### Ordem de execução
+1. Temas afetados em 2026 → 2025 → 2024 (cronológica reversa)
+2. Prioridade: tributário → trabalhista → previdenciário → civil
+3. Processos-semente de cada tema (já estão em processos_afetados)
+4. Processos de contraste: mesma classe, mesmo tribunal de origem, mesmo período
+
+### O que a amostra vai revelar
+- Qual tribunal de origem gera mais afetações por ramo
+- Qual relator afeta com mais frequência
+- Tempo entre primeiro REsp e afetação
+- Concentração por escritório nos processos-semente
+- Circuitos STJ → STF via link_stf_rg (257 temas)
+
+---
+
+*PROTOCOLO_JUDX.md — versão 1.1*
+*Atualizado em 27/03/2026 — adicionada estratégia STJ de amostra de contraste.*
 *Próxima revisão recomendada após primeiro ciclo completo de dados em modo `events`.*
