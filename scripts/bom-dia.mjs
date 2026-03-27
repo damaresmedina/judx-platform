@@ -137,6 +137,24 @@ async function main() {
   } catch { console.log('    (não encontrou STATUS.md)'); }
 
   console.log(`\n${line('═')}`);
+  // 8. Inventário auto-update
+  console.log(`\n💾 INVENTÁRIO:`);
+  try {
+    const invDir = 'C:\\Users\\medin\\Desktop\\backup_judx';
+    const today = new Date().toISOString().slice(0, 10);
+    const invFile = `${invDir}\\INVENTARIO_COMPLETO_${today}.xlsx`;
+    const { existsSync } = await import('fs');
+    if (existsSync(invFile)) {
+      console.log(`    ${invFile} — já existe hoje`);
+    } else {
+      console.log(`    Gerando inventário do dia...`);
+      const { execSync } = await import('child_process');
+      execSync('python scripts/inventario-completo.py', { cwd: 'C:\\Users\\medin\\projetos\\judx-platform', timeout: 300000 });
+      console.log(`    ✅ Inventário salvo em ${invFile}`);
+    }
+  } catch (e) { console.log(`    ⚠️ Erro ao gerar inventário: ${e.message?.slice(0, 60)}`); }
+
+  console.log(`\n${line('═')}`);
   console.log(`  Relatório gerado em ${ts()}. Bom trabalho!`);
   console.log(line('═'));
 }
