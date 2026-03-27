@@ -3,6 +3,112 @@
 
 ---
 
+## 22/03/2026 — Sessão 7d948a64 (Dia 1: Fundação)
+
+### ICONS — Schema e seed inicial
+- Schema SQL criado: cf_titulos, cf_capitulos, cf_artigos, cf_vinculos, stf_decisoes
+- Seed da CF/88: 9 títulos, 33 capítulos, 250 artigos CF + 138 ADCT
+- Seed de decisões: 5.209 decisões únicas do STF (da CF comentada)
+- 9.014 citações totais (decisões × dispositivos) → 5.209 decisões únicas
+- Fonte: `constituição comentada stf.docx`
+- Parsing tratou lixo: "1ªTDJde" = órgão grudado com data DJ → separado via regex
+- Regra aprendida: nunca descartar dado com parsing sujo — limpar e preservar
+
+### ICONS — Primeira visualização
+- Cartografia STF (12 painéis) gerada a partir do banco
+- Paleta: navy #1a2744, gold #d4a017, paper #f5f0e8
+- Tipografia: Playfair Display + DM Mono + DM Sans
+
+---
+
+## 22-23/03/2026 — Sessões 8a869472 + 73c8ef4a (Extração)
+
+### STF — Download de ementas via API
+- API: jurisprudencia.stf.jus.br/pages/search
+- Rodadas: 5+ batches de 500
+- Problema: classes como HC/RHC em segredo de justiça → retry infinito
+- Solução: priorizar por classe (controle concentrado primeiro), batches curtos
+- Relator null em casos famosos (ADPF 378 MC, relator Fachin) → preencher do banco
+- Deploy: projus.github.io/icons + GitHub Pages
+
+---
+
+## 24/03/2026 — Sessão e47b70c7 (Arquitetura JudX — 128 msgs)
+
+### Decisão arquitetural: JudX separado do ICONS
+- JudX = comportamento institucional (STF + STJ)
+- ICONS = ancoragem constitucional (STF → CF/88)
+- Bancos separados, código separado, infra separada
+- Comunicação futura via signal_emitter (não implementado)
+
+### JudX — Setup
+- Supabase: ejwyguskoiraredinqmb
+- GitHub: damaresmedina/judx-platform
+- Vercel: judx-platform.vercel.app
+- Stack: Next.js 16 + React 18 + TypeScript + Tailwind
+
+### ICONS — Dupla ancoragem (Emenda 01)
+- Cada decisão ancorada no artigo da CF E tem identidade própria
+- Nomenclatura definida: registro_jurisprudencial, ancora_normativa, etc.
+- Schema v9 com 9 entidades, 3 camadas
+
+---
+
+## 25/03/2026 — Sessões 59b1eeaa + a2e0d6c5 (Limpeza ICONS — 312+118 msgs)
+
+### ICONS — Banco resetado e repopulado
+- Protocolo ontológico v9 congelado
+- CONSTITUICAO_ONTOLOGICA.md definida como lei fundamental
+- 954 artigos com fronteiras vazadas corrigidos via espelho misto v9
+- Banco ICONS limpo e repopulado com schema correto
+- Deploy: ontologia.html, protocolo_v9.html
+
+### ICONS — Ponte para JudX
+- Script ponte_stj.py: replicação do ICONS para o JudX
+- Direção: sempre inversa (ICONS → JudX, nunca o contrário)
+- "Colonizar" o JudX com dados do ICONS
+
+---
+
+## 26/03/2026 — Sessões c47ff0fd + 042a2736 + 53feee6f + 5008ee07 (Pipeline STF)
+
+### JudX — Schema reformulado
+- DROP + CREATE de todas as tabelas judx_*
+- 40+ tabelas criadas (judx_case, judx_decision, judx_court, etc.)
+- Tabelas raw: stf_decisoes, stf_processos, stf_partes
+- PROTOCOLO_JUDX.md v1.0 criado (13 seções, princípios epistemológicos)
+
+### STF — Corte Aberta carregada
+- 169.851 decisões carregadas de arquivos Excel em C:\projetos\judx\STF\
+- Arquivos: 7 planilhas .xlsx com decisões 1988-2026
+- Colunas: processo, classe, orgao_julgador, relator, data_decisao, descricao_andamento, etc.
+- Fonte: portal Corte Aberta do STF
+
+### Pipeline normalização iniciado
+- run-stf-pipeline-fast.mjs: normaliza stf_decisoes → judx_case + judx_decision
+- Batch de 500, keepalive 30s, log persistente
+- Problema: 2 instâncias simultâneas causaram deadlock → resolvido matando duplicata
+- Solução: SAVEPOINT por batch + retry
+
+### Extração de partes iniciada
+- fetch-stf-partes-safe.mjs: portal.stf.jus.br/processos/abaPartes.asp
+- Rate limit conservador: 3 concurrent, 400ms delay, pausa 60s/500req
+- IP tinha sido bloqueado (429) → desbloqueou após ~12h
+- Teste 1.000 incidentes: 7.792 partes, 0 erros, 4.5 req/s
+
+### Landing pages
+- Landing PT e EN do JudX criadas
+- Deploy judx-platform.vercel.app
+- Landing ICONS PT copiada de projus.github.io/icons → icons.org.br
+
+### STJ — Primeiras tentativas
+- SCON bloqueado por Cloudflare (403)
+- Portal pesquisa processual bloqueado (403)
+- CKAN funciona (dadosabertos.web.stj.jus.br) — dados a partir de fev/2022
+- Datajud API funciona (api-publica.datajud.cnj.jus.br) — todos os anos
+
+---
+
 ## 27/03/2026 — Sessão e083e141
 
 ### STF — Não-decisão
