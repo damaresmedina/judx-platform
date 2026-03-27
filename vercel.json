@@ -18,7 +18,7 @@
       "schedule": "0 8 * * 0"
     },
     {
-      "path": "/api/normalize-judx?mode=core&source=stf_decisions&limit=1500",
+      "path": "/api/normalize-judx?mode=core&source=stf_decisoes&limit=1500",
       "schedule": "*/4 * * * *"
     }
   ]
