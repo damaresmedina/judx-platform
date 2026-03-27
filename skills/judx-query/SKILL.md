@@ -62,9 +62,21 @@ Always clean up: `rm C:\projetos\icons\tmp_q.js` after running.
 - `decisoes_virtual = true` covers 85% of corpus. `ambiente_julgamento` (Presencial/Virtual) only exists for 2026 data
 - `observacao_andamento` has the full decision text (long). `descricao_andamento` has the short result category
 
-## Output Formatting
+## Queries Cookbook
 
-- Use `console.table()` for small result sets
-- For larger results, format as aligned columns with `.padEnd()` / `.padStart()`
-- Always report totals, percentages, and context
+Consulte `queries-cookbook.md` neste diretório — contém TODAS as queries já testadas e validadas (divergência, unanimidade, coalizões, volume/sessão, temas STJ, decidibilidade ICONS, etc.). Não reinvente — copie e execute.
+
+## Output — REGRA CRÍTICA
+
+**A usuária NÃO é programadora.** NUNCA:
+- Mostrar código SQL/JS esperando que ela rode
+- Pedir para ela "colar no Supabase"
+- Explicar sintaxe de queries
+- Mostrar stack traces ou erros técnicos
+
+SEMPRE:
+- Executar a query autonomamente (escrever tmp, rodar, deletar)
+- Reportar RESULTADOS: tabelas formatadas, números, percentuais, insights
+- Interpretar o que os dados revelam (dado → interpretação → implicação)
+- Se der erro: resolver sozinho e tentar de novo
 - Clean up temp files after every query
