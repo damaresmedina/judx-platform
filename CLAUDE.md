@@ -7,13 +7,15 @@ Ao iniciar qualquer conversa neste projeto, SEMPRE execute nesta ordem:
 1. Leia este arquivo `CLAUDE.md`
 2. Leia `STATUS.md` — contém timeline, estado dos bancos, processos, achados e próximos passos
 3. Rode `node scripts/bom-dia.mjs` — diagnóstico automático de bancos, processos em background, sites e logs. Reporte o resultado para a usuária como "estado atual".
-4. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
-5. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md`
-6. Carregue as skills em `skills/` e o cookbook em `skills/judx-query/queries-cookbook.md`
-7. **Ao final da sessão**:
+4. Leia `SCHEMA_REFERENCE.md` — estrutura completa de TODAS as tabelas, fontes e APIs. **NUNCA perguntar a estrutura dos dados.** Está tudo ali.
+5. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
+6. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md`
+7. Carregue as skills em `skills/` e o cookbook em `skills/judx-query/queries-cookbook.md`
+8. **A cada query ou análise**: salve o resultado automaticamente em CSV na pasta `Desktop\backup_judx\resultados\` com nome descritivo e data. A usuária precisa de cópia local auditável de TUDO.
+9. **Ao final da sessão**:
    - Atualize `STATUS.md` com o que foi feito e os próximos passos
    - **ACUMULE** novos achados no `DIARIO_ACHADOS.md` — NUNCA sobrescrever, só adicionar ao final com data e sessão. Cada achado inclui: dado, fonte, proxy usado, limitação.
-   - Salve resultados significativos em Excel em `Desktop\backup_judx\`
+   - Salve compilado em Excel em `Desktop\backup_judx\`
 
 O `STATUS.md` é a memória viva do projeto. Sempre leia antes de começar, sempre atualize antes de terminar. O `bom-dia.mjs` é o diagnóstico rápido — não substitui o STATUS.md, complementa com dados live.
 
