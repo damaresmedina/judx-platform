@@ -10,7 +10,10 @@ Ao iniciar qualquer conversa neste projeto, SEMPRE execute nesta ordem:
 4. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
 5. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md`
 6. Carregue as skills em `skills/` e o cookbook em `skills/judx-query/queries-cookbook.md`
-7. **Ao final da sessão**: atualize `STATUS.md` com o que foi feito e os próximos passos
+7. **Ao final da sessão**:
+   - Atualize `STATUS.md` com o que foi feito e os próximos passos
+   - **ACUMULE** novos achados no `DIARIO_ACHADOS.md` — NUNCA sobrescrever, só adicionar ao final com data e sessão. Cada achado inclui: dado, fonte, proxy usado, limitação.
+   - Salve resultados significativos em Excel em `Desktop\backup_judx\`
 
 O `STATUS.md` é a memória viva do projeto. Sempre leia antes de começar, sempre atualize antes de terminar. O `bom-dia.mjs` é o diagnóstico rápido — não substitui o STATUS.md, complementa com dados live.
 
