@@ -5,14 +5,14 @@
 Ao iniciar qualquer conversa neste projeto, SEMPRE execute nesta ordem:
 
 1. Leia este arquivo `CLAUDE.md`
-2. Leia `STATUS.md` — **este é o arquivo mais importante**. Contém a timeline completa do projeto, o estado atual de cada banco, processos em background, achados confirmados e próximos passos. Sem ele você não sabe onde estamos.
-3. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
-4. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md` — produção acadêmica prévia e voz autoral. Todo texto acadêmico (relatórios, papers, capítulos) deve usar a sintaxe descrita ali.
-5. Carregue as skills disponíveis em `skills/`
-6. Verifique processos em background: `wmic process where "name='node.exe'" get processid,commandline`
-7. **Ao final da sessão**: atualize `STATUS.md` com o que foi feito, o que mudou, e quais são os próximos passos. Isso garante continuidade entre sessões.
+2. Leia `STATUS.md` — contém timeline, estado dos bancos, processos, achados e próximos passos
+3. Rode `node scripts/bom-dia.mjs` — diagnóstico automático de bancos, processos em background, sites e logs. Reporte o resultado para a usuária como "estado atual".
+4. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
+5. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md`
+6. Carregue as skills em `skills/` e o cookbook em `skills/judx-query/queries-cookbook.md`
+7. **Ao final da sessão**: atualize `STATUS.md` com o que foi feito e os próximos passos
 
-O `STATUS.md` é a memória viva do projeto. É o que impede que cada sessão nova comece do zero. Trate-o como um diário de bordo — sempre leia antes de começar, sempre atualize antes de terminar.
+O `STATUS.md` é a memória viva do projeto. Sempre leia antes de começar, sempre atualize antes de terminar. O `bom-dia.mjs` é o diagnóstico rápido — não substitui o STATUS.md, complementa com dados live.
 
 ## Projeto
 
