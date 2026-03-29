@@ -1,23 +1,32 @@
 # JudX Platform — Instruções para o Claude Code
 
-## OBRIGATÓRIO A CADA INÍCIO DE SESSÃO
+## QUEM É A USUÁRIA
 
-Ao iniciar qualquer conversa neste projeto, SEMPRE execute nesta ordem:
+**Damares Medina** — pesquisadora (15+ anos STF), advogada, professora IDP, Visiting Scholar Bicocca-Milano.
+- Livros: Amicus Curiae (2010), Repercussão Geral no STF (2015, Saraiva), Manual do Contencioso Constitucional (em produção 2026)
+- Papers centrais: "The Extractive Litigating State", "Fiscal Risk Constitutionalism", "The Litigating State", "Economia Política da Litigância", "Circuitos de Enforcement"
+- Teses: (1) 79% STF sem mérito (2) ~90% STJ sem mérito (3) litigiosidade é do Estado (4) virtual concentrou poder sem deliberação (5) litígio é tecnologia de governo (6) cortes alocam risco fiscal
+- **NÃO é programadora**: executar e reportar RESULTADOS. Pode mostrar código quando relevante. NUNCA pedir para rodar query — fazer direto.
+- **Estilo**: direta, monitora de perto, quer resultados. Prefere ação a explicação.
 
-1. Leia este arquivo `CLAUDE.md`
-2. Leia `STATUS.md` — contém timeline, estado dos bancos, processos, achados e próximos passos
-3. Rode `node scripts/bom-dia.mjs` — diagnóstico automático de bancos, processos em background, sites e logs. Reporte o resultado para a usuária como "estado atual".
-4. Leia `SCHEMA_REFERENCE.md` — estrutura completa de TODAS as tabelas, fontes e APIs. **NUNCA perguntar a estrutura dos dados.** Está tudo ali.
-5. Leia `PROTOCOLO_JUDX.md` (protocolo canônico, atualmente v1.1)
-6. Consulte as memórias `user_producao_academica.md` e `feedback_voz_autoral_damares.md`
-7. Carregue as skills em `skills/` e o cookbook em `skills/judx-query/queries-cookbook.md`
-8. **A cada query ou análise**: salve o resultado automaticamente em CSV na pasta `Desktop\backup_judx\resultados\` com nome descritivo e data. A usuária precisa de cópia local auditável de TUDO.
-9. **Ao final da sessão**:
-   - Atualize `STATUS.md` com o que foi feito e os próximos passos
-   - **ACUMULE** novos achados no `DIARIO_ACHADOS.md` — NUNCA sobrescrever, só adicionar ao final com data e sessão. Cada achado inclui: dado, fonte, proxy usado, limitação.
-   - Salve compilado em Excel em `Desktop\backup_judx\`
+### Voz Autoral (para textos acadêmicos)
+- Frase densa em camadas, proposição + aposto/subordinada. Contenção — elegância de precisão, não de floreio
+- Dado → interpretação → implicação institucional → ressalva ou paradoxo. NUNCA abandone o leitor diante de um número
+- 1ª do plural ("propomos", "constatamos"). Marcadores: "Nesse sentido", "Isso porque", "Contudo", "Em que pese"
+- Manual completo: `Desktop/infoprodutos/manual da voz autoral dm.docx`
 
-O `STATUS.md` é a memória viva do projeto. Sempre leia antes de começar, sempre atualize antes de terminar. O `bom-dia.mjs` é o diagnóstico rápido — não substitui o STATUS.md, complementa com dados live.
+### Rigor Empírico
+- NUNCA inferir além dos dados. Número sem fonte/período/amostra/limitação = proibido
+- Correlação ≠ causalidade. "O corpus mostra" (fato) ≠ "isso sugere" (interpretação) ≠ "isso poderia indicar" (hipótese)
+- Ao redigir papers: apresentar dados e leituras possíveis — a autora decide o argumento
+
+## INÍCIO DE SESSÃO
+
+- O **hook bom-dia** já roda `bom-dia.mjs` automaticamente em saudações. **NÃO** duplicar: não rodar o script de novo, não ler STATUS.md para o briefing.
+- Ler `SCHEMA_REFERENCE.md` e `PROTOCOLO_JUDX.md` apenas **quando precisar** (query, extração, análise) — não no início.
+- Ler memórias, skills e cookbook apenas **quando relevantes** para a tarefa pedida.
+- **A cada query/análise**: salvar resultado em CSV em `Desktop\backup_judx\resultados\` com nome descritivo e data.
+- **Ao final da sessão**: atualizar `STATUS.md`, acumular achados no `DIARIO_ACHADOS.md`, salvar compilado em Excel.
 
 ## Projeto
 
@@ -99,3 +108,8 @@ judx-platform/
 6. **Protocolo mais recente** — atualmente PROTOCOLO_JUDX.md v1.1
 7. **Conteúdo > design** — rigor das informações sempre acima do design
 8. **Queries via node + pg** — arquivo tmp em C:\projetos\icons\, rodar, deletar
+9. **A usuária NÃO é programadora** — executar e reportar resultados. Pode mostrar código quando relevante. NUNCA pedir para copiar/colar/recortar/anexar/rodar comandos.
+10. **Backup automático** — salvar cada resultado em CSV/Excel em `Desktop\backup_judx\resultados\`
+11. **NUNCA sobrescrever** — sempre acumular informação (append, não overwrite)
+12. **Autonomia incremental** — pode aplicar melhorias sem perguntar. Confirmar antes: tabelas novas, deploy, push, decisões sobre argumento acadêmico
+13. **Ao reiniciar** — salvar estado exato no STATUS.md, retomar automaticamente na próxima sessão
