@@ -75,6 +75,37 @@ function agregar(dados: any[], groupBy: 'relator' | 'assunto_principal'): Linha[
     .sort((a, b) => (b.taxa ?? -1) - (a.taxa ?? -1))
 }
 
+function formatarAssunto(slug: string): string {
+  if (!slug) return ''
+  const mapa: Record<string, string> = {
+    'tributario': 'tribut\u00e1rio', 'publico': 'p\u00fablico',
+    'processual': 'processual', 'administrativo': 'administrativo',
+    'constitucional': 'constitucional', 'previdenciario': 'previdenci\u00e1rio',
+    'acao': 'a\u00e7\u00e3o', 'execucao': 'execu\u00e7\u00e3o', 'funcao': 'fun\u00e7\u00e3o',
+    'obrigacao': 'obriga\u00e7\u00e3o', 'nao': 'n\u00e3o', 'e': 'e',
+    'de': 'de', 'do': 'do', 'da': 'da', 'das': 'das', 'dos': 'dos',
+    'em': 'em', 'com': 'com', 'por': 'por', 'para': 'para',
+    'penal': 'penal', 'civil': 'civil', 'trabalho': 'trabalho',
+    'direito': 'Direito', 'outras': 'outras', 'materia': 'mat\u00e9ria',
+    'materias': 'mat\u00e9rias', 'servidor': 'servidor', 'impostos': 'impostos',
+    'contribuicoes': 'contribui\u00e7\u00f5es', 'icms': 'ICMS', 'iss': 'ISS',
+    'ipi': 'IPI', 'ir': 'IR', 'iptu': 'IPTU', 'ipva': 'IPVA',
+    'prisao': 'pris\u00e3o', 'preventiva': 'preventiva', 'revogacao': 'revoga\u00e7\u00e3o',
+    'investigacao': 'investiga\u00e7\u00e3o', 'nulidade': 'nulidade',
+    'cerceamento': 'cerceamento', 'defesa': 'defesa',
+    'liberdade': 'liberdade', 'provisoria': 'provis\u00f3ria',
+    'aplicacao': 'aplica\u00e7\u00e3o', 'pena': 'pena', 'parte': 'parte',
+    'geral': 'geral', 'especial': 'especial', 'recurso': 'recurso',
+    'repercussao': 'repercuss\u00e3o', 'mandado': 'mandado',
+    'seguranca': 'seguran\u00e7a', 'habeas': 'habeas', 'corpus': 'corpus',
+    'regimental': 'regimental', 'agravo': 'agravo',
+  }
+  return slug
+    .split('_')
+    .map((w) => mapa[w.toLowerCase()] ?? (w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(' ')
+}
+
 const anos = Array.from({ length: 10 }, (_, i) => 2016 + i)
 
 export default function TaxaProvimento() {
@@ -102,8 +133,22 @@ export default function TaxaProvimento() {
       .then((d) => {
         setRamos([...new Set(d.map((x: any) => x.ramo_direito).filter(Boolean))].sort() as string[])
         setRelatores([...new Set(d.map((x: any) => x.relator).filter(Boolean))].sort() as string[])
+        // Auto-carregar dados ao abrir
+        consultarAuto()
       })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function consultarAuto() {
+    setLoading(true)
+    try {
+      const raw = await buscarDados({ anoIni: 2016, anoFim: 2025 })
+      setDados(agregar(raw, 'relator'))
+    } catch (e: any) {
+      setErro(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function consultar() {
     setErro('')
@@ -259,38 +304,33 @@ export default function TaxaProvimento() {
                   {aba === 'relator' ? 'Ministro' : 'Assunto'}
                   {col === 'nome' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
-                {aba === 'assunto' && <th className="py-2 px-2 text-xs">Ramo</th>}
                 <th
                   className="py-2 px-2 cursor-pointer hover:text-white"
                   onClick={() => ordenar('total')}
                 >
                   Total{col === 'total' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
-                {aba === 'relator' && (
-                  <>
-                    <th
-                      className="py-2 px-2 cursor-pointer hover:text-white"
-                      onClick={() => ordenar('provido')}
-                    >
-                      Provido
-                      {col === 'provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
-                    </th>
-                    <th
-                      className="py-2 px-2 cursor-pointer hover:text-white"
-                      onClick={() => ordenar('nao_provido')}
-                    >
-                      N&atilde;o Provido
-                      {col === 'nao_provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
-                    </th>
-                    <th
-                      className="py-2 px-2 cursor-pointer hover:text-white"
-                      onClick={() => ordenar('parcial')}
-                    >
-                      Parcial
-                      {col === 'parcial' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
-                    </th>
-                  </>
-                )}
+                <th
+                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('provido')}
+                >
+                  Provido
+                  {col === 'provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
+                <th
+                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('nao_provido')}
+                >
+                  N&atilde;o Provido
+                  {col === 'nao_provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
+                <th
+                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('parcial')}
+                >
+                  Parcial
+                  {col === 'parcial' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
                 <th
                   className="py-2 px-2 cursor-pointer hover:text-white"
                   onClick={() => ordenar('taxa')}
@@ -303,26 +343,21 @@ export default function TaxaProvimento() {
             <tbody>
               {dadosVisiveis.map((row, i) => (
                 <tr key={i} className="border-b border-gray-800 hover:bg-white/5">
-                  <td className="py-2 pr-4 font-medium">{row.nome}</td>
-                  {aba === 'assunto' && (
-                    <td className="py-2 px-2 text-gray-500 text-xs">{row.ramo}</td>
-                  )}
+                  <td className="py-2 pr-4 font-medium">
+                    {aba === 'assunto' ? formatarAssunto(row.nome) : row.nome}
+                  </td>
                   <td className="py-2 px-2 text-gray-400">
                     {row.total.toLocaleString('pt-BR')}
                   </td>
-                  {aba === 'relator' && (
-                    <>
-                      <td className="py-2 px-2 text-green-400">
-                        {row.provido.toLocaleString('pt-BR')}
-                      </td>
-                      <td className="py-2 px-2 text-red-400">
-                        {row.nao_provido.toLocaleString('pt-BR')}
-                      </td>
-                      <td className="py-2 px-2 text-yellow-400">
-                        {row.parcial.toLocaleString('pt-BR')}
-                      </td>
-                    </>
-                  )}
+                  <td className="py-2 px-2 text-green-400">
+                    {row.provido.toLocaleString('pt-BR')}
+                  </td>
+                  <td className="py-2 px-2 text-red-400">
+                    {row.nao_provido.toLocaleString('pt-BR')}
+                  </td>
+                  <td className="py-2 px-2 text-yellow-400">
+                    {row.parcial.toLocaleString('pt-BR')}
+                  </td>
                   <td className="py-2 px-2 font-bold">
                     {row.taxa !== null ? `${row.taxa}%` : '\u2014'}
                   </td>
