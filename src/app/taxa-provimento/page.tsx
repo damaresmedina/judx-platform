@@ -185,18 +185,18 @@ export default function TaxaProvimento() {
   const dadosVisiveis = paywall ? linhas.slice(0, 3) : linhas
 
   return (
-    <main className="min-h-screen bg-[#0d1b2a] text-white px-4 py-8 max-w-5xl mx-auto">
+    <main className="min-h-screen bg-[#0d1f35] text-white px-6 py-10 max-w-5xl mx-auto font-[family-name:var(--font-dm-sans)]">
       <div className="mb-8">
-        <a href="/" className="text-yellow-400 text-sm hover:underline">
+        <a href="/" className="text-[#c8922a] text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] hover:text-[#e8b44a] transition-colors">
           &larr; JudX
         </a>
-        <h1 className="text-3xl font-bold mt-2">Taxa de Provimento no STF</h1>
-        <p className="text-gray-400 mt-1">
+        <h1 className="text-4xl md:text-5xl font-black mt-3 font-[family-name:var(--font-playfair)] leading-tight tracking-tight">Taxa de Provimento no STF</h1>
+        <p className="text-white/40 mt-2 text-sm tracking-wide font-[family-name:var(--font-dm-mono)]">
           Baseado em 110.000+ decis&otilde;es colegiadas de m&eacute;rito &middot; 2016&ndash;2025
         </p>
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-gray-700">
+      <div className="flex gap-6 mb-8 border-b border-white/10">
         {(['relator', 'assunto'] as const).map((a) => (
           <button
             key={a}
@@ -204,10 +204,10 @@ export default function TaxaProvimento() {
               setAba(a)
               setDados([])
             }}
-            className={`pb-2 px-1 text-sm font-medium ${
+            className={`pb-3 px-1 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-medium ${
               aba === a
-                ? 'border-b-2 border-yellow-400 text-yellow-400'
-                : 'text-gray-400'
+                ? 'border-b-2 border-[#c8922a] text-[#c8922a]'
+                : 'text-white/35 hover:text-white/60 transition-colors'
             }`}
           >
             {a === 'relator' ? 'Por Ministro Relator' : 'Por Assunto/Tema'}
@@ -220,7 +220,7 @@ export default function TaxaProvimento() {
           <select
             value={ramoSel}
             onChange={(e) => setRamoSel(e.target.value)}
-            className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
           >
             <option value="">Todos os ramos</option>
             {ramos.map((r) => (
@@ -233,7 +233,7 @@ export default function TaxaProvimento() {
           <select
             value={relatorSel}
             onChange={(e) => setRelatorSel(e.target.value)}
-            className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
           >
             <option value="">Todos os ministros</option>
             {relatores.map((r) => (
@@ -246,7 +246,7 @@ export default function TaxaProvimento() {
         <select
           value={anoIni}
           onChange={(e) => setAnoIni(+e.target.value)}
-          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+          className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
         >
           {anos.map((a) => (
             <option key={a} value={a}>
@@ -254,11 +254,11 @@ export default function TaxaProvimento() {
             </option>
           ))}
         </select>
-        <span className="self-center text-gray-400 text-sm">at&eacute;</span>
+        <span className="self-center text-white/30 text-xs font-[family-name:var(--font-dm-mono)] tracking-widest">at&eacute;</span>
         <select
           value={anoFim}
           onChange={(e) => setAnoFim(+e.target.value)}
-          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+          className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
         >
           {anos.map((a) => (
             <option key={a} value={a}>
@@ -269,7 +269,7 @@ export default function TaxaProvimento() {
         <button
           onClick={consultar}
           disabled={loading}
-          className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-2 rounded text-sm disabled:opacity-50"
+          className="bg-[#c8922a] hover:bg-[#e8b44a] text-[#0d1f35] font-bold px-8 py-2 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-sans)] disabled:opacity-40 transition-colors"
         >
           {loading ? 'Consultando...' : 'Consultar'}
         </button>
@@ -277,8 +277,8 @@ export default function TaxaProvimento() {
 
       {loading && (
         <div className="flex flex-col items-center py-12">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-500 mb-4" />
-          <p className="text-gray-400 text-sm">
+          <div className="animate-spin h-8 w-8 border border-[#c8922a] border-t-transparent mb-4" />
+          <p className="text-white/30 text-xs tracking-widest font-[family-name:var(--font-dm-mono)]">
             Consultando 110.000+ decis&otilde;es colegiadas de m&eacute;rito...
           </p>
         </div>
@@ -287,7 +287,7 @@ export default function TaxaProvimento() {
       {erro && <p className="text-red-400 mb-4">{erro}</p>}
 
       {!loading && dados.length === 0 && !erro && (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-white/20 text-sm tracking-widest font-[family-name:var(--font-dm-mono)]">
           Selecione os filtros e clique em Consultar
         </div>
       )}
@@ -296,80 +296,80 @@ export default function TaxaProvimento() {
         <div className="relative">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-gray-400 border-b border-gray-700 text-left">
+              <tr className="text-white/30 border-b border-white/10 text-left">
                 <th
-                  className="py-2 pr-4 cursor-pointer hover:text-white"
+                  className="py-3 pr-4 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('nome')}
                 >
                   {aba === 'relator' ? 'Ministro' : 'Assunto'}
                   {col === 'nome' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
                 <th
-                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('total')}
                 >
                   Total{col === 'total' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
                 <th
-                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('provido')}
                 >
                   Provido
                   {col === 'provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
                 <th
-                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('nao_provido')}
                 >
                   N&atilde;o Provido
                   {col === 'nao_provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
                 <th
-                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('parcial')}
                 >
                   Parcial
                   {col === 'parcial' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
                 <th
-                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
                   onClick={() => ordenar('taxa')}
                 >
                   Taxa %{col === 'taxa' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
                 </th>
-                <th className="w-32">Visual</th>
+                <th className="w-32 py-3 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal text-white/30">Visual</th>
               </tr>
             </thead>
             <tbody>
               {dadosVisiveis.map((row, i) => (
-                <tr key={i} className="border-b border-gray-800 hover:bg-white/5">
-                  <td className="py-2 pr-4 font-medium">
+                <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
+                  <td className="py-3 pr-4 font-medium text-white/90 font-[family-name:var(--font-dm-sans)]">
                     {aba === 'assunto' ? formatarAssunto(row.nome) : row.nome}
                   </td>
-                  <td className="py-2 px-2 text-gray-400">
+                  <td className="py-3 px-2 text-white/35 font-[family-name:var(--font-dm-mono)] text-sm">
                     {row.total.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-2 px-2 text-green-400">
+                  <td className="py-3 px-2 text-emerald-400/70 font-[family-name:var(--font-dm-mono)] text-sm">
                     {row.provido.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-2 px-2 text-red-400">
+                  <td className="py-3 px-2 text-red-400/60 font-[family-name:var(--font-dm-mono)] text-sm">
                     {row.nao_provido.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-2 px-2 text-yellow-400">
+                  <td className="py-3 px-2 text-[#c8922a]/70 font-[family-name:var(--font-dm-mono)] text-sm">
                     {row.parcial.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-2 px-2 font-bold">
+                  <td className="py-3 px-2 font-black text-white font-[family-name:var(--font-playfair)] text-lg">
                     {row.taxa !== null ? `${row.taxa}%` : '\u2014'}
                   </td>
                   <td>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-white/8 h-[6px]">
                       <div
-                        className={`h-2 rounded-full ${
+                        className={`h-[6px] transition-all duration-700 ${
                           (row.taxa ?? 0) > 40
-                            ? 'bg-green-500'
+                            ? 'bg-emerald-400/80'
                             : (row.taxa ?? 0) > 20
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
+                            ? 'bg-[#c8922a]/80'
+                            : 'bg-red-400/60'
                         }`}
                         style={{ width: `${Math.min(row.taxa ?? 0, 100)}%` }}
                       />
@@ -381,20 +381,20 @@ export default function TaxaProvimento() {
           </table>
 
           {!paywall && (
-            <p className="text-gray-600 text-xs mt-3 text-right">
+            <p className="text-white/15 text-xs mt-4 text-right tracking-widest font-[family-name:var(--font-dm-mono)]">
               Consulta {consultas} de {LIMITE} gratuitas
             </p>
           )}
 
           {paywall && (
             <>
-              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d1b2a] to-transparent pointer-events-none" />
-              <div className="flex flex-col items-center py-10 border border-gray-700 rounded-lg mt-4">
-                <span className="text-3xl mb-3">&#128274;</span>
-                <h3 className="text-xl font-bold mb-1">
+              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d1f35] to-transparent pointer-events-none" />
+              <div className="flex flex-col items-center py-12 mt-6 border border-[#c8922a]/30 bg-white/[0.02]">
+                <div className="w-8 h-px bg-[#c8922a]/50 mb-6" />
+                <h3 className="text-3xl font-black mb-2 font-[family-name:var(--font-playfair)] italic">
                   Acesso completo &mdash; R$ 97/m&ecirc;s
                 </h3>
-                <p className="text-gray-400 text-sm mb-6 text-center max-w-sm">
+                <p className="text-white/40 text-sm mb-8 text-center max-w-sm leading-relaxed font-[family-name:var(--font-dm-sans)]">
                   Todas as combina&ccedil;&otilde;es de relator, assunto e per&iacute;odo.
                   <br />
                   Sem limite de consultas.
@@ -403,11 +403,11 @@ export default function TaxaProvimento() {
                   href={PAYMENT_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded text-sm"
+                  className="bg-[#c8922a] hover:bg-[#e8b44a] text-[#0d1f35] font-bold py-3 px-10 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-sans)] transition-colors"
                 >
                   Assinar JUDX Plus &rarr;
                 </a>
-                <p className="text-gray-600 text-xs mt-4">
+                <p className="text-white/15 text-xs mt-5 tracking-widest font-[family-name:var(--font-dm-mono)]">
                   Acesso liberado em at&eacute; 24h ap&oacute;s confirma&ccedil;&atilde;o
                 </p>
               </div>
