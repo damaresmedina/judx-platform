@@ -1,0 +1,4 @@
+[2026-03-29T16:03:11.902Z] Conectado ao banco JudX
+[2026-03-29T16:03:53.542Z] Tabela stj_datajud pronta
+[2026-03-29T16:03:53.543Z] Período: 2023-2023 (53 semanas, do mais recente ao mais antigo)
+[2026-03-29T16:05:53.718Z] FATAL: canceling statement due to statement timeout

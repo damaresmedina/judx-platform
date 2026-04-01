@@ -1,0 +1,30 @@
+(node:3340) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[06:47:15] Missing incidentes: 117348
+[TEST MODE] Will process first 1000 only
+(node:3340) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+  [06:47:37] 100/1000 — 100 fetched, 839 partes, 0 empty, 0 err — 22s (4.5/s, ETA 3m)
+  [06:47:59] 200/1000 — 200 fetched, 1440 partes, 0 empty, 0 err — 44s (4.5/s, ETA 3m)
+  [06:48:23] 300/1000 — 300 fetched, 2126 partes, 0 empty, 0 err — 68s (4.4/s, ETA 3m)
+  [06:48:44] 400/1000 — 400 fetched, 2913 partes, 0 empty, 0 err — 89s (4.5/s, ETA 2m)
+  [06:49:06] Cooling down (60s pause after 500 requests)...
+  [06:50:07] 500/1000 — 500 fetched, 3655 partes, 0 empty, 0 err — 172s (2.9/s, ETA 3m)
+  [06:50:28] 600/1000 — 600 fetched, 4324 partes, 0 empty, 0 err — 194s (3.1/s, ETA 2m)
+  [06:50:50] 700/1000 — 700 fetched, 5025 partes, 0 empty, 0 err — 215s (3.3/s, ETA 2m)
+  [06:51:10] 800/1000 — 800 fetched, 5841 partes, 0 empty, 0 err — 236s (3.4/s, ETA 1m)
+  [06:51:33] 900/1000 — 900 fetched, 6582 partes, 0 empty, 0 err — 258s (3.5/s, ETA 0m)
+  [06:51:54] Cooling down (60s pause after 1000 requests)...
+  [06:52:55] 1000/1000 — 1000 fetched, 7792 partes, 0 empty, 0 err — 340s (2.9/s, ETA 0m)
+
+=== DONE ===
+  Fetched: 1000
+  Partes inserted: 7792
+  Empty pages: 0
+  Total in table: 11398
+  Errors: 0
+
+=== By tipo ===
+  oab: 6089
+  ente_publico: 3931
+  pessoa_fisica: 780
+  pessoa_juridica: 598

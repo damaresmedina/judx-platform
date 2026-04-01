@@ -1,0 +1,7 @@
+[2026-03-29T15:59:58.005Z] Conectado ao banco JudX
+[2026-03-29T16:00:09.876Z] Tabela stj_datajud pronta
+[2026-03-29T16:00:09.877Z] Período: 2018-2018 (53 semanas, do mais recente ao mais antigo)
+[2026-03-29T16:01:23.755Z] Resume: 902545 processos já no banco, data mais antiga: Sun Dec 18 2016 00:00:00 GMT-0200 (Horário de Verão de Brasília)
+[2026-03-29T16:01:23.755Z] 
+=== EXTRAÇÃO COMPLETA ===
+[2026-03-29T16:03:23.814Z] FATAL: canceling statement due to statement timeout

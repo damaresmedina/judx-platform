@@ -1,0 +1,206 @@
+TEORIA DOS OBJETOS ANCORADOS
+
+
+1. A Presidência não é só filtro de inadmissão — ela é o nó de passagem de tudo.
+Todo processo que entra no STF passa pela Presidência. A distribuição ao relator é um ato da Presidência. Isso significa que a Presidência tem dois papéis ontologicamente distintos:
+
+PAPEL 1 — DISTRIBUIÇÃO (ato administrativo-jurisdicional)
+  Todo processo passa aqui
+  A Presidência distribui ao relator
+  Este ato ancora o processo institucionalmente
+  Não gera decisão de mérito — gera ancoragem
+
+PAPEL 2 — FILTRO DE INADMISSÃO (ato decisório)
+  Só o ARE (e antes o AI) passa por aqui como decisão
+  A Presidência DECIDE negar ou admitir
+  Se negar → NÃO-DECISÃO primária, string curta
+  Se admitir → processo se transforma, string continua
+
+2. O RE chega "inteiro" — o ARE chega "pela metade".
+RE direto:
+  Tribunal origem já reconheceu matéria constitucional controvertida
+  O RE traz o mérito constitucional dentro dele
+  Presidência distribui → relator recebe processo completo
+  String começa com força jurídica plena
+
+
+
+PLENÁRIO VIRTUAL:
+  Formalmente colegiado (11 ministros votam)
+  Materialmente monocrático (relator decide, demais seguem)
+  Assíncrono (sem diálogo, sem deliberação)
+  Sem sustentação oral (na maioria dos casos)
+  Controlado pelo fluxo — não pela pauta do presidente
+  
+  → DECISÃO FORMALMENTE COLEGIADA
+    MATERIALMENTE MONOCRÁTICA
+
+PLENÁRIO PRESENCIAL:
+  Formalmente colegiado
+  Materialmente colegiado (debate real, tempo real)
+  Com sustentação oral
+  Controlado pela pauta do presidente
+  
+  → DECISÃO COLEGIADA DE VERDADE
+  → PODER DO PRESIDENTE SOBRE O QUE É DELIBERADO
+
+QUEM CONTROLA A PAUTA PRESENCIAL:
+
+  Plenário Presencial    → Presidente do STF
+  1ª Turma Presencial    → Presidente da 1ª Turma
+  2ª Turma Presencial    → Presidente da 2ª Turma
+
+QUEM PODE ROMPER O FLUXO VIRTUAL:
+
+  Qualquer ministro      → destaque (puxa para presencial)
+  Mas só o presidente do órgão inclui na pauta presencial
+
+CONSEQUÊNCIA:
+  O destaque é necessário mas não suficiente
+  Ministro destaca → processo sai do PV
+  Presidente do órgão decide se e quando entra no PP
+  O destaque sem inclusão em pauta = processo em limbo
+
+RG aparece nos dados como andamento (reconhecida/negada)
+Mas só para a fração mínima que foi formalmente processada
+
+Os demais casos (maioria):
+  RE julgado sem RG formal registrada nos andamentos
+  Três hipóteses (campo de estudo):
+    H1: RG presumida por tema já reconhecido (paradigma)
+    H2: RG reconhecida em sessão mas não registrada como andamento
+    H3: STF julgou sem enfrentar a preliminar (irregularidade)
+
+A distinção entre H1, H2 e H3 só aparece cruzando:
+  - andamentos de RG
+  - temas de RG (stf_temas se existir)
+  - data do julgamento vs data do paradigma
+
+ARE:
+  O RE ficou na origem — só a questão da admissibilidade subiu
+  A "metade que subiu" é a discussão sobre se o RE merecia subir
+  Presidência decide: abre a porta ou não
+  Se abre → o RE entra, nó se transforma, string continua com força plena
+  Se não abre → string termina, RE continua represado na origem para sempre
+3. A repercussão geral como nó obrigatório mas frequentemente pulado.
+Depois do filtro de admissibilidade:
+  RE (direto ou convertido de ARE) deveria passar por:
+    → Plenário Virtual: preliminar de repercussão geral
+         RG reconhecida → processo prossegue
+         RG negada → processo extinto
+    → Mas a empiria mostra: muitos REs são julgados SEM que
+      a preliminar seja formalmente analisada
+      Isso é um campo de estudo: o STF julga sem declarar RG?
+      Ou a RG é presumida? Ou é julgado antes da preliminar?
+4. O modelo de nós completo — antes de qualquer código:
+NÓ = processo (identificado pelo incidente, imutável)
+STRING = sequência ordenada de eventos no nó
+EVENTO = qualquer coisa que acontece na string:
+  - distribuição (âncora institucional)
+  - decisão (ato jurisdicional)
+  - mudança de classe (ARE→RE)
+  - mudança de relator
+  - mudança de órgão
+  - sobrestamento por RG
+  - reconhecimento/negativa de RG
+  - julgamento de mérito
+  - baixa
+
+ARESTA = vínculo entre nós (pai → filho)
+  AgInt é nó filho do ARE
+  EDcl é nó filho do acórdão que decidiu o AgInt
+  O AgInt não é evento na string do ARE —
+  é um NÓ NOVO com seu próprio incidente,
+  ancorado no ARE como pai
+5. A arquitetura completa dos fluxos:
+ENTRADA NO STF (todos passam pela Presidência — distribuição)
+│
+├── ORIGINÁRIAS (ADI, ADPF, HC, MS, ACO, AP, Inq...)
+│     Presidência distribui → relator → órgão competente
+│     String: distribuição → deliberações → acórdão → EDcl possíveis
+│
+├── RE DIRETO (tribunal origem admitiu)
+│     Presidência distribui → relator → Turma ou Plenário
+│     Evento obrigatório antes do mérito: RG (Plenário Virtual)
+│     String: distribuição → RG → mérito → EDcl possíveis
+│     LACUNA EMPÍRICA: REs julgados sem RG formal — registrar e estudar
+│
+└── ARE (tribunal origem inadmitiu o RE)
+      Presidência: distribui E decide (dois papéis simultâneos)
+      │
+      ├── NEGADO (≈85%) → NÃO-DECISÃO PRIMÁRIA
+      │     String curta: distribuição → decisão Presidência → baixa
+      │     AgInt possível → NÓ FILHO, string dele:
+      │           distribuição → decisão Turma → (EDcl possível → NÓ FILHO)
+      │
+      └── ADMITIDO (≈15%) → nó se transforma (ARE→RE)
+            String continua com RG obrigatória (mas empiricamente pulável)
+            └── RG negada → extinção
+            └── RG reconhecida → mérito
+                  └── acórdão → EDcl possível → NÓ FILHO
+
+
+
+O modelo de nós completo — versão final antes do SQL:
+OBJETOS:
+
+NÓ (processo_no)
+  identidade: incidente (imutável)
+  atributos correntes: classe_atual, relator_atual, orgao_atual
+  atributos de nascimento: classe_origem, data_autuacao
+  fluxo_entrada: RE_DIRETO | ARE_NEGADO | ARE_ADMITIDO | ORIGINARIA
+  flag_classe_alterada: bool (ARE virou RE)
+  flag_rg_formal: bool (RG foi formalmente registrada)
+  flag_rg_ausente: bool (RE julgado sem RG formal — campo de estudo)
+
+STRING (processo_string_evento)
+  identidade: incidente + seq
+  tipo_evento:
+    DISTRIBUICAO          → ancora institucionalmente (todos os nós)
+    DECISAO_ADMISSIBILIDADE → Presidência sobre ARE (NÃO-DECISÃO ou abertura)
+    MUDANCA_CLASSE        → ARE→RE (admissão)
+    MUDANCA_RELATOR       → redistribuição
+    MUDANCA_ORGAO         → Turma→Plenário, etc.
+    DECISAO_RG            → reconhece ou nega RG (Plenário Virtual)
+    AUSENCIA_RG           → RE julgado sem RG formal (campo de estudo)
+    DECISAO_MERITO        → julgamento de mérito
+    DESTAQUE              → ministro puxa do PV para presencial
+    INCLUSAO_PAUTA_PP     → presidente inclui na pauta presencial
+    DECISAO_COLEGIADA_PV  → acórdão Plenário Virtual
+    DECISAO_COLEGIADA_PP  → acórdão Plenário Presencial
+    DECISAO_TURMA_PV      → acórdão Turma Virtual
+    DECISAO_TURMA_PP      → acórdão Turma Presencial
+    BAIXA                 → processo baixado
+
+ARESTA (processo_no.incidente_pai)
+  NÓ FILHO nascido da string do pai:
+    AgInt → filho de ARE negado
+    EDcl  → filho de qualquer acórdão
+    Rcl   → filho de decisão descumprida
+
+PODERES DA PRESIDÊNCIA (poder_presidencia_evento)
+  DISTRIBUICAO           → ancora todos os processos
+  FILTRO_ARE             → decide admissão ARE
+  CONTROLE_PAUTA_PP      → inclui ou não no PP
+  (destaque é poder de qualquer ministro — não da Presidência)
+
+AMBIENTE DECISÓRIO (dimensão de cada evento)
+  Virtual  → deliberação assíncrona, materialmente monocrática
+  Presencial → deliberação síncrona, genuinamente colegiada
+  A distinção não é logística — é sobre natureza da colegialidade
+
+O modelo ontológico completo — o que cada tabela representa:
+tribunal                  → STF, STJ, TST, TSE, STM
+orgao_julgador            → PR, VP, 1T, 2T, PL (STF) + CE, 1S-3S, 1T-6T (STJ)
+composicao_temporal       → quem ocupava qual cargo quando
+classe_processual         → cadeia recursal declarada + origem_externa
+tipo_vinculo_recursal     → semântica de cada aresta do grafo
+taxonomia_nao_decisao     → graus 1, 2, 3 da não-decisão
+poder_presidencia         → 3 poderes + destaque como objetos
+processo_no               → NÓ = incidente imutável + fluxo_entrada
+processo_string_evento    → STRING = eventos ordenados com natureza_colegialidade
+
+
+
+
+

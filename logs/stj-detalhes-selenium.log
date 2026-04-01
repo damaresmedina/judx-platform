@@ -1,0 +1,46 @@
+[2026-03-29T00:20:25.748533] Conectado ao banco JudX
+[2026-03-29T00:20:26.095850] Total: 6098 processos
+[2026-03-29T00:20:26.120312] Resume: 0 já feitos, 6098 restantes
+[2026-03-29T00:20:26.121351] Limitado a 3
+[2026-03-29T00:20:26.121855] Iniciando Chrome headless...
+[2026-03-29T00:20:28.953682] Chrome OK
+[2026-03-29T00:20:34.397157] 
+=== FASE 1 COMPLETA ===
+[2026-03-29T00:20:34.398396] Sucesso: 3 | Erros: 0
+[2026-03-29T00:20:34.432118] CSV final: C:\Users\medin\Desktop\backup_judx\resultados\stj_detalhes_2026-03-29.csv (10 rows)
+[2026-03-29T00:20:34.460564] stj_processo_detalhes: 10 registros no banco
+C:\Users\medin\projetos\judx-platform\scripts\fetch-stj-detalhes-selenium.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  line = f"[{datetime.utcnow().isoformat()}] {msg}"
+C:\Users\medin\projetos\judx-platform\scripts\fetch-stj-detalhes-selenium.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  line = f"[{datetime.utcnow().isoformat()}] {msg}"
+[2026-03-29T00:21:27.987054] Chrome OK
+[2026-03-29T00:21:54.250383] [0.2%] 10/6098 | Agravo em Recurso Especial 91997929820088260000 | sem detalhes | ok: 10 erros: 0
+[2026-03-29T00:22:16.746500] [0.3%] 20/6098 | Recurso Especial 91711712820078260000 | sem detalhes | ok: 20 erros: 0
+[2026-03-29T00:22:40.336051] [0.5%] 30/6098 | Recurso Especial 91355471520078260000 | sem detalhes | ok: 30 erros: 0
+[2026-03-29T00:23:06.561306] [0.7%] 40/6098 | Recurso Especial 90932298020088260000 | sem detalhes | ok: 40 erros: 0
+[2026-03-29T00:23:30.740409] [0.8%] 50/6098 | Agravo em Recurso Especial 90719374420058260000 | sem detalhes | ok: 50 erros: 0
+[2026-03-29T00:23:54.219424] [1.0%] 60/6098 | Agravo em Recurso Especial 90495153620098260000 | sem detalhes | ok: 60 erros: 0
+[2026-03-29T00:23:58.709348] ERRO Recurso Especial 90349102720058260000: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:00.212102] ERRO Agravo em Recurso Especial 90344291120198210001: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:01.714771] ERRO Recurso Especial 90263514220098260000: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:03.217532] ERRO Agravo em Recurso Especial 90256118920068260000: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:04.720610] ERRO Recurso Especial 90176101320098260000: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:06.223747] ERRO Agravo em Recurso Especial 90144015620188210001: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:07.727090] ERRO Agravo em Recurso Especial 90027632620188210001: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+
+[2026-03-29T00:24:09.233206] ERRO Agravo em Recurso Especial 90027502720188210001: Message: tab crashed
+  (Session info: chrome=146.0.7680.165)
+

@@ -1,0 +1,359 @@
+[2026-03-28T21:43:06.410Z] Conectado ao banco JudX
+[2026-03-28T21:43:06.723Z] Total processos: 6098 (2215 sementes + 3902 contramostra)
+[2026-03-28T21:43:06.723Z] Limitado a 3 processos
+[2026-03-28T21:43:20.613Z] [33.3%] 1/3 | REsp 1340236 | 0 partes | 0 fases | 0 decisões | total: 0p 0f 0d | erros: 0
+[2026-03-28T21:43:52.121Z] 
+=== FINALIZADO ===
+[2026-03-28T21:43:52.122Z] Sucesso: 3 | Erros: 0 | Partes: 0 | Fases: 0 | Decisões: 0
+[2026-03-28T21:43:52.203Z] stj_partes: 0 | stj_fases: 0 | stj_decisoes_detalhe: 0
+[2026-03-28T21:45:57.457Z] Conectado ao banco JudX
+[2026-03-28T21:45:57.485Z] FATAL: for SELECT DISTINCT, ORDER BY expressions must appear in select list
+[2026-03-28T21:46:06.447Z] Conectado ao banco JudX
+[2026-03-28T21:46:06.557Z] FATAL: value "09243382520138130000" is out of range for type bigint
+[2026-03-28T21:46:26.347Z] Conectado ao banco JudX
+[2026-03-28T21:46:26.506Z] Total processos: 6098 (3902 contramostra primeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-28T21:46:26.507Z] Limitado a 5 processos
+[2026-03-28T21:46:41.255Z] [20.0%] 1/5 | REsp 1364679 | 27 partes | 97 fases | 1 decisões | total: 27p 97f 1d | erros: 0
+[2026-03-28T21:47:46.541Z] 
+=== FINALIZADO ===
+[2026-03-28T21:47:46.542Z] Sucesso: 5 | Erros: 0 | Partes: 87 | Fases: 285 | Decisões: 13
+[2026-03-28T21:47:46.617Z] stj_partes: 87 | stj_fases: 285 | stj_decisoes_detalhe: 13
+[2026-03-28T21:47:54.234Z] Conectado ao banco JudX
+[2026-03-28T21:47:54.399Z] Total processos: 6098 (3902 contramostra primeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-28T21:47:54.426Z] Resume: 0 já extraídos, 6098 restantes
+[2026-03-28T21:48:08.306Z] [0.0%] 1/6098 | REsp 1364679 | 27 partes | 97 fases | 1 decisões | total: 27p 97f 1d | erros: 0
+[2026-03-28T21:50:41.797Z] [0.2%] 10/6098 | AREsp 195873 | 15 partes | 10 fases | 1 decisões | total: 147p 501f 23d | erros: 0
+[2026-03-28T21:53:25.051Z] [0.3%] 20/6098 | REsp 1067878 | 15 partes | 94 fases | 5 decisões | total: 298p 819f 37d | erros: 0
+[2026-03-28T21:56:17.812Z] [0.5%] 30/6098 | REsp 1138394 | 18 partes | 33 fases | 2 decisões | total: 506p 1486f 73d | erros: 0
+[2026-03-28T21:57:11.743Z] Conectado ao banco JudX
+[2026-03-28T21:57:12.224Z] Total processos: 6098 (3902 contramostra primeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-28T21:57:12.250Z] Resume: 2 já extraídos, 6096 restantes
+[2026-03-28T21:57:26.843Z] [0.0%] 1/6096 | REsp 1364679 | 27 partes | 97 fases | 1 decisões | total: 27p 97f 1d | erros: 0
+[2026-03-28T22:00:02.317Z] [0.2%] 10/6096 | AREsp 195873 | 15 partes | 10 fases | 1 decisões | total: 153p 534f 20d | erros: 0
+[2026-03-28T22:02:57.618Z] [0.3%] 20/6096 | REsp 1325743 | 29 partes | 96 fases | 3 decisões | total: 296p 921f 35d | erros: 0
+[2026-03-28T22:06:07.180Z] ERRO Recurso Especial 91355471520078260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:07:22.475Z] ERRO Agravo em Recurso Especial 91306697620098260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:08:34.904Z] ERRO Recurso Especial 91301224120068260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:09:44.792Z] ERRO Recurso Especial 91237799720048260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:12:35.699Z] [0.7%] 40/6096 | REsp 1380854 | 17 partes | 29 fases | 1 decisões | total: 652p 1827f 85d | erros: 4
+[2026-03-28T22:16:14.297Z] ERRO Recurso Especial 90718530420098260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:17:29.549Z] ERRO Agravo em Recurso Especial 90707512020048260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:18:49.069Z] ERRO Agravo em Recurso Especial 90706938020058260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:21:13.839Z] [1.0%] 60/6096 | REsp 1440183 | 20 partes | 63 fases | 2 decisões | total: 862p 2420f 112d | erros: 7
+[2026-03-28T22:23:02.195Z] ERRO Agravo em Recurso Especial 90256118920068260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:24:11.497Z] ERRO Recurso Especial 90176101320098260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:25:21.684Z] ERRO Agravo em Recurso Especial 90144015620188210001: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:26:34.229Z] ERRO Agravo em Recurso Especial 90027632620188210001: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:27:42.141Z] ERRO Agravo em Recurso Especial 90027502720188210001: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:28:54.868Z] ERRO Agravo em Recurso Especial 90021164320198230000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:30:07.663Z] ERRO Agravo em Recurso Especial 90017564520188230000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:31:16.574Z] ERRO Agravo em Recurso Especial 90004617419998260090: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:34:11.577Z] [1.3%] 80/6096 | AREsp 816954 | 18 partes | 22 fases | 1 decisões | total: 1071p 3039f 140d | erros: 15
+[2026-03-28T22:37:04.256Z] [1.5%] 90/6096 | AREsp 1424976 | 16 partes | 17 fases | 2 decisões | total: 1251p 3299f 155d | erros: 15
+[2026-03-28T22:39:56.745Z] [1.6%] 100/6096 | AREsp 646193 | 16 partes | 31 fases | 1 decisões | total: 1429p 3840f 174d | erros: 15
+[2026-03-28T22:42:49.645Z] [1.8%] 110/6096 | AREsp 1821100 | 15 partes | 10 fases | 1 decisões | total: 1590p 4086f 186d | erros: 15
+[2026-03-28T22:45:46.700Z] [2.0%] 120/6096 | AREsp 1647413 | 18 partes | 32 fases | 2 decisões | total: 1757p 4312f 200d | erros: 15
+[2026-03-28T22:48:37.895Z] [2.1%] 130/6096 | REsp 1374368 | 14 partes | 63 fases | 1 decisões | total: 1927p 4564f 215d | erros: 15
+[2026-03-28T22:49:47.165Z] ERRO Agravo em Recurso Especial 51096788320184039999: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:51:05.069Z] ERRO Agravo em Recurso Especial 50804158220144047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:52:24.550Z] ERRO Recurso Especial 50728101220194047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:53:39.924Z] ERRO Recurso Especial 50717756620098130024: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:55:28.164Z] [2.3%] 140/6096 | AREsp 1426511 | 16 partes | 13 fases | 1 decisões | total: 1943p 4577f 216d | erros: 19
+[2026-03-28T22:58:04.729Z] ERRO Agravo em Recurso Especial 50423219320174049999: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T22:59:17.890Z] ERRO Agravo em Recurso Especial 50371235120174047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:00:28.168Z] ERRO Agravo em Recurso Especial 50359920820124047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:01:38.279Z] ERRO Recurso Especial 50349566520244040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:02:36.242Z] [2.5%] 150/6096 | AREsp 1425353 | 14 partes | 12 fases | 1 decisões | total: 2007p 4747f 227d | erros: 23
+[2026-03-28T23:04:37.246Z] ERRO Agravo em Recurso Especial 50249347620104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:05:47.979Z] ERRO Agravo em Recurso Especial 50246181820134040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:06:59.753Z] ERRO Agravo em Recurso Especial 50234839220184040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:08:08.478Z] ERRO Agravo em Recurso Especial 50232274820114047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:09:21.042Z] ERRO Agravo em Recurso Especial 50232188620114047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:10:33.961Z] ERRO Agravo em Recurso Especial 50230291520184040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:11:41.805Z] ERRO Agravo em Recurso Especial 50226349620134040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:12:53.965Z] ERRO Agravo em Recurso Especial 50189909820124047108: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:14:06.790Z] ERRO Recurso Especial 50189519620104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:15:15.603Z] ERRO Recurso Especial 50179426520114047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:16:27.250Z] ERRO Agravo em Recurso Especial 50171396120194040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:17:40.164Z] ERRO Recurso Especial 50162238220104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:18:49.393Z] ERRO Recurso Especial 50157622220104047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:19:59.722Z] ERRO Agravo em Recurso Especial 50157257820134047003: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:21:12.717Z] ERRO Agravo em Recurso Especial 50147355620144047002: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:22:21.560Z] ERRO Recurso Especial 50144543920104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:23:32.537Z] ERRO Agravo em Recurso Especial 50140587120104047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:24:45.059Z] ERRO Agravo em Recurso Especial 50140357120134040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:25:54.340Z] ERRO Agravo em Recurso Especial 50133777620184036183: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:27:06.455Z] ERRO Agravo em Recurso Especial 50133312620174047208: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:28:19.227Z] ERRO Agravo em Recurso Especial 50127288820194047108: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:29:28.066Z] ERRO Recurso Especial 50126807120104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:30:38.995Z] ERRO Agravo em Recurso Especial 50122423820124047112: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:31:51.246Z] ERRO Agravo em Recurso Especial 50121141220198217000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:33:20.732Z] [3.0%] 180/6096 | REsp 1317201 | 19 partes | 26 fases | 1 decisões | total: 2087p 4924f 235d | erros: 47
+[2026-03-28T23:36:15.062Z] [3.1%] 190/6096 | Recurso Especial 50097320420204047102 | 0 partes | 0 fases | 0 decisões | total: 2269p 5242f 245d | erros: 47
+[2026-03-28T23:38:51.004Z] ERRO Agravo em Recurso Especial 50085468420134047200: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:39:59.381Z] ERRO Agravo em Recurso Especial 50083493520124040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:41:27.761Z] ERRO Agravo em Recurso Especial 50074284220134040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:42:39.819Z] ERRO Recurso Especial 50074051020114047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:43:48.290Z] ERRO Agravo em Recurso Especial 50071296620174047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:44:59.167Z] ERRO Agravo em Recurso Especial 50069594520134047000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:46:11.898Z] ERRO Agravo em Recurso Especial 50068591220124047102: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:47:20.072Z] ERRO Recurso Especial 50068257720114047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:48:30.590Z] ERRO Agravo em Recurso Especial 50064929020214020000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:49:43.365Z] ERRO Agravo em Recurso Especial 50063218720184039999: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:50:52.901Z] ERRO Agravo em Recurso Especial 50061410620128270000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:51:27.999Z] ERRO Recurso Especial 50060372320114040000: fetch failed
+[2026-03-28T23:51:30.024Z] ERRO Agravo em Recurso Especial 50058656920198210008: fetch failed
+[2026-03-28T23:52:22.546Z] Conectado ao banco JudX
+[2026-03-28T23:52:22.756Z] Total processos: 6098 (3902 contramostra primeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-28T23:52:22.787Z] Resume: 15 já extraídos, 6083 restantes
+rimeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-28T23:52:22.787Z] Resume: 15 já extraídos, 6083 restantes
+[2026-03-28T23:52:42.511Z] ERRO Agravo em Recurso Especial 50057226920104047100: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:53:55.085Z] ERRO Agravo em Recurso Especial 50054380820174047200: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:55:03.682Z] ERRO Recurso Especial 50051967120114047002: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:56:15.679Z] ERRO Agravo em Recurso Especial 50051772120144047015: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-28T23:58:31.677Z] [3.6%] 220/6096 | REsp 1305738 | 18 partes | 95 fases | 2 decisões | total: 2461p 5792f 268d | erros: 64
+[2026-03-29T00:01:16.969Z] [3.8%] 230/6096 | AREsp 1423878 | 18 partes | 12 fases | 1 decisões | total: 2623p 6108f 284d | erros: 64
+[2026-03-29T00:03:40.844Z] ERRO Agravo em Recurso Especial 50027136920154047118: fetch failed
+[2026-03-29T00:03:42.855Z] ERRO Agravo em Recurso Especial 50026592420104047104: fetch failed
+[2026-03-29T00:04:35.538Z] Conectado ao banco JudX
+[2026-03-29T00:04:35.942Z] Total processos: 6098 (3902 contramostra primeiro, 2196 sementes depois) — mais recente ao mais antigo
+[2026-03-29T00:04:35.982Z] Resume: 15 já extraídos, 6083 restantes
+[2026-03-29T00:04:51.922Z] [0.0%] 1/6083 | REsp 1364679 | 16 partes | 97 fases | 1 decisões | total: 16p 97f 1d | erros: 0
+[2026-03-29T00:07:22.445Z] [0.2%] 10/6083 | AREsp 195873 | 4 partes | 10 fases | 1 decisões | total: 59p 599f 24d | erros: 0
+[2026-03-29T00:08:35.186Z] ERRO Recurso Especial 91908796420078260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+/6083 | AREsp 195873 | 4 partes | 10 fases | 1 decisões | total: 59p 599f 24d | erros: 0
+[2026-03-29T00:08:35.186Z] ERRO Recurso Especial 91908796420078260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:08:39.794Z] ERRO Agravo em Recurso Especial 50017634720114047200: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:09:48.169Z] ERRO Agravo em Recurso Especial 50016952020134047203: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:10:59.852Z] ERRO Recurso Especial 50016784920204047102: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:12:12.048Z] ERRO Agravo em Recurso Especial 50016749320124047101: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:12:47.143Z] ERRO Recurso Especial 50015904120124047215: fetch failed
+[2026-03-29T00:12:49.169Z] ERRO Recurso Especial 50014411820114047203: fetch failed
+[2026-03-29T00:13:59.314Z] ERRO Recurso Especial 50013557820104047107: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:15:10.156Z] ERRO Agravo em Recurso Especial 50012329020124040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:16:23.382Z] ERRO Recurso Especial 50010893820114040000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:17:31.469Z] ERRO Agravo em Recurso Especial 50010734920104047201: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:19:21.204Z] [4.4%] 270/6096 | REsp 1331490 | 14 partes | 96 fases | 3 decisões | total: 3028p 7255f 337d | erros: 76
+[2026-03-29T00:20:29.936Z] ERRO Recurso Especial 50009330920194047101: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:21:41.118Z] ERRO Recurso Especial 50009125120114047121: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:22:54.142Z] ERRO Recurso Especial 50008936320154047005: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:24:02.899Z] ERRO Agravo em Recurso Especial 50008665020104047201: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:25:14.871Z] ERRO Agravo em Recurso Especial 50008499520194030000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:26:27.795Z] ERRO Agravo em Recurso Especial 50007888920114047211: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:27:36.799Z] ERRO Recurso Especial 50006582020114047205: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:29:06.535Z] [4.6%] 280/6096 | AREsp 2228048 | 16 partes | 96 fases | 5 decisões | total: 3081p 7541f 350d | erros: 83
+[2026-03-29T00:30:18.969Z] ERRO Agravo em Recurso Especial 50003916720104047210: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:31:28.190Z] ERRO Agravo em Recurso Especial 50002807020114047203: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:32:38.945Z] ERRO Agravo em Recurso Especial 50002593420104047202: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:33:51.082Z] ERRO Recurso Especial 50002282620104047004: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:35:49.862Z] [4.8%] 290/6096 | REsp 1380181 | 15 partes | 57 fases | 3 decisões | total: 3158p 7704f 357d | erros: 87
+[2026-03-29T00:38:56.622Z] ERRO Agravo em Recurso Especial 40239552220188240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:40:05.951Z] ERRO Agravo em Recurso Especial 40227210520188240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:41:16.572Z] ERRO Agravo em Recurso Especial 40172218920178240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:42:25.004Z] ERRO Agravo em Recurso Especial 40119442420198240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:43:35.003Z] ERRO Agravo em Recurso Especial 40119000520198240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:45:27.220Z] ERRO Agravo em Recurso Especial 40115545420198240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:46:38.336Z] ERRO Agravo em Recurso Especial 40091742920178240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:47:50.851Z] ERRO Agravo em Recurso Especial 40082103620178240000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:48:59.125Z] ERRO Agravo em Recurso Especial 40065420520138120000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:49:31.780Z] [5.1%] 310/6096 | AREsp 1425775 | 21 partes | 13 fases | 1 decisões | total: 3360p 8160f 381d | erros: 96
+[2026-03-29T00:52:37.098Z] ERRO AREsp 3068581: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T00:53:09.784Z] [5.2%] 320/6096 | AREsp 3050201 | 14 partes | 31 fases | 2 decisões | total: 3503p 8455f 399d | erros: 97
+[2026-03-29T00:55:54.303Z] [5.4%] 330/6096 | AREsp 1046221 | 14 partes | 11 fases | 1 decisões | total: 3652p 8784f 417d | erros: 97
+[2026-03-29T00:58:43.274Z] [5.6%] 340/6096 | AREsp 2928355 | 17 partes | 41 fases | 3 decisões | total: 3804p 9155f 440d | erros: 97
+[2026-03-29T01:01:35.351Z] [5.7%] 350/6096 | AREsp 2876866 | 14 partes | 35 fases | 2 decisões | total: 3954p 9566f 464d | erros: 97
+[2026-03-29T01:04:28.532Z] [5.9%] 360/6096 | AREsp 2857907 | 15 partes | 33 fases | 2 decisões | total: 4108p 9939f 488d | erros: 97
+[2026-03-29T01:05:39.419Z] ERRO AREsp 2851677: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:06:47.897Z] ERRO AREsp 2851084: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:07:56.130Z] ERRO AREsp 2850190: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:09:08.864Z] ERRO AREsp 2846824: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:10:16.974Z] ERRO AREsp 2846538: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:11:39.881Z] [6.1%] 370/6096 | AREsp 2834423 | 14 partes | 32 fases | 2 decisões | total: 4182p 10123f 500d | erros: 102
+[2026-03-29T01:13:08.436Z] ERRO AREsp 2834385: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:15:18.879Z] [6.2%] 380/6096 | AREsp 2812019 | 16 partes | 44 fases | 3 decisões | total: 4318p 10488f 520d | erros: 103
+[2026-03-29T01:18:01.729Z] [6.4%] 390/6096 | AREsp 2807942 | 18 partes | 22 fases | 2 decisões | total: 4474p 10723f 538d | erros: 103
+[2026-03-29T01:20:58.945Z] [6.6%] 400/6096 | AREsp 2805378 | 15 partes | 40 fases | 2 decisões | total: 4631p 11092f 559d | erros: 103
+[2026-03-29T01:23:33.556Z] ERRO AREsp 2802469: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:24:42.596Z] ERRO AREsp 2802222: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:25:53.927Z] ERRO AREsp 2801989: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:27:06.399Z] ERRO AREsp 2801784: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:27:23.033Z] [6.7%] 410/6096 | AREsp 2801714 | 16 partes | 20 fases | 2 decisões | total: 4723p 11292f 571d | erros: 107
+[2026-03-29T01:30:26.014Z] ERRO AREsp 2800219: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:31:37.531Z] ERRO AREsp 2800043: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:32:46.331Z] ERRO AREsp 2799853: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:33:58.684Z] ERRO AREsp 2799530: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:36:27.187Z] [7.1%] 430/6096 | AREsp 2797796 | 17 partes | 49 fases | 2 decisões | total: 4979p 11794f 604d | erros: 111
+[2026-03-29T01:39:00.853Z] ERRO AREsp 2796437: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:40:09.506Z] ERRO AREsp 2796203: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:41:22.922Z] ERRO AREsp 2796040: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:42:33.843Z] ERRO AREsp 2795857: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:43:43.508Z] ERRO AREsp 2795781: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:46:26.426Z] [7.4%] 450/6096 | AREsp 2794215 | 15 partes | 21 fases | 2 decisões | total: 5210p 12219f 633d | erros: 116
+[2026-03-29T01:49:31.011Z] [7.5%] 460/6096 | AREsp 2792558 | 15 partes | 20 fases | 2 decisões | total: 5367p 12472f 652d | erros: 116
+[2026-03-29T01:51:27.885Z] ERRO AREsp 2792201: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T01:53:07.621Z] [7.7%] 470/6096 | AREsp 2789085 | 17 partes | 21 fases | 2 decisões | total: 5508p 12799f 670d | erros: 117
+[2026-03-29T01:55:53.230Z] [7.9%] 480/6096 | AREsp 2787524 | 18 partes | 56 fases | 3 decisões | total: 5676p 13206f 693d | erros: 117
+[2026-03-29T01:58:44.085Z] [8.0%] 490/6096 | AREsp 2783881 | 15 partes | 53 fases | 2 decisões | total: 5835p 13590f 714d | erros: 117
+[2026-03-29T02:01:26.667Z] [8.2%] 500/6096 | AREsp 2782150 | 16 partes | 20 fases | 2 decisões | total: 5996p 13965f 736d | erros: 117
+[2026-03-29T02:01:26.667Z] Gerando backup CSV intermediário (500 processos)...
+[2026-03-29T02:01:27.028Z] CSV backup: C:\Users\medin\Desktop\backup_judx\resultados\stj_partes_2026-03-29.csv (4624 rows)
+[2026-03-29T02:01:27.844Z] CSV backup: C:\Users\medin\Desktop\backup_judx\resultados\stj_fases_2026-03-29.csv (16335 rows)
+[2026-03-29T02:01:27.925Z] CSV backup: C:\Users\medin\Desktop\backup_judx\resultados\stj_decisoes_detalhe_2026-03-29.csv (846 rows)
+[2026-03-29T02:03:46.616Z] ERRO AREsp 2781821: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T02:05:10.026Z] [8.4%] 510/6096 | AREsp 2780817 | 15 partes | 20 fases | 2 decisões | total: 6137p 14198f 753d | erros: 118
+[2026-03-29T02:07:56.508Z] [8.5%] 520/6096 | AREsp 2778290 | 19 partes | 44 fases | 2 decisões | total: 6297p 14570f 774d | erros: 118
+[2026-03-29T02:10:42.318Z] [8.7%] 530/6096 | AREsp 2774571 | 16 partes | 20 fases | 2 decisões | total: 6466p 14939f 797d | erros: 118
+[2026-03-29T02:13:30.306Z] [8.9%] 540/6096 | AREsp 2772023 | 14 partes | 48 fases | 2 decisões | total: 6614p 15361f 817d | erros: 118
+[2026-03-29T02:16:16.622Z] [9.0%] 550/6096 | AREsp 2770470 | 15 partes | 22 fases | 2 decisões | total: 6778p 15703f 837d | erros: 118
+[2026-03-29T02:19:03.413Z] [9.2%] 560/6096 | AREsp 2768633 | 17 partes | 41 fases | 2 decisões | total: 6946p 16159f 858d | erros: 118
+[2026-03-29T02:22:03.507Z] [9.4%] 570/6096 | AREsp 2765529 | 16 partes | 51 fases | 2 decisões | total: 7127p 16467f 880d | erros: 118
+[2026-03-29T02:25:00.908Z] [9.5%] 580/6096 | AREsp 2762146 | 16 partes | 43 fases | 2 decisões | total: 7293p 16797f 899d | erros: 118
+[2026-03-29T02:27:45.347Z] [9.7%] 590/6096 | AREsp 2759482 | 14 partes | 50 fases | 2 decisões | total: 7455p 17192f 919d | erros: 118
+[2026-03-29T02:30:42.123Z] [9.8%] 600/6096 | AREsp 2756112 | 15 partes | 42 fases | 1 decisões | total: 7606p 17598f 939d | erros: 118
+[2026-03-29T02:33:30.161Z] [10.0%] 610/6096 | AREsp 2752857 | 16 partes | 46 fases | 2 decisões | total: 7763p 18011f 959d | erros: 118
+[2026-03-29T02:36:03.445Z] ERRO AREsp 2750337: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T02:37:08.399Z] [10.2%] 620/6096 | AREsp 2749784 | 15 partes | 20 fases | 2 decisões | total: 7924p 18361f 976d | erros: 119
+[2026-03-29T02:39:52.667Z] [10.3%] 630/6096 | AREsp 2747714 | 14 partes | 32 fases | 2 decisões | total: 8091p 18754f 998d | erros: 119
+[2026-03-29T02:42:35.783Z] [10.5%] 640/6096 | AREsp 2745941 | 15 partes | 33 fases | 2 decisões | total: 8249p 19126f 1017d | erros: 119
+[2026-03-29T02:45:16.640Z] [10.7%] 650/6096 | AREsp 2743382 | 14 partes | 33 fases | 2 decisões | total: 8417p 19543f 1033d | erros: 119
+[2026-03-29T02:48:02.971Z] [10.8%] 660/6096 | AREsp 2741480 | 17 partes | 23 fases | 2 decisões | total: 8586p 19867f 1051d | erros: 119
+[2026-03-29T02:50:43.265Z] [11.0%] 670/6096 | AREsp 2739457 | 16 partes | 22 fases | 2 decisões | total: 8744p 20297f 1066d | erros: 119
+[2026-03-29T02:53:28.595Z] [11.2%] 680/6096 | AREsp 2736262 | 14 partes | 38 fases | 1 decisões | total: 8913p 20790f 1086d | erros: 119
+[2026-03-29T02:56:13.447Z] [11.3%] 690/6096 | AREsp 2733300 | 17 partes | 87 fases | 2 decisões | total: 9076p 21271f 1106d | erros: 119
+[2026-03-29T02:58:57.046Z] [11.5%] 700/6096 | AREsp 2730561 | 20 partes | 20 fases | 2 decisões | total: 9257p 21764f 1124d | erros: 119
+[2026-03-29T03:01:41.278Z] [11.6%] 710/6096 | AREsp 2725370 | 22 partes | 78 fases | 4 decisões | total: 9430p 22174f 1142d | erros: 119
+[2026-03-29T03:03:28.595Z] ERRO AREsp 2724905: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T03:05:35.695Z] [11.8%] 720/6096 | AREsp 2721420 | 0 partes | 0 fases | 0 decisões | total: 9534p 22339f 1150d | erros: 120
+[2026-03-29T03:08:29.077Z] [12.0%] 730/6096 | AREsp 2718666 | 15 partes | 34 fases | 0 decisões | total: 9695p 22622f 1160d | erros: 120
+[2026-03-29T03:11:20.387Z] [12.1%] 740/6096 | AREsp 2711836 | 16 partes | 95 fases | 3 decisões | total: 9854p 23011f 1173d | erros: 120
+[2026-03-29T03:14:11.231Z] [12.3%] 750/6096 | AREsp 2703656 | 16 partes | 20 fases | 2 decisões | total: 10023p 23474f 1188d | erros: 120
+[2026-03-29T03:17:01.260Z] [12.5%] 760/6096 | AREsp 2699849 | 14 partes | 40 fases | 1 decisões | total: 10177p 23955f 1204d | erros: 120
+[2026-03-29T03:19:49.980Z] [12.6%] 770/6096 | AREsp 2690424 | 15 partes | 36 fases | 1 decisões | total: 10337p 24449f 1218d | erros: 120
+[2026-03-29T03:22:38.015Z] [12.8%] 780/6096 | AREsp 2678687 | 14 partes | 38 fases | 0 decisões | total: 10501p 25005f 1237d | erros: 120
+[2026-03-29T03:25:25.056Z] [13.0%] 790/6096 | AREsp 2649702 | 14 partes | 28 fases | 0 decisões | total: 10662p 25535f 1255d | erros: 120
+[2026-03-29T03:28:17.500Z] [13.1%] 800/6096 | AREsp 2627041 | 17 partes | 15 fases | 1 decisões | total: 10816p 25952f 1267d | erros: 120
+[2026-03-29T03:31:08.966Z] [13.3%] 810/6096 | AREsp 2600005 | 20 partes | 47 fases | 2 decisões | total: 10993p 26397f 1286d | erros: 120
+[2026-03-29T05:51:05.413Z] [13.5%] 820/6096 | AREsp 2577828 | 17 partes | 95 fases | 3 decisões | total: 11182p 27008f 1309d | erros: 120
+[2026-03-29T05:53:42.827Z] [13.6%] 830/6096 | AREsp 2531121 | 18 partes | 53 fases | 3 decisões | total: 11373p 27442f 1326d | erros: 120
+[2026-03-29T05:56:47.348Z] [13.8%] 840/6096 | AREsp 2479938 | 15 partes | 27 fases | 1 decisões | total: 11547p 27758f 1339d | erros: 120
+[2026-03-29T05:59:30.146Z] [13.9%] 850/6096 | AREsp 2457968 | 17 partes | 41 fases | 1 decisões | total: 11714p 28240f 1356d | erros: 120
+[2026-03-29T06:01:26.599Z] ERRO AREsp 2453438: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:02:34.326Z] ERRO AREsp 2453390: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:03:43.656Z] ERRO AREsp 2453066: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:04:55.123Z] ERRO AREsp 2452677: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:06:20.363Z] [14.1%] 860/6096 | AREsp 2442792 | 17 partes | 42 fases | 1 decisões | total: 11833p 28579f 1367d | erros: 124
+[2026-03-29T06:08:57.095Z] [14.3%] 870/6096 | AREsp 2414236 | 15 partes | 61 fases | 4 decisões | total: 11999p 28972f 1388d | erros: 124
+[2026-03-29T06:10:20.325Z] ERRO AREsp 2399381: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:11:27.085Z] ERRO AREsp 2397676: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:12:33.353Z] ERRO AREsp 2395784: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:13:40.815Z] ERRO AREsp 2389509: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:14:51.777Z] ERRO AREsp 2382063: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:15:59.202Z] ERRO Agravo em Recurso Especial 23751574020128130024: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:17:05.707Z] ERRO AREsp 2372018: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:18:14.844Z] ERRO AREsp 2371524: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:19:21.933Z] ERRO AREsp 2368650: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:20:29.097Z] ERRO AREsp 2363224: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:21:36.422Z] ERRO AREsp 2362200: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:22:43.247Z] ERRO AREsp 2360368: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:23:51.819Z] ERRO AREsp 2351211: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:24:59.242Z] ERRO AREsp 2348866: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:26:06.737Z] ERRO AREsp 2348729: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:27:17.679Z] ERRO AREsp 2348196: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:28:25.048Z] ERRO AREsp 2348006: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:29:32.243Z] ERRO AREsp 2346282: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:30:41.260Z] ERRO AREsp 2344945: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:31:48.799Z] ERRO AREsp 2340901: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:32:55.754Z] ERRO AREsp 2335355: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:35:36.808Z] [14.8%] 900/6096 | AREsp 1831028 | 27 partes | 69 fases | 1 decisões | total: 12169p 29457f 1408d | erros: 145
+[2026-03-29T06:38:09.575Z] [14.9%] 910/6096 | AREsp 2268033 | 14 partes | 16 fases | 1 decisões | total: 12354p 29631f 1418d | erros: 145
+[2026-03-29T06:40:40.694Z] [15.1%] 920/6096 | AREsp 2258905 | 17 partes | 75 fases | 1 decisões | total: 12566p 30101f 1435d | erros: 145
+[2026-03-29T06:43:11.713Z] [15.3%] 930/6096 | AREsp 2248098 | 20 partes | 14 fases | 1 decisões | total: 12763p 30409f 1449d | erros: 145
+[2026-03-29T06:45:44.775Z] [15.4%] 940/6096 | AREsp 2243512 | 17 partes | 19 fases | 2 decisões | total: 12934p 30611f 1460d | erros: 145
+[2026-03-29T06:48:20.022Z] [15.6%] 950/6096 | AREsp 2238004 | 15 partes | 16 fases | 1 decisões | total: 13115p 30934f 1473d | erros: 145
+[2026-03-29T06:51:17.804Z] ERRO AREsp 2232859: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:52:25.339Z] ERRO AREsp 2232244: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:53:34.476Z] ERRO REsp 2232227: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:54:39.084Z] ERRO AREsp 2232201: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:55:47.910Z] ERRO AREsp 2231801: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:57:11.284Z] ERRO AREsp 2231543: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:58:18.500Z] ERRO Agravo em Recurso Especial 22312220720198260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T06:59:27.841Z] ERRO AREsp 2230901: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:00:35.226Z] ERRO AREsp 2230501: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:01:57.268Z] ERRO AREsp 2229509: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:03:06.285Z] ERRO AREsp 2229065: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:05:37.366Z] [16.1%] 980/6096 | AREsp 2224586 | 17 partes | 16 fases | 1 decisões | total: 13449p 31610f 1501d | erros: 156
+[2026-03-29T07:07:46.401Z] ERRO AREsp 2221318: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:08:55.649Z] ERRO AREsp 2220969: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:10:03.705Z] ERRO AREsp 2220945: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:11:10.917Z] ERRO AREsp 2220942: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:12:18.954Z] ERRO REsp 2219746: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:13:25.886Z] ERRO AREsp 2219380: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:14:32.993Z] ERRO REsp 2219316: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:15:41.764Z] ERRO Agravo em Recurso Especial 22193015620168260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:16:49.333Z] ERRO Agravo em Recurso Especial 22190547020198260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:17:56.107Z] ERRO Agravo em Recurso Especial 22173774420158260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:19:05.384Z] ERRO AREsp 2213328: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:20:12.681Z] ERRO Agravo em Recurso Especial 22131670820198260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:21:19.903Z] ERRO AREsp 2211477: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:22:29.139Z] ERRO Agravo em Recurso Especial 22108567820188260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:23:36.083Z] ERRO AREsp 2209912: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:24:44.183Z] ERRO AREsp 2208712: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:25:53.596Z] ERRO Agravo em Recurso Especial 22080108620128130024: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:27:01.241Z] ERRO AREsp 2207558: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:28:10.164Z] ERRO AREsp 2206424: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:29:19.311Z] ERRO Agravo em Recurso Especial 22061051920168260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:30:25.924Z] ERRO AREsp 2204789: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:32:08.937Z] ERRO AREsp 2202619: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:33:16.310Z] ERRO Agravo em Recurso Especial 22018602820178260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:34:23.033Z] ERRO AREsp 2200983: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:35:31.787Z] ERRO Agravo em Recurso Especial 22007648020148260000: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:39:07.167Z] [16.7%] 1020/6096 | AREsp 2191801 | 17 partes | 21 fases | 1 decisões | total: 13753p 32211f 1536d | erros: 181
+[2026-03-29T07:40:13.824Z] ERRO AREsp 2191542: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T07:42:30.897Z] [16.9%] 1030/6096 | AREsp 1817197 | 21 partes | 49 fases | 0 decisões | total: 13899p 32456f 1547d | erros: 182
+[2026-03-29T07:45:14.446Z] [17.1%] 1040/6096 | EREsp 2183069 | 16 partes | 82 fases | 3 decisões | total: 14109p 32857f 1568d | erros: 182
+[2026-03-29T07:47:46.892Z] [17.2%] 1050/6096 | AREsp 2181031 | 14 partes | 38 fases | 2 decisões | total: 14272p 33160f 1583d | erros: 182
+[2026-03-29T07:50:22.591Z] [17.4%] 1060/6096 | AREsp 863828 | 22 partes | 76 fases | 2 decisões | total: 14454p 33447f 1596d | erros: 182
+[2026-03-29T07:52:54.997Z] [17.6%] 1070/6096 | REsp 1306436 | 15 partes | 44 fases | 2 decisões | total: 14623p 33761f 1611d | erros: 182
+[2026-03-29T07:55:30.221Z] [17.7%] 1080/6096 | AREsp 2165956 | 19 partes | 58 fases | 2 decisões | total: 14781p 34189f 1629d | erros: 182
+[2026-03-29T07:58:01.712Z] [17.9%] 1090/6096 | AREsp 1427470 | 18 partes | 15 fases | 1 decisões | total: 14948p 34470f 1639d | erros: 182
+[2026-03-29T08:00:34.867Z] [18.0%] 1100/6096 | REsp 2154233 | 14 partes | 36 fases | 1 decisões | total: 15107p 34755f 1651d | erros: 182
+[2026-03-29T08:03:06.176Z] [18.2%] 1110/6096 | AREsp 2145444 | 17 partes | 23 fases | 1 decisões | total: 15289p 35178f 1668d | erros: 182
+[2026-03-29T08:05:48.809Z] [18.4%] 1120/6096 | AREsp 2139533 | 19 partes | 18 fases | 1 decisões | total: 15458p 35421f 1678d | erros: 182
+[2026-03-29T08:09:13.984Z] ERRO AREsp 2135797: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:10:21.155Z] ERRO AREsp 2135697: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:11:29.735Z] ERRO AREsp 2135485: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:12:36.799Z] ERRO AREsp 2134356: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:15:03.179Z] [18.7%] 1140/6096 | AREsp 1821939 | 24 partes | 11 fases | 0 decisões | total: 15752p 35975f 1703d | erros: 186
+[2026-03-29T08:17:44.386Z] [18.9%] 1150/6096 | AREsp 2124858 | 17 partes | 85 fases | 3 decisões | total: 15934p 36298f 1717d | erros: 186
+[2026-03-29T08:20:15.674Z] [19.0%] 1160/6096 | REsp 2118544 | 14 partes | 55 fases | 2 decisões | total: 16119p 36690f 1729d | erros: 186
+[2026-03-29T08:22:47.544Z] [19.2%] 1170/6096 | REsp 2116006 | 18 partes | 12 fases | 1 decisões | total: 16276p 36920f 1740d | erros: 186
+[2026-03-29T08:25:19.270Z] [19.4%] 1180/6096 | REsp 2115516 | 15 partes | 12 fases | 1 decisões | total: 16465p 37317f 1757d | erros: 186
+[2026-03-29T08:27:57.028Z] [19.5%] 1190/6096 | REsp 2111547 | 14 partes | 28 fases | 2 decisões | total: 16643p 37648f 1768d | erros: 186
+[2026-03-29T08:30:29.387Z] [19.7%] 1200/6096 | AREsp 1822227 | 16 partes | 10 fases | 1 decisões | total: 16817p 38015f 1789d | erros: 186
+[2026-03-29T08:33:01.259Z] [19.8%] 1210/6096 | REsp 2093431 | 26 partes | 22 fases | 2 decisões | total: 17002p 38306f 1803d | erros: 186
+[2026-03-29T08:35:36.939Z] [20.0%] 1220/6096 | REsp 2083692 | 25 partes | 15 fases | 1 decisões | total: 17179p 38731f 1824d | erros: 186
+[2026-03-29T08:38:19.861Z] [20.2%] 1230/6096 | REsp 2080986 | 15 partes | 12 fases | 1 decisões | total: 17347p 38982f 1838d | erros: 186
+[2026-03-29T08:39:56.329Z] ERRO AREsp 2080078: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:41:41.550Z] [20.3%] 1240/6096 | AREsp 2076397 | 15 partes | 19 fases | 1 decisões | total: 17500p 39384f 1862d | erros: 187
+[2026-03-29T08:44:13.209Z] [20.5%] 1250/6096 | AREsp 1426178 | 14 partes | 15 fases | 1 decisões | total: 17674p 39658f 1873d | erros: 187
+[2026-03-29T08:46:54.868Z] [20.7%] 1260/6096 | AREsp 867046 | 18 partes | 13 fases | 1 decisões | total: 17840p 39945f 1887d | erros: 187
+[2026-03-29T08:49:27.576Z] [20.8%] 1270/6096 | REsp 2049724 | 17 partes | 49 fases | 3 decisões | total: 18042p 40314f 1908d | erros: 187
+[2026-03-29T08:50:51.475Z] ERRO REsp 2048562: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:51:58.160Z] ERRO REsp 2047286: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:53:05.483Z] ERRO REsp 2047017: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:54:14.245Z] ERRO REsp 2045718: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:56:06.518Z] [21.0%] 1280/6096 | REsp 2042886 | 16 partes | 12 fases | 1 decisões | total: 18146p 40446f 1916d | erros: 191
+[2026-03-29T08:58:44.872Z] ERRO REsp 2040926: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T08:59:52.618Z] ERRO REsp 2040748: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T09:01:02.108Z] ERRO REsp 2040692: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T09:02:09.395Z] ERRO REsp 2040305: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T09:03:16.942Z] ERRO REsp 2040285: FlareSolverr error: error / undefined / Error: Error solving the challenge. Timeout after 60.0 seconds.
+[2026-03-29T09:06:03.455Z] [21.3%] 1300/6096 | REsp 2038657 | 14 partes | 16 fases | 1 decisões | total: 18419p 40958f 1939d | erros: 196
+[2026-03-29T09:08:40.812Z] [21.5%] 1310/6096 | AREsp 1820362 | 23 partes | 25 fases | 2 decisões | total: 18601p 41152f 1951d | erros: 196
+[2026-03-29T09:11:12.776Z] [21.7%] 1320/6096 | AREsp 2029314 | 25 partes | 94 fases | 5 decisões | total: 18787p 41456f 1968d | erros: 196
+[2026-03-29T09:13:48.157Z] [21.8%] 1330/6096 | REsp 2022682 | 16 partes | 62 fases | 2 decisões | total: 19001p 41900f 1985d | erros: 196
+[2026-03-29T09:16:19.477Z] [22.0%] 1340/6096 | AREsp 2017749 | 15 partes | 83 fases | 2 decisões | total: 19184p 42413f 2009d | erros: 196
+[2026-03-29T09:19:18.515Z] [22.1%] 1350/6096 | REsp 2014539 | 21 partes | 15 fases | 1 decisões | total: 19346p 42798f 2021d | erros: 196
+[2026-03-29T09:22:16.504Z] [22.3%] 1360/6096 | AREsp 2011317 | 15 partes | 44 fases | 1 decisões | total: 19514p 43339f 2041d | erros: 196
+[2026-03-29T09:25:02.230Z] [22.5%] 1370/6096 | AREsp 2009911 | 15 partes | 96 fases | 3 decisões | total: 19688p 43804f 2057d | erros: 196

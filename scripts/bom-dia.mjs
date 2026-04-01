@@ -44,7 +44,7 @@ async function main() {
       ['stf', "SELECT COUNT(*) FROM stf_decisoes"],
       ['cases', "SELECT COUNT(*) FROM judx_case"],
       ['dec', "SELECT COUNT(*) FROM judx_decision"],
-      ['partes', "SELECT COUNT(*) FROM stf_partes"],
+      ['partes', "SELECT COUNT(*)::text FROM stf_partes"],
       ['stj_t', "SELECT COUNT(*) FROM stj_temas"],
       ['stj_u', "SELECT COUNT(*) FROM stj_universal"],
       ['last', "SELECT MAX(created_at)::date::text as d FROM stf_partes"],
@@ -56,9 +56,14 @@ async function main() {
 
   out.push(`BOM-DIA ${d}`);
   if (jx._conn) { out.push(`JudX: CONEXAO FALHOU`); }
-  else { out.push(`JudX: stf=${jx.stf} cases=${jx.cases} dec=${jx.dec} partes=${jx.partes} stj_temas=${jx.stj_t} stj_univ=${jx.stj_u} last=${jx.last}`); }
+  else { out.push(`JudX(banco): stf_decisoes=${jx.stf} cases=${jx.cases} dec=${jx.dec} partes=${jx.partes} stj_temas=${jx.stj_t} stj_univ=${jx.stj_u} last=${jx.last}`); }
   if (ic._conn) { out.push(`ICONS: CONEXAO FALHOU`); }
   else { out.push(`ICONS: obj=${ic.obj} edg=${ic.edg}`); }
+
+  // Dados locais — o banco tem ~7% da base real
+  out.push(`Dados locais: 2.927.525 decisões STF auditadas (27 CSVs em Desktop\\backup_judx\\resultados\\audit_por_ano\\) | 2.907.193 com partes (99.3%)`);
+  out.push(`Partes: 2.194.195 processos únicos (CSVs 2000-2016 + XLSX 2017-2026) | 55 processos sem partes (AP/AR sigilosos)`);
+  out.push(`STJ local: 2.646.620 processos Datajud (CSV 578MB) | Base normativa: 5.915 artigos 17 códigos`);
 
   // Processos background
   try {
@@ -87,6 +92,25 @@ async function main() {
       pending.forEach(p => out.push(p.replace('- [ ] ', '  ')));
     }
   } catch {}
+
+  // Mapa de dados — compacto (atualizado 31/mar/2026)
+  out.push('');
+  out.push('=== DADOS LOCAIS ===');
+  out.push('CORTE ABERTA (2.927.525 decisões):');
+  out.push('  Downloads\\stf_decisoes_fatias\\ — 27 CSVs por ano (2000-2026), 1.525 MB, 20 cols originais');
+  out.push('  Downloads\\stf_partes_fatias\\ — 17 CSVs (2000-2016) + Downloads\\stf_partes_20XX.xlsx (2017-2026)');
+  out.push('  2.194.195 processos com partes | 55 sem (AP/AR sigilosos)');
+  out.push('AUDIT CONSOLIDADO:');
+  out.push('  Desktop\\backup_judx\\resultados\\audit_por_ano\\ — 27 CSVs, decisões+partes, 25 cols');
+  out.push('PIPELINE ONTOLÓGICO:');
+  out.push('  Downloads\\stf_pipeline_local\\ — processo_no (969MB), processo_string_evento (791MB), auditoria_nao_decisoes (281MB)');
+  out.push('MASTER:');
+  out.push('  Downloads\\stf_master\\ — 3_master_completo.csv (2.3GB, 34 cols), 1_basicos_ponte.csv (174MB)');
+  out.push('STJ:');
+  out.push('  projetos\\judx-backup\\stj_datajud_20XX.csv — 2.646.620 processos, 578 MB');
+  out.push('CRAWLER DMA (histórico):');
+  out.push('  Desktop\\geral\\Fechamento DMA\\...\\crawler_judx_fast\\ — andamentos (2.2GB), basicos (273MB)');
+  out.push('  Desktop\\geral\\bkp\\singapura\\iconsjudx\\ — partes (613MB), andamentos (1.6GB), processo (64MB)');
 
   console.log(out.join('\n'));
 }

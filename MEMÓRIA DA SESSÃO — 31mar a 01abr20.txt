@@ -1,0 +1,257 @@
+MEMÓRIA DA SESSÃO — 31/mar a 01/abr/2026
+
+  RESUMO
+
+  Sessão de auditoria, consolidação e recuperação de dados do projeto
+  JudX. Foco: verificar integridade dos 2.927.525 decisões STF da Corte
+  Aberta, fechar gaps de partes e relatores.
+
+  ---
+  O QUE FOI FEITO
+
+  1. Exame do ORIGINAL_stf_partes_28mar2026.csv
+
+  - 856.416 registros, 117.814 processos, 268.823 nomes distintos, 41
+  classes processuais
+  - Papéis: ADV 58,3%, PROC 22,1%, IMPTE 5,5%, INTDO 3%, PACTE 2,8%,
+  COATOR 2,6%
+  - Tipos: oab 65,2%, ente_publico 28,4%, pessoa_fisica 5,6%,
+  pessoa_juridica 0,8%
+  - OAB preenchido em apenas 50,6%
+
+  2. Cruzamento stf_universal × partes
+
+  - 117.814 processos em ambos, 21.923 só no universal, 0 órfãos no
+  partes
+  - Os dois arquivos são complementares e congruentes
+
+  3. Download partes 2012-2016 via Qlik API
+
+  - IP do STF desbloqueado via Python com User-Agent
+  - 5 anos baixados: 2012 (80K), 2013 (79K), 2014 (100K), 2015 (99K),
+  2016 (102K)
+  - Método: Qlik Engine WebSocket API (mesmo script
+  download_corte_aberta.py)
+
+  4. Cruzamento 5.000 processos sem incidente × todas as partes
+
+  - 4.945 encontrados (98,9%), 55 sem partes (21 AP + 34 AR sigilosos)
+  - Partes vieram de CSVs Qlik 2000-2016 + XLSX manuais 2017-2026
+
+  5. Inventário completo de todos os dados no HD
+
+  - Decisões: 2.927.525 em 27 CSVs (1.525 MB), 20 colunas originais
+  - Partes: 2.194.195 processos (CSVs + XLSX)
+  - Pipeline ontológico: processo_no (969MB), processo_string_evento
+  (791MB)
+  - Master: 3_master_completo.csv (2.3GB, 34 cols)
+  - STJ: 2.646.620 processos (578MB)
+  - Crawler DMA: andamentos (2.2GB), basicos (273MB), partes singapura
+  (613MB)
+
+  6. Geração de 27 CSVs audit por ano
+
+  - Primeira versão: pipeline ontológico + partes (faltavam 976K
+  decisões)
+  - Pipeline descartou 976K decisões vs originais
+  - Refeito dos CSVs originais de decisões: 2.927.525 completo
+  - 2000-2025: 100% com partes | 2026: 20,6% (dados recentes)
+
+  7. Diagnóstico do banco Supabase
+
+  - 16 tabelas com dados (~1,6 GB), 35+ tabelas vazias
+  - Banco tem ~7% da base real (169K de 2.927.525)
+  - Tabelas processo_no e processo_string_evento vazias (nunca
+  carregadas)
+  - Tabelas duplicadas (composicao_temporal × stf_composicao_temporal)
+
+  8. Auditoria de partes — descoberta do NI
+
+  - XLSX novos (2000-2016) são idênticos aos CSVs Qlik — mesma contagem,
+   mesmo % NI
+  - O NI vem da PRÓPRIA Corte Aberta, não do cruzamento
+  - 2000-2002: 31-39% NI (processos antigos sem registro digital)
+  - 2003-2017: 0,1-4% NI (dados excelentes)
+  - 2018+: 88-99% NI (Corte Aberta parou de expor polos)
+  - Advogados continuam preenchidos (~86%)
+  - Total: polo ativo real 68,7%, NI 31,3%
+
+  9. Scraper portal STF — recuperação de partes reais
+
+  - Portal abaPartes.asp tem dados reais mesmo quando Corte Aberta tem
+  NI
+  - Incidente no gap 5.059.030 → 7.600.000 (~2,5M a varrer)
+  - Densidade ~40-67% (maioria dos incidentes existe)
+
+  Evolução do scraper:
+
+  - v1: parser não reconhecia AGTE/AGDO → 99,5% polos vazios
+  (descartado)
+  - v2: parser corrigido mas pouco volume (descartado)
+  - v3: encoding errado (descartado)
+  - v4 (final): run_scraper.py — parser correto, encoding UTF-8, flush a
+   cada write
+
+  WAF do STF — limites testados:
+
+  - 0.1s throttle sem cooldown: ban após ~400 requests
+  - 0.2s throttle contínuo: ban após ~860 requests
+  - Config segura final: batch=750, throttle=0.2s, cooldown=90s → 3.1
+  req/s
+  - ETA: ~9 dias para 2.5M incidentes
+
+  Automatização:
+
+  - scraper_permanente.bat na pasta Startup do Windows (auto-restart no
+  login)
+  - Processo detached via subprocess.Popen com
+  creationflags=0x00000008|0x00000200
+  - Checkpoint a cada batch, retoma automática, HTML bruto salvo como
+  fallback
+
+  Resultado parcial (01/abr):
+
+  - ~10.150 processos recuperados com partes reais
+  - PA 99,4%, PP 100%, ADV 93,8% preenchidos
+  - Zero erros, zero bans com config final
+
+  10. Correção do Relator — 663.504 decisões corrigidas
+
+  - 123.324 NI → ministro real via composição temporal
+  - 538.983 "MINISTRO PRESIDENTE" → ministro real
+  - 1.197 "VICE-PRESIDENTE" → ministro real
+  - 0 não resolvidos — 100% corrigido
+  - 27 CSVs em
+  Desktop\backup_judx\resultados\decisoes_relator_corrigido\
+  - Nova coluna ministro_real adicionada
+
+  11. Auditoria campo a campo — 2.927.525 decisões
+
+  - 15 de 20 campos 100% preenchidos
+  - Observação do andamento: 74,6% (742K sem texto da decisão — Corte
+  Aberta não expõe)
+  - Relator: 95,8% → 100% após correção
+  - Data baixa: 98,9% (33K em tramitação)
+  - Ramo/Assuntos: 98,4% (47K antigos sem classificação)
+  - "Andamento decisão" (linha decisória): 100%, 293 valores distintos
+
+  12. Script bom-dia.mjs corrigido
+
+  - partes=ERRO → partes=856416
+  - Mapa de dados atualizado (Corte Aberta, audit, pipeline, master,
+  STJ, crawler)
+  - Dados locais agora aparecem no diagnóstico
+
+  13. Memória completa do projeto
+
+  - Downloads\MEMORIA_COMPLETA_JUDX_31mar2026.md — 11 seções
+  - Inclui: credenciais, diretórios, scripts, banco, achados, teoria dos
+   objetos ancorados, timeline, pendências
+
+  ---
+  ARQUIVOS GERADOS
+
+  Arquivo: audit_por_ano/audit_2000.csv ... audit_2026.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 27 CSVs decisões+partes (25 cols)
+  ────────────────────────────────────────
+  Arquivo: decisoes_relator_corrigido/decisoes_2000.csv ...
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 27 CSVs com ministro_real
+  ────────────────────────────────────────
+  Arquivo: partes_portal_FINAL.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: Partes recuperadas do portal (~10K+)
+  ────────────────────────────────────────
+  Arquivo: html_raw_partes/
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: HTML bruto gzip (fallback)
+  ────────────────────────────────────────
+  Arquivo: run_scraper.py
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: Script final do scraper
+  ────────────────────────────────────────
+  Arquivo: scraper_permanente.bat
+  Local: Desktop\backup_judx\resultados\ + Startup\
+  Conteúdo: Auto-restart
+  ────────────────────────────────────────
+  Arquivo: cp_final.txt
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: Checkpoint scraper
+  ────────────────────────────────────────
+  Arquivo: RELATORIO_INCONSISTENCIAS_PARTES.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 27 linhas, NI por ano
+  ────────────────────────────────────────
+  Arquivo: relacao_processos_stf_partes.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 117.814 processos classe+número
+  ────────────────────────────────────────
+  Arquivo: match_sem_incidente_x_partes2023.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 431 matches
+  ────────────────────────────────────────
+  Arquivo: cruzamento_sem_incidente_x_partes_todas.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 5.000 processos auditados
+  ────────────────────────────────────────
+  Arquivo: ni_recuperaveis_com_incidente.csv
+  Local: Desktop\backup_judx\resultados\
+  Conteúdo: 87.950 processos
+  ────────────────────────────────────────
+  Arquivo: MEMORIA_COMPLETA_JUDX_31mar2026.md
+  Local: Downloads\
+  Conteúdo: Documento completo do projeto
+
+  ---
+  ESTADO ATUAL (01/abr/2026)
+
+  Scraper ativo
+
+  - PID variável (processo detached + Startup)
+  - Config: batch=750, throttle=0.2s, cooldown=90s
+  - Range: 5.073.030 → 7.600.000
+  - Saída: partes_portal_FINAL.csv
+  - ETA: ~9 dias
+
+  Base de decisões
+
+  - 2.927.525 decisões, 20 campos originais
+  - 15/20 campos 100% preenchidos
+  - Relator: 100% corrigido (ministro_real)
+  - Partes: 68,7% polo real na Corte Aberta, scraper recuperando o resto
+
+  Gaps restantes
+
+  1. Partes NI 2018-2025 (scraper em andamento)
+  2. Faixa de incidentes 1→1.405.086 (pré-2000, para depois)
+  3. Faixa 2.699.257→3.698.186 (gap intermediário, para depois)
+  4. Observação do andamento: 25% sem texto (limitação da fonte)
+
+  Próximos passos
+
+  1. Scraper terminar → cruzar incidente→processo com basicos_ponte
+  2. Reconstruir audit CSVs substituindo NI por dados reais do portal
+  3. Rodar scraper para faixas pré-2000
+  4. Subir para Supabase (SÓ APÓS AUDITORIA COMPLETA)
+  5. Paper Circuitos de Enforcement
+
+  ---
+  REGRAS APRENDIDAS
+
+  - Portal STF: User-Agent obrigatório, sem UA = 403
+  - Portal encoding: declara ISO-8859-1 mas conteúdo é UTF-8, usar
+  r.content.decode('utf-8')
+  - WAF STF: ~860 requests por sessão com 0.2s throttle, ban temporário
+  3-5min
+  - Corte Aberta: NI em polos a partir de 2018 é limitação da fonte, não
+   erro nosso
+  - abaPartes.asp: >200 chars = processo real, 86 chars = vazio
+  - AGTE/AGDO são papéis de polo ativo/passivo (parser deve reconhecer)
+  - OAB no polo ativo é normal em HC (impetrantes são advogados)
+  - Pipeline ontológico descartou 976K decisões — sempre usar CSVs
+  originais como fonte
+  - Scraper no Windows: subprocess.Popen com creationflags para processo
+   detached
+  - Startup folder: AppData\Roaming\Microsoft\Windows\Start
+  Menu\Programs\Startup\

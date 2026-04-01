@@ -1,0 +1,8 @@
+-- ============================================================
+-- MODELO ONTOLÓGICO COMPLETO — ICONS/PROJUS
+-- Banco: judx-platform (ejwyguskoiraredinqmb) — Supabase sa-east-1
+-- Gerado em: 30/mar/2026
+-- Autora: Damares Medina
+-- Arquivo de referência — execução será local via pipeline Python
+-- ============================================================
+-- [SQL completo salvo como referência - ver mensagem original]

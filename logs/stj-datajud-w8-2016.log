@@ -1,0 +1,9 @@
+[2026-03-29T15:30:28.062Z] Conectado ao banco JudX
+[2026-03-29T15:31:12.789Z] Tabela stj_datajud pronta
+[2026-03-29T15:31:12.791Z] Período: 2016-2016 (53 semanas, do mais recente ao mais antigo)
+(node:2184) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2026-03-29T15:31:14.330Z] [2016-12-25/2016-12-31] 176 processos — iniciando extração
+[2026-03-29T15:31:22.758Z]   [2016-12-25/2016-12-31] 176/176 (100.0%) | total banco: 176 | erros: 0
+[2026-03-29T15:31:22.874Z] [2016-12-25/2016-12-31] COMPLETO — 176 extraídos
+[2026-03-29T15:33:23.038Z] FATAL: canceling statement due to statement timeout
