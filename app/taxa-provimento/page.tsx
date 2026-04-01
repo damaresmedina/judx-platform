@@ -6,7 +6,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK!
 const STORAGE_KEY = 'judx_consultas'
-const LIMITE_GRATIS = 3
+const LIMITE = 3
 
 type Linha = {
   nome: string
@@ -35,13 +35,15 @@ async function buscarDados(filtros: {
   anoIni: number
   anoFim: number
 }) {
-  let url = `${SUPABASE_URL}/rest/v1/v_provimento`
+  let url = `${SUPABASE_URL}/rest/v1/v_provimento_merito`
   url += `?select=relator,categoria_provimento,ramo_direito,assunto_principal,ano`
-  url += `&ano=gte.${filtros.anoIni}&ano=lte.${filtros.anoFim}&limit=100000`
+  url += `&ano=gte.${filtros.anoIni}&ano=lte.${filtros.anoFim}`
+  url += `&limit=100000`
   if (filtros.ramo) url += `&ramo_direito=eq.${encodeURIComponent(filtros.ramo)}`
   if (filtros.relator) url += `&relator=eq.${encodeURIComponent(filtros.relator)}`
+
   const res = await fetch(url, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
   })
   if (!res.ok) throw new Error(`Erro ${res.status}`)
   return res.json()
@@ -50,17 +52,19 @@ async function buscarDados(filtros: {
 function agregar(dados: any[], groupBy: 'relator' | 'assunto_principal'): Linha[] {
   const mapa: Record<string, any> = {}
   for (const row of dados) {
-    const chave = row[groupBy] || 'Não informado'
-    if (!mapa[chave]) mapa[chave] = {
-      nome: chave, ramo: row.ramo_direito || '',
-      total: 0, provido: 0, nao_provido: 0, parcial: 0, nao_conhecido: 0,
+    const chave = row[groupBy] || 'N\u00e3o informado'
+    if (!mapa[chave]) {
+      mapa[chave] = {
+        nome: chave, ramo: row.ramo_direito || '',
+        total: 0, provido: 0, nao_provido: 0, parcial: 0, nao_conhecido: 0,
+      }
     }
     mapa[chave].total++
-    const c = row.categoria_provimento
-    if (c === 'provido') mapa[chave].provido++
-    else if (c === 'nao_provido') mapa[chave].nao_provido++
-    else if (c === 'parcial') mapa[chave].parcial++
-    else if (c === 'nao_conhecido') mapa[chave].nao_conhecido++
+    const cat = row.categoria_provimento
+    if (cat === 'provido') mapa[chave].provido++
+    else if (cat === 'nao_provido') mapa[chave].nao_provido++
+    else if (cat === 'parcial') mapa[chave].parcial++
+    else if (cat === 'nao_conhecido') mapa[chave].nao_conhecido++
   }
   return Object.values(mapa)
     .map((v: any) => {
@@ -71,51 +75,47 @@ function agregar(dados: any[], groupBy: 'relator' | 'assunto_principal'): Linha[
     .sort((a, b) => (b.taxa ?? -1) - (a.taxa ?? -1))
 }
 
-function corBarra(taxa: number | null): string {
-  if (taxa === null) return 'bg-gray-500'
-  if (taxa >= 40) return 'bg-green-500'
-  if (taxa >= 20) return 'bg-yellow-500'
-  return 'bg-red-500'
-}
-
 const anos = Array.from({ length: 10 }, (_, i) => 2016 + i)
 
 export default function TaxaProvimento() {
   const [aba, setAba] = useState<'relator' | 'assunto'>('relator')
   const [ramos, setRamos] = useState<string[]>([])
   const [relatores, setRelatores] = useState<string[]>([])
-  const [anoIni, setAnoIni] = useState(2016)
-  const [anoFim, setAnoFim] = useState(2025)
   const [ramoSel, setRamoSel] = useState('')
   const [relatorSel, setRelatorSel] = useState('')
+  const [anoIni, setAnoIni] = useState(2016)
+  const [anoFim, setAnoFim] = useState(2025)
   const [dados, setDados] = useState<Linha[]>([])
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
   const [consultas, setConsultas] = useState(0)
   const [col, setCol] = useState('taxa')
-  const [dir, setDir] = useState<'asc'|'desc'>('desc')
+  const [dir, setDir] = useState<'asc' | 'desc'>('desc')
 
   useEffect(() => {
     setConsultas(getContador())
     fetch(
-      `${SUPABASE_URL}/rest/v1/v_provimento?select=ramo_direito,relator&limit=100000`,
+      `${SUPABASE_URL}/rest/v1/v_provimento_merito?select=ramo_direito,relator&limit=100000`,
       { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
     )
-      .then(r => r.json())
-      .then(d => {
+      .then((r) => r.json())
+      .then((d) => {
         setRamos([...new Set(d.map((x: any) => x.ramo_direito).filter(Boolean))].sort() as string[])
         setRelatores([...new Set(d.map((x: any) => x.relator).filter(Boolean))].sort() as string[])
       })
   }, [])
 
   async function consultar() {
-    setErro(''); setLoading(true)
+    setErro('')
+    setLoading(true)
     try {
-      const n = incrementar(); setConsultas(n)
+      const n = incrementar()
+      setConsultas(n)
       const raw = await buscarDados({
         ramo: aba === 'relator' ? ramoSel || undefined : undefined,
         relator: aba === 'assunto' ? relatorSel || undefined : undefined,
-        anoIni, anoFim,
+        anoIni,
+        anoFim,
       })
       setDados(agregar(raw, aba === 'relator' ? 'relator' : 'assunto_principal'))
     } catch (e: any) {
@@ -126,166 +126,260 @@ export default function TaxaProvimento() {
   }
 
   function ordenar(c: string) {
-    if (col === c) setDir(d => d === 'desc' ? 'asc' : 'desc')
-    else { setCol(c); setDir('desc') }
+    if (col === c) setDir((d) => (d === 'desc' ? 'asc' : 'desc'))
+    else {
+      setCol(c)
+      setDir('desc')
+    }
   }
 
-  const paywall = consultas > LIMITE_GRATIS
+  const paywall = consultas > LIMITE
   const linhas = [...dados].sort((a: any, b: any) =>
     dir === 'desc' ? (b[col] ?? -1) - (a[col] ?? -1) : (a[col] ?? -1) - (b[col] ?? -1)
   )
-  const visiveis = paywall ? linhas.slice(0, 3) : linhas
+  const dadosVisiveis = paywall ? linhas.slice(0, 3) : linhas
 
   return (
-    <main className="min-h-screen bg-[#0d1b2a] text-white px-4 py-10">
-      <div className="max-w-5xl mx-auto">
-
-        <div className="mb-8">
-          <a href="/" className="text-[#c9a84c] text-sm hover:underline">&larr; JudX</a>
-          <h1 className="text-3xl font-bold mt-2">Taxa de Provimento no STF</h1>
-          <p className="text-gray-400 mt-1">145.000+ decisões colegiadas reais &middot; 2016–2025</p>
-        </div>
-
-        <div className="flex gap-2 mb-6">
-          {(['relator','assunto'] as const).map(a => (
-            <button key={a} onClick={() => { setAba(a); setDados([]) }}
-              className={`px-4 py-2 rounded font-medium transition ${
-                aba === a ? 'bg-[#c9a84c] text-black' : 'bg-white/10 text-gray-300 hover:bg-white/20'
-              }`}>
-              {a === 'relator' ? 'Por Ministro Relator' : 'Por Assunto/Tema'}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-3 mb-6">
-          {aba === 'relator' ? (
-            <select value={ramoSel} onChange={e => setRamoSel(e.target.value)}
-              className="bg-white/10 text-white rounded px-3 py-2 text-sm min-w-[220px]">
-              <option value="">Todos os ramos</option>
-              {ramos.map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
-          ) : (
-            <select value={relatorSel} onChange={e => setRelatorSel(e.target.value)}
-              className="bg-white/10 text-white rounded px-3 py-2 text-sm min-w-[220px]">
-              <option value="">Todos os relatores</option>
-              {relatores.map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
-          )}
-          <select value={anoIni} onChange={e => setAnoIni(+e.target.value)}
-            className="bg-white/10 text-white rounded px-3 py-2 text-sm">
-            {anos.map(a => <option key={a} value={a}>De {a}</option>)}
-          </select>
-          <select value={anoFim} onChange={e => setAnoFim(+e.target.value)}
-            className="bg-white/10 text-white rounded px-3 py-2 text-sm">
-            {anos.map(a => <option key={a} value={a}>Até {a}</option>)}
-          </select>
-          <button onClick={consultar} disabled={loading}
-            className="bg-[#c9a84c] hover:bg-[#b8963b] text-black font-bold px-6 py-2 rounded disabled:opacity-50">
-            {loading ? 'Consultando...' : 'Consultar'}
-          </button>
-        </div>
-
-        {loading && (
-          <div className="flex flex-col items-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#c9a84c] mb-4"/>
-            <p className="text-gray-400">Consultando 145.000+ decisões reais...</p>
-          </div>
-        )}
-
-        {erro && <p className="text-red-400 mb-4">{erro}</p>}
-
-        {!loading && dados.length === 0 && !erro && (
-          <div className="text-center py-16 text-gray-500">
-            Selecione os filtros e clique em Consultar
-          </div>
-        )}
-
-        {!loading && dados.length > 0 && (
-          <div className="relative">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="text-[#c9a84c] border-b border-white/10 text-left">
-                  <th className="py-2 px-3 cursor-pointer hover:text-white" onClick={() => ordenar('nome')}>
-                    {aba === 'relator' ? 'Ministro' : 'Assunto'}{col==='nome'? dir==='desc'?' \u2193':' \u2191':''}
-                  </th>
-                  {aba === 'assunto' && (
-                    <th className="py-2 px-3 text-xs">Ramo</th>
-                  )}
-                  {(['total','provido','nao_provido','parcial','nao_conhecido'] as const).map(c => (
-                    aba === 'assunto' && c !== 'total' ? null :
-                    <th key={c} className="py-2 px-3 cursor-pointer hover:text-white" onClick={() => ordenar(c)}>
-                      {c === 'total' ? 'Total'
-                        : c === 'provido' ? 'Provido'
-                        : c === 'nao_provido' ? 'Não Provido'
-                        : c === 'parcial' ? 'Parcial'
-                        : 'Não Conhecido'}
-                      {col===c? dir==='desc'?' \u2193':' \u2191':''}
-                    </th>
-                  ))}
-                  <th className="py-2 px-3 cursor-pointer hover:text-white" onClick={() => ordenar('taxa')}>
-                    Taxa %{col==='taxa'? dir==='desc'?' \u2193':' \u2191':''}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {visiveis.map((l, i) => (
-                  <tr key={i} className="border-b border-white/5 hover:bg-white/5">
-                    <td className="py-2 px-3">{l.nome}</td>
-                    {aba === 'assunto' && (
-                      <td className="py-2 px-3 text-gray-500 text-xs">{l.ramo}</td>
-                    )}
-                    <td className="py-2 px-3">{l.total.toLocaleString('pt-BR')}</td>
-                    {aba === 'relator' && (
-                      <>
-                        <td className="py-2 px-3 text-green-400">{l.provido.toLocaleString('pt-BR')}</td>
-                        <td className="py-2 px-3 text-red-400">{l.nao_provido.toLocaleString('pt-BR')}</td>
-                        <td className="py-2 px-3 text-yellow-400">{l.parcial.toLocaleString('pt-BR')}</td>
-                        <td className="py-2 px-3 text-gray-400">{l.nao_conhecido.toLocaleString('pt-BR')}</td>
-                      </>
-                    )}
-                    <td className="py-2 px-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 bg-white/10 rounded-full h-1.5">
-                          <div className={`h-1.5 rounded-full ${corBarra(l.taxa)}`}
-                            style={{ width: `${Math.min(l.taxa ?? 0, 100)}%` }}/>
-                        </div>
-                        <span>{l.taxa !== null ? `${l.taxa}%` : '\u2014'}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {paywall && (
-              <>
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0d1b2a] to-transparent pointer-events-none"/>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-[#0d1b2a]/95 border border-[#c9a84c]/30 rounded-xl p-8 text-center max-w-sm shadow-xl">
-                    <div className="text-3xl mb-3">&#128274;</div>
-                    <h3 className="text-xl font-bold text-white mb-1">Acesso completo</h3>
-                    <p className="text-[#c9a84c] font-bold text-lg mb-2">R$ 97/mês</p>
-                    <p className="text-gray-400 text-sm mb-5">
-                      Todas as combinações de relator,<br/>assunto e período. Sem limite.
-                    </p>
-                    <a href={PAYMENT_LINK} target="_blank" rel="noopener noreferrer"
-                      className="block w-full bg-[#c9a84c] hover:bg-[#b8963b] text-black font-bold py-3 px-6 rounded text-center">
-                      Assinar JUDX Plus &rarr;
-                    </a>
-                    <p className="text-gray-600 text-xs mt-3">Ambiente de teste &middot; pagamentos não são cobrados</p>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {!paywall && dados.length > 0 && (
-              <p className="text-gray-600 text-xs mt-3 text-right">
-                Consulta {consultas} de {LIMITE_GRATIS} gratuitas
-              </p>
-            )}
-          </div>
-        )}
+    <main className="min-h-screen bg-[#0d1b2a] text-white px-4 py-8 max-w-5xl mx-auto">
+      <div className="mb-8">
+        <a href="/" className="text-yellow-400 text-sm hover:underline">
+          &larr; JudX
+        </a>
+        <h1 className="text-3xl font-bold mt-2">Taxa de Provimento no STF</h1>
+        <p className="text-gray-400 mt-1">
+          Baseado em 110.000+ decis&otilde;es colegiadas de m&eacute;rito &middot; 2016&ndash;2025
+        </p>
       </div>
+
+      <div className="flex gap-4 mb-6 border-b border-gray-700">
+        {(['relator', 'assunto'] as const).map((a) => (
+          <button
+            key={a}
+            onClick={() => {
+              setAba(a)
+              setDados([])
+            }}
+            className={`pb-2 px-1 text-sm font-medium ${
+              aba === a
+                ? 'border-b-2 border-yellow-400 text-yellow-400'
+                : 'text-gray-400'
+            }`}
+          >
+            {a === 'relator' ? 'Por Ministro Relator' : 'Por Assunto/Tema'}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-3 mb-6">
+        {aba === 'relator' ? (
+          <select
+            value={ramoSel}
+            onChange={(e) => setRamoSel(e.target.value)}
+            className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+          >
+            <option value="">Todos os ramos</option>
+            {ramos.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select
+            value={relatorSel}
+            onChange={(e) => setRelatorSel(e.target.value)}
+            className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+          >
+            <option value="">Todos os ministros</option>
+            {relatores.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        )}
+        <select
+          value={anoIni}
+          onChange={(e) => setAnoIni(+e.target.value)}
+          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+        >
+          {anos.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+        <span className="self-center text-gray-400 text-sm">at&eacute;</span>
+        <select
+          value={anoFim}
+          onChange={(e) => setAnoFim(+e.target.value)}
+          className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-sm text-white"
+        >
+          {anos.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={consultar}
+          disabled={loading}
+          className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 py-2 rounded text-sm disabled:opacity-50"
+        >
+          {loading ? 'Consultando...' : 'Consultar'}
+        </button>
+      </div>
+
+      {loading && (
+        <div className="flex flex-col items-center py-12">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-yellow-500 mb-4" />
+          <p className="text-gray-400 text-sm">
+            Consultando 110.000+ decis&otilde;es colegiadas de m&eacute;rito...
+          </p>
+        </div>
+      )}
+
+      {erro && <p className="text-red-400 mb-4">{erro}</p>}
+
+      {!loading && dados.length === 0 && !erro && (
+        <div className="text-center py-16 text-gray-500">
+          Selecione os filtros e clique em Consultar
+        </div>
+      )}
+
+      {!loading && dados.length > 0 && (
+        <div className="relative">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-gray-400 border-b border-gray-700 text-left">
+                <th
+                  className="py-2 pr-4 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('nome')}
+                >
+                  {aba === 'relator' ? 'Ministro' : 'Assunto'}
+                  {col === 'nome' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
+                {aba === 'assunto' && <th className="py-2 px-2 text-xs">Ramo</th>}
+                <th
+                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('total')}
+                >
+                  Total{col === 'total' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
+                {aba === 'relator' && (
+                  <>
+                    <th
+                      className="py-2 px-2 cursor-pointer hover:text-white"
+                      onClick={() => ordenar('provido')}
+                    >
+                      Provido
+                      {col === 'provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                    </th>
+                    <th
+                      className="py-2 px-2 cursor-pointer hover:text-white"
+                      onClick={() => ordenar('nao_provido')}
+                    >
+                      N&atilde;o Provido
+                      {col === 'nao_provido' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                    </th>
+                    <th
+                      className="py-2 px-2 cursor-pointer hover:text-white"
+                      onClick={() => ordenar('parcial')}
+                    >
+                      Parcial
+                      {col === 'parcial' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                    </th>
+                  </>
+                )}
+                <th
+                  className="py-2 px-2 cursor-pointer hover:text-white"
+                  onClick={() => ordenar('taxa')}
+                >
+                  Taxa %{col === 'taxa' ? (dir === 'desc' ? ' \u2193' : ' \u2191') : ''}
+                </th>
+                <th className="w-32">Visual</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dadosVisiveis.map((row, i) => (
+                <tr key={i} className="border-b border-gray-800 hover:bg-white/5">
+                  <td className="py-2 pr-4 font-medium">{row.nome}</td>
+                  {aba === 'assunto' && (
+                    <td className="py-2 px-2 text-gray-500 text-xs">{row.ramo}</td>
+                  )}
+                  <td className="py-2 px-2 text-gray-400">
+                    {row.total.toLocaleString('pt-BR')}
+                  </td>
+                  {aba === 'relator' && (
+                    <>
+                      <td className="py-2 px-2 text-green-400">
+                        {row.provido.toLocaleString('pt-BR')}
+                      </td>
+                      <td className="py-2 px-2 text-red-400">
+                        {row.nao_provido.toLocaleString('pt-BR')}
+                      </td>
+                      <td className="py-2 px-2 text-yellow-400">
+                        {row.parcial.toLocaleString('pt-BR')}
+                      </td>
+                    </>
+                  )}
+                  <td className="py-2 px-2 font-bold">
+                    {row.taxa !== null ? `${row.taxa}%` : '\u2014'}
+                  </td>
+                  <td>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full ${
+                          (row.taxa ?? 0) > 40
+                            ? 'bg-green-500'
+                            : (row.taxa ?? 0) > 20
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
+                        }`}
+                        style={{ width: `${Math.min(row.taxa ?? 0, 100)}%` }}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {!paywall && (
+            <p className="text-gray-600 text-xs mt-3 text-right">
+              Consulta {consultas} de {LIMITE} gratuitas
+            </p>
+          )}
+
+          {paywall && (
+            <>
+              <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d1b2a] to-transparent pointer-events-none" />
+              <div className="flex flex-col items-center py-10 border border-gray-700 rounded-lg mt-4">
+                <span className="text-3xl mb-3">&#128274;</span>
+                <h3 className="text-xl font-bold mb-1">
+                  Acesso completo &mdash; R$ 97/m&ecirc;s
+                </h3>
+                <p className="text-gray-400 text-sm mb-6 text-center max-w-sm">
+                  Todas as combina&ccedil;&otilde;es de relator, assunto e per&iacute;odo.
+                  <br />
+                  Sem limite de consultas.
+                </p>
+                <a
+                  href={PAYMENT_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded text-sm"
+                >
+                  Assinar JUDX Plus &rarr;
+                </a>
+                <p className="text-gray-600 text-xs mt-4">
+                  Acesso liberado em at&eacute; 24h ap&oacute;s confirma&ccedil;&atilde;o
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </main>
   )
 }
