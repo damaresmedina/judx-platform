@@ -15,7 +15,9 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--gbrd);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(10,21,37,0.95)}
-.hdr a{color:var(--gold);font-size:.7rem;letter-spacing:.18em;font-weight:700;text-decoration:none;text-transform:uppercase}
+.hdr a{text-decoration:none}
+.hdr .logo-judx{color:var(--gold);font-size:.75rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase}
+.hdr .logo-sub{color:var(--mut);font-size:.6rem;letter-spacing:.1em;font-weight:400;margin-left:.3rem}
 .hdr .back{color:var(--mut);font-size:.78rem;letter-spacing:0;text-transform:none}
 .hdr .back:hover{color:var(--gold)}
 
@@ -72,7 +74,7 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 <body>
 
 <header class="hdr">
-  <a href="/taxa_provimento/">JudX · Inteligência Jurisprudencial</a>
+  <a href="/taxa_provimento/"><span class="logo-judx">JUDX</span><span class="logo-sub">· Inteligência Jurisprudencial</span></a>
   <a href="/taxa_provimento/" class="back">&#8592; Voltar ao painel</a>
 </header>
 

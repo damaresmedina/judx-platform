@@ -1,6 +1,6 @@
 /**
  * bom-dia.mjs — Diagnóstico compacto para início de sessão
- * Output mínimo para economizar contexto Claude
+ * Baseado em MEMORIA_PROJUS v5 (01/abr/2026)
  *
  * Usage: node scripts/bom-dia.mjs
  */
@@ -8,7 +8,7 @@
 import pg from 'pg';
 const { Client } = pg;
 import { execSync } from 'child_process';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, statSync } from 'fs';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -35,18 +35,27 @@ async function queryDB(url, queries) {
   return results;
 }
 
+function fileLines(path) {
+  try { return readFileSync(path, 'utf-8').split('\n').length - 1; } catch { return 0; }
+}
+
+function fileExists(path) {
+  try { return statSync(path).size; } catch { return 0; }
+}
+
 async function main() {
   const out = [];
   const d = new Date().toLocaleDateString('pt-BR');
 
-  // Bancos — sequencial para evitar conflito de conexão
+  // ── Bancos ──
   const jx = await queryDB(JUDX_URL, [
       ['stf', "SELECT COUNT(*) FROM stf_decisoes"],
       ['cases', "SELECT COUNT(*) FROM judx_case"],
       ['dec', "SELECT COUNT(*) FROM judx_decision"],
       ['partes', "SELECT COUNT(*)::text FROM stf_partes"],
+      ['prov', "SELECT COUNT(*) FROM v_provimento_merito WHERE categoria_provimento IS NOT NULL"],
       ['stj_t', "SELECT COUNT(*) FROM stj_temas"],
-      ['stj_u', "SELECT COUNT(*) FROM stj_universal"],
+      ['stj_dj', "SELECT COUNT(*) FROM stj_decisoes_dj"],
       ['last', "SELECT MAX(created_at)::date::text as d FROM stf_partes"],
     ]);
   const ic = await queryDB(ICONS_URL, [
@@ -55,27 +64,49 @@ async function main() {
     ]);
 
   out.push(`BOM-DIA ${d}`);
-  if (jx._conn) { out.push(`JudX: CONEXAO FALHOU`); }
-  else { out.push(`JudX(banco): stf_decisoes=${jx.stf} cases=${jx.cases} dec=${jx.dec} partes=${jx.partes} stj_temas=${jx.stj_t} stj_univ=${jx.stj_u} last=${jx.last}`); }
+  out.push(`Contexto: MEMORIA_PROJUS v5 (01/abr/2026)`);
+
+  // ── JudX banco ──
+  if (jx._conn) { out.push(`JudX banco: CONEXAO FALHOU`); }
+  else {
+    out.push(`JudX(banco): stf_decisoes=${jx.stf} cases=${jx.cases} dec=${jx.dec} partes=${jx.partes}`);
+    out.push(`  v_provimento_merito=${jx.prov} | stj_temas=${jx.stj_t} stj_dj=${jx.stj_dj} | last=${jx.last}`);
+  }
+
+  // ── ICONS banco ──
   if (ic._conn) { out.push(`ICONS: CONEXAO FALHOU`); }
-  else { out.push(`ICONS: obj=${ic.obj} edg=${ic.edg}`); }
+  else { out.push(`ICONS: obj=${ic.obj} edg=${ic.edg} (edges semânticos: 0 — pipeline não executado)`); }
 
-  // Dados locais — o banco tem ~7% da base real
-  out.push(`Dados locais: 2.927.525 decisões STF auditadas (27 CSVs em Desktop\\backup_judx\\resultados\\audit_por_ano\\) | 2.907.193 com partes (99.3%)`);
-  out.push(`Partes: 2.194.195 processos únicos (CSVs 2000-2016 + XLSX 2017-2026) | 55 processos sem partes (AP/AR sigilosos)`);
-  out.push(`STJ local: 2.646.620 processos Datajud (CSV 578MB) | Base normativa: 5.915 artigos 17 códigos`);
+  // ── Corpus local (CAMADA 1) ──
+  out.push('');
+  out.push('=== CORPUS LOCAL (2.927.525 decisões STF) ===');
+  out.push('  Decisões: Downloads\\stf_decisoes_fatias\\ (27 CSVs, 1.525 MB, 2000-2026)');
+  out.push('  Relatores: 100% corrigidos (663.504 Presidência→ministro_real)');
+  out.push('  Partes: 2.194.195 processos (CSVs+XLSX) | 68,7% polo real | 31,3% *NI* (2018+)');
 
-  // Processos background
+  // ── Scraper status ──
+  const scraperCSV = 'C:\\Users\\medin\\Desktop\\backup_judx\\resultados\\partes_portal_FINAL.csv';
+  const scraperCP = 'C:\\Users\\medin\\Desktop\\backup_judx\\resultados\\cp_final.txt';
+  const scraperLines = fileLines(scraperCSV);
+  let scraperPos = '';
+  try { scraperPos = readFileSync(scraperCP, 'utf-8').trim(); } catch {}
+  let scraperRunning = false;
   try {
-    const procs = execSync('wmic process where "name=\'node.exe\'" get processid,commandline /format:csv 2>nul', { encoding: 'utf8' });
-    const scripts = procs.split('\n').filter(l => l.includes('scripts/') && !l.includes('bom-dia'))
-      .map(l => { const m = l.match(/scripts\/([^\s,"]+)/); return m?.[1]; }).filter(Boolean);
-    if (scripts.length) out.push(`BG: ${scripts.join(', ')}`);
+    const ps = execSync('tasklist /FI "IMAGENAME eq python.exe" /FO CSV 2>nul', { encoding: 'utf8' });
+    scraperRunning = ps.includes('python.exe');
   } catch {}
+  out.push(`  Scraper portal: ${scraperLines} processos recuperados | checkpoint=${scraperPos} | ${scraperRunning ? 'RODANDO' : 'PARADO'}`);
 
-  // Sites — check rápido
+  // ── Taxa de provimento (produto lançado 01/abr) ──
+  out.push('');
+  out.push('=== PRODUTO: Taxa de Provimento (judx.com.br/taxa-provimento) ===');
+  out.push('  681.575 ocorrências (2010-2026) | RE 17,1% | ARE 1,2% | AI 1,8% | Geral 3,7%');
+  out.push('  Dados Qlik: Desktop\\backup_judx\\resultados\\taxa_provimento\\');
+  out.push('  Stripe: teste (produção pendente Revolut Business)');
+
+  // ── Sites ──
   const sites = [];
-  for (const [n, u] of [['icons.org.br', 'https://icons.org.br'], ['judx', 'https://judx-platform.vercel.app']]) {
+  for (const [n, u] of [['icons.org.br', 'https://icons.org.br'], ['judx.com.br', 'https://judx-platform.vercel.app']]) {
     try {
       const r = await fetch(u, { signal: AbortSignal.timeout(5000) });
       sites.push(`${n}:${r.ok ? 'OK' : r.status}`);
@@ -83,7 +114,7 @@ async function main() {
   }
   out.push(`Sites: ${sites.join(' ')}`);
 
-  // Pendências — só itens NÃO riscados do STATUS.md
+  // ── Pendências do STATUS.md ──
   try {
     const status = readFileSync('C:\\Users\\medin\\projetos\\judx-platform\\STATUS.md', 'utf8');
     const pending = status.match(/^- \[ \] .+$/gm);
@@ -93,24 +124,26 @@ async function main() {
     }
   } catch {}
 
-  // Mapa de dados — compacto (atualizado 31/mar/2026)
+  // ── Pendências comerciais (MEMORIA_PROJUS v5) ──
   out.push('');
-  out.push('=== DADOS LOCAIS ===');
-  out.push('CORTE ABERTA (2.927.525 decisões):');
-  out.push('  Downloads\\stf_decisoes_fatias\\ — 27 CSVs por ano (2000-2026), 1.525 MB, 20 cols originais');
-  out.push('  Downloads\\stf_partes_fatias\\ — 17 CSVs (2000-2016) + Downloads\\stf_partes_20XX.xlsx (2017-2026)');
-  out.push('  2.194.195 processos com partes | 55 sem (AP/AR sigilosos)');
-  out.push('AUDIT CONSOLIDADO:');
-  out.push('  Desktop\\backup_judx\\resultados\\audit_por_ano\\ — 27 CSVs, decisões+partes, 25 cols');
-  out.push('PIPELINE ONTOLÓGICO:');
-  out.push('  Downloads\\stf_pipeline_local\\ — processo_no (969MB), processo_string_evento (791MB), auditoria_nao_decisoes (281MB)');
-  out.push('MASTER:');
-  out.push('  Downloads\\stf_master\\ — 3_master_completo.csv (2.3GB, 34 cols), 1_basicos_ponte.csv (174MB)');
-  out.push('STJ:');
-  out.push('  projetos\\judx-backup\\stj_datajud_20XX.csv — 2.646.620 processos, 578 MB');
-  out.push('CRAWLER DMA (histórico):');
-  out.push('  Desktop\\geral\\Fechamento DMA\\...\\crawler_judx_fast\\ — andamentos (2.2GB), basicos (273MB)');
-  out.push('  Desktop\\geral\\bkp\\singapura\\iconsjudx\\ — partes (613MB), andamentos (1.6GB), processo (64MB)');
+  out.push('=== PENDÊNCIAS COMERCIAIS ===');
+  out.push('  Revolut Business: em abertura (documentos perdidos)');
+  out.push('  Stripe produção: aguarda IBAN Revolut');
+  out.push('  Faturação AT: software a contratar (Invoicexpress/Moloni)');
+  out.push('  Post LinkedIn: rascunho pendente aprovação');
+
+  // ── STJ ──
+  out.push('');
+  out.push('=== STJ ===');
+  out.push('  2.646.620 processos Datajud (CSV 578MB) | 1.420 temas repetitivos | 203K decisões DJe');
+
+  // ── Processos background ──
+  try {
+    const procs = execSync('wmic process where "name=\'node.exe\'" get processid,commandline /format:csv 2>nul', { encoding: 'utf8' });
+    const scripts = procs.split('\n').filter(l => l.includes('scripts/') && !l.includes('bom-dia'))
+      .map(l => { const m = l.match(/scripts\/([^\s,"]+)/); return m?.[1]; }).filter(Boolean);
+    if (scripts.length) out.push(`BG: ${scripts.join(', ')}`);
+  } catch {}
 
   console.log(out.join('\n'));
 }
