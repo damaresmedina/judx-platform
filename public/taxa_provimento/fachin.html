@@ -3,267 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edson Fachin · Taxa de Provimento · JUDX</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Edson Fachin · Taxa de Provimento · JudX</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy: #0d1f35;
-  --navy-light: #112540;
-  --gold: #c8922a;
-  --gold-light: #e8b84b;
-  --cream: #f5f0e8;
-  --text-muted: #7a9bb5;
-  --card-bg: #0a1628;
-  --card-border: rgba(200,146,42,0.15);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; line-height:1.6; min-height:100vh; }
+:root{--navy:#0a1525;--navy2:#0d1f35;--navy3:#112a4a;--gold:#c8922a;--goldL:#e8b84b;--goldD:rgba(200,146,42,0.15);--red:#e05252;--txt:#e8f0f8;--mut:#6a8aa5;--dim:#3a5a74;--glass:rgba(15,30,50,0.7);--gbrd:rgba(200,146,42,0.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;line-height:1.6}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,var(--navy3) 25%,var(--navy2) 50%,var(--navy3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;display:inline-block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.header { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 2.5rem; border-bottom:1px solid var(--card-border); }
-.logo { color:var(--gold); font-size:0.75rem; letter-spacing:0.15em; font-weight:500; text-decoration:none; }
-.back { color:var(--text-muted); font-size:0.8rem; text-decoration:none; transition:color 0.2s; }
-.back:hover { color:var(--gold); }
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--gbrd);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(10,21,37,0.95)}
+.hdr a{color:var(--gold);font-size:.7rem;letter-spacing:.18em;font-weight:700;text-decoration:none;text-transform:uppercase}
+.hdr .back{color:var(--mut);font-size:.78rem;letter-spacing:0;text-transform:none}
+.hdr .back:hover{color:var(--gold)}
 
-.hero-minister {
-  display:grid; grid-template-columns:auto 1fr; gap:2.5rem;
-  padding:3rem 2.5rem 2rem; align-items:center;
-  border-bottom:1px solid var(--card-border);
-  background:linear-gradient(180deg,#0a1628 0%,var(--navy) 100%);
-}
-.hero-photo { width:140px; height:140px; border-radius:50%; overflow:hidden; border:3px solid rgba(200,146,42,0.4); }
-.hero-photo img { width:100%; height:100%; object-fit:cover; object-position:top; }
-.hero-info h1 { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:900; margin-bottom:0.3rem; }
-.hero-info .role { color:var(--text-muted); font-size:0.85rem; margin-bottom:1rem; }
-.hero-info .pct { font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:#c8922a; }
-.hero-info .pct-label { color:var(--text-muted); font-size:0.75rem; letter-spacing:0.1em; }
-.hero-info .total-label { color:var(--text-muted); font-size:0.8rem; margin-top:0.5rem; }
+.hero{display:grid;grid-template-columns:140px 1fr;gap:2.5rem;padding:3rem 2.5rem;border-bottom:1px solid var(--gbrd);background:linear-gradient(180deg,rgba(15,25,45,1),var(--navy))}
+.photo{width:140px;height:140px;border-radius:50%;overflow:hidden;border:3px solid rgba(200,146,42,.35);box-shadow:0 0 40px rgba(200,146,42,.1)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+.hlbl{color:var(--mut);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.2rem}
+.hpct{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.hname{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;margin-bottom:.3rem}
+.hrole{color:var(--mut);font-size:.82rem;margin-bottom:.5rem}
+.hdet{color:var(--dim);font-size:.78rem}
+.badge{display:inline-flex;padding:.2rem .6rem;border-radius:20px;font-size:.65rem;letter-spacing:.05em;margin-top:.6rem;border:1px solid var(--gbrd)}
 
-.content { max-width:1100px; margin:0 auto; padding:2rem 2.5rem; }
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 2rem 4rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin-bottom:2.5rem}
+.st{background:var(--glass);border:1px solid var(--gbrd);padding:1rem;border-radius:6px;transition:transform .2s}
+.st:hover{transform:translateY(-2px)}
+.st .l{color:var(--mut);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+.st .v{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500}
 
-.section-title {
-  font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700;
-  margin-bottom:1rem; padding-bottom:0.5rem;
-  border-bottom:1px solid var(--card-border);
-  color:var(--gold);
-}
+.sec{margin-bottom:2.5rem}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gbrd)}
+.sh h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold)}
+.sh span{font-size:.7rem;color:var(--dim)}
 
-.grid-stats {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:1rem; margin-bottom:2.5rem;
-}
-.stat-card {
-  background:var(--card-bg); border:1px solid var(--card-border);
-  padding:1.2rem; border-radius:4px;
-}
-.stat-card .label { color:var(--text-muted); font-size:0.7rem; letter-spacing:0.1em; margin-bottom:0.3rem; }
-.stat-card .value { font-family:'DM Mono',monospace; font-size:1.4rem; font-weight:500; }
-.stat-card .value.gold { color:var(--gold); }
-.stat-card .value.red { color:#e05252; }
+.br{display:flex;align-items:center;gap:.8rem;margin-bottom:.5rem;animation:fadeUp .4s ease both}
+.bl{width:100px;font-size:.72rem;color:var(--mut);text-align:right;flex-shrink:0;font-family:'DM Mono',monospace}
+.bt{flex:1;height:28px;background:rgba(255,255,255,.03);border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 10px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.bf span{font-family:'DM Mono',monospace;font-size:.68rem;color:#fff;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 
-.chart-container { margin-bottom:2.5rem; }
-.bar-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.6rem; }
-.bar-label { width:120px; font-size:0.75rem; color:var(--text-muted); text-align:right; flex-shrink:0; }
-.bar-track { flex:1; height:24px; background:rgba(255,255,255,0.05); border-radius:2px; overflow:hidden; position:relative; }
-.bar-fill { height:100%; border-radius:2px; transition:width 0.6s ease; display:flex; align-items:center; padding-left:8px; }
-.bar-fill span { font-family:'DM Mono',monospace; font-size:0.7rem; color:#fff; }
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;color:var(--mut);font-size:.62rem;letter-spacing:.12em;padding:.6rem .8rem;border-bottom:1px solid var(--gbrd);text-transform:uppercase}
+.tbl td{padding:.55rem .8rem;font-size:.78rem;border-bottom:1px solid rgba(255,255,255,.03)}
+.tbl tr:hover{background:rgba(200,146,42,.04)}
+.mono{font-family:'DM Mono',monospace}
 
-.table-section { margin-bottom:2.5rem; }
-.data-table { width:100%; border-collapse:collapse; }
-.data-table th { text-align:left; color:var(--text-muted); font-size:0.7rem; letter-spacing:0.1em; padding:0.6rem 0.8rem; border-bottom:1px solid var(--card-border); }
-.data-table td { padding:0.6rem 0.8rem; font-size:0.8rem; border-bottom:1px solid rgba(255,255,255,0.05); }
-.data-table tr:hover { background:rgba(200,146,42,0.05); }
+.pw{text-align:center;margin-top:1.2rem;padding:1.2rem;background:linear-gradient(180deg,transparent,rgba(200,146,42,.05));border:1px dashed var(--goldD);border-radius:6px}
+.pw a{display:inline-block;background:var(--gold);color:var(--navy);font-size:.68rem;font-weight:700;letter-spacing:.1em;padding:.55rem 1.5rem;text-decoration:none;border-radius:4px;text-transform:uppercase;margin-top:.5rem}
+.pw a:hover{background:var(--goldL)}
 
-.loading { text-align:center; color:var(--text-muted); padding:2rem; font-size:0.85rem; }
+.ftr{border-top:1px solid var(--gbrd);padding:1.2rem 2rem;display:flex;justify-content:space-between;color:var(--dim);font-size:.65rem;letter-spacing:.08em}
 
-@media(max-width:700px) {
-  .hero-minister { grid-template-columns:1fr; text-align:center; justify-items:center; gap:1rem; padding:2rem 1.2rem; }
-  .hero-photo { width:100px; height:100px; }
-  .content { padding:1.5rem 1.2rem; }
-  .bar-label { width:80px; font-size:0.65rem; }
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;text-align:center;justify-items:center;gap:1rem;padding:2rem 1.2rem}
+  .photo{width:100px;height:100px}.hpct{font-size:2.5rem}.hname{font-size:1.5rem}
+  .wrap{padding:1.5rem 1rem 3rem}.stats{grid-template-columns:repeat(2,1fr)}
+  .bl{width:70px;font-size:.6rem}.bt{height:22px}
+  .ftr{flex-direction:column;gap:.3rem;text-align:center}
+  .hdr{padding:.8rem 1rem}
 }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <a href="/taxa_provimento/" class="logo">JUDX · Inteligência Jurisprudencial</a>
-  <a href="/taxa_provimento/" class="back">← Voltar ao painel</a>
+<header class="hdr">
+  <a href="/taxa_provimento/">JudX</a>
+  <a href="/taxa_provimento/" class="back">&#8592; Voltar ao painel</a>
 </header>
 
-<section class="hero-minister">
-  <div class="hero-photo">
-    <img src="/ministros/fachin.jpg" alt="Edson Fachin" onerror="this.style.display='none';this.parentElement.textContent='EF'">
-  </div>
-  <div class="hero-info">
-    <div class="pct-label">TAXA DE PROVIMENTO</div>
-    <div class="pct">4.8%</div>
-    <h1>Edson Fachin</h1>
-    <div class="role">1ª Turma · STF · Posse em 2015</div>
-    <div class="total-label" id="hero-total">Carregando decisões...</div>
+<section class="hero">
+  <div class="photo"><img src="/ministros/fachin.jpg" alt="Edson Fachin"></div>
+  <div>
+    <div class="hlbl">Taxa de provimento</div>
+    <div class="hpct" id="hpct"><span class="sk" style="width:100px;height:3rem"></span></div>
+    <h1 class="hname">Edson Fachin</h1>
+    <div class="hrole">1ª Turma · STF · Posse em 2015</div>
+    <div class="hdet" id="hdet"><span class="sk" style="width:250px;height:1rem"></span></div>
+    <div class="badge" id="badge" style="opacity:0">-</div>
   </div>
 </section>
 
-<div class="content">
-
-  <div class="grid-stats" id="stats">
-    <div class="stat-card"><div class="label">TOTAL DECISÕES</div><div class="value" id="s-total">...</div></div>
-    <div class="stat-card"><div class="label">PROVIDOS</div><div class="value gold" id="s-provido">...</div></div>
-    <div class="stat-card"><div class="label">NÃO PROVIDOS</div><div class="value" id="s-nao-provido">...</div></div>
-    <div class="stat-card"><div class="label">PARCIALMENTE PROVIDOS</div><div class="value" id="s-parcial">...</div></div>
-    <div class="stat-card"><div class="label">NÃO CONHECIDOS</div><div class="value red" id="s-nao-conhecido">...</div></div>
-    <div class="stat-card"><div class="label">MÉDIA PONDERADA STF</div><div class="value" style="color:var(--text-muted)" id="s-media">...</div></div>
+<div class="wrap">
+  <div class="stats">
+    <div class="st"><div class="l">Total decisões</div><div class="v" id="v0"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
+    <div class="st"><div class="l">Providos</div><div class="v" style="color:var(--gold)" id="v1"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
+    <div class="st"><div class="l">Não providos</div><div class="v" style="color:#4a6a84" id="v2"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
+    <div class="st"><div class="l">Parcial</div><div class="v" style="color:var(--mut)" id="v3"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
+    <div class="st"><div class="l">Não conhecidos</div><div class="v" style="color:var(--red)" id="v4"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
+    <div class="st"><div class="l">Média STF (ponderada)</div><div class="v" style="color:var(--mut)" id="v5"><span class="sk" style="width:50px;height:1.2rem"></span></div></div>
   </div>
 
-  <div class="chart-container">
-    <h2 class="section-title">Evolução por Ano</h2>
-    <div id="chart-anos" class="loading">Carregando dados do Supabase...</div>
+  <div class="sec">
+    <div class="sh"><h2>Evolução por Ano</h2><span>A partir da posse (2015)</span></div>
+    <div id="cAnos"><div class="sk" style="width:60%;height:28px;margin-bottom:.5rem"></div><div class="sk" style="width:80%;height:28px"></div></div>
   </div>
 
-  <div class="chart-container">
-    <h2 class="section-title">Por Ramo do Direito</h2>
-    <div id="chart-ramos" class="loading">Carregando...</div>
+  <div class="sec">
+    <div class="sh"><h2>Por Ramo do Direito</h2><span>Top 8</span></div>
+    <div id="cRamos"><div class="sk" style="width:70%;height:28px;margin-bottom:.5rem"></div><div class="sk" style="width:50%;height:28px"></div></div>
   </div>
 
-  <div class="table-section">
-    <h2 class="section-title">Top Assuntos</h2>
-    <div id="table-assuntos" class="loading">Carregando...</div>
+  <div class="sec">
+    <div class="sh"><h2>Top Assuntos</h2><span>Mínimo 5 decisões</span></div>
+    <div id="cAss"><div class="sk" style="width:100%;height:200px"></div></div>
+  </div>
+</div>
+
+  <!-- Radar Decisório -->
+  <div style="margin-top:3rem;background:linear-gradient(135deg,rgba(200,146,42,0.05),rgba(15,25,45,0.8));border:1px solid var(--goldD);border-radius:8px;padding:2rem;position:relative;overflow:hidden">
+    <div style="position:absolute;top:12px;right:-28px;background:var(--gold);color:var(--navy);font-size:.55rem;font-weight:700;letter-spacing:.15em;padding:.2rem 2.5rem;transform:rotate(45deg)">EM BREVE</div>
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:.5rem">JudX Pulse</h3>
+    <p style="color:var(--mut);font-size:.82rem;max-width:600px;line-height:1.7">Inteligência coletiva aplicada ao contencioso. Acompanhe em tempo real como a comunidade jurídica avalia as tendências de cada gabinete.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.2rem">
+      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.4rem">&#9878;&#65039;</div>
+        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">3 Filtros</div>
+        <div style="font-size:.65rem;color:var(--dim)">Previsão de admissibilidade, mérito e provimento por processo</div>
+      </div>
+      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.4rem">&#128200;</div>
+        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">Tendências</div>
+        <div style="font-size:.65rem;color:var(--dim)">Sinais de mudança de posição por ministro e ramo</div>
+      </div>
+      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
+        <div style="font-size:1.5rem;margin-bottom:.4rem">&#128172;</div>
+        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">Comunidade</div>
+        <div style="font-size:.65rem;color:var(--dim)">Discussão entre advogados com análise de dados integrada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cadastro OAB -->
+  <div style="margin-top:2rem;background:var(--navy2);border:1px solid var(--gbrd);border-radius:8px;padding:2rem;text-align:center">
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.4rem">Acesso antecipado para advogados</h3>
+    <p style="color:var(--mut);font-size:.8rem;margin-bottom:1.2rem">Cadastre-se com seu número da OAB para receber acesso prioritário às novas funcionalidades.</p>
+    <form style="display:flex;gap:.6rem;max-width:500px;margin:0 auto;flex-wrap:wrap;justify-content:center" onsubmit="event.preventDefault();var o=document.getElementById('oab').value,m=document.getElementById('msg');if(!/^\d{3,7}\/[A-Z]{2}$/.test(o)){m.textContent='Formato: 123456/SP';m.style.color='var(--red)';return}m.textContent='Cadastro recebido! Verificaremos sua OAB.';m.style.color='#4ade80'">
+      <input id="oab" style="background:var(--navy3);border:1px solid var(--gbrd);color:var(--txt);padding:.65rem 1rem;font-size:.8rem;border-radius:4px;font-family:DM Sans,sans-serif;flex:1;min-width:140px" type="text" placeholder="N° OAB (ex: 123456/SP)" required>
+      <input style="background:var(--navy3);border:1px solid var(--gbrd);color:var(--txt);padding:.65rem 1rem;font-size:.8rem;border-radius:4px;font-family:DM Sans,sans-serif;flex:1;min-width:140px" type="email" placeholder="seu@email.com" required>
+      <button style="background:var(--gold);color:var(--navy);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.65rem 1.5rem;border:none;border-radius:4px;cursor:pointer;text-transform:uppercase" type="submit">Solicitar acesso</button>
+    </form>
+    <div id="msg" style="font-size:.65rem;color:var(--dim);margin-top:.6rem">OAB será verificada · Dados protegidos · Sem spam</div>
   </div>
 
 </div>
 
+<footer class="ftr">
+  <span>JudX · Inteligência Jurisprudencial · judx.com.br</span>
+  <span>© 2026</span>
+</footer>
+
 <script>
-const SUPA_URL = 'https://ejwyguskoiraredinqmb.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
-const RELATOR = 'MIN. EDSON FACHIN';
-const ANO_POSSE = 2015;
-const hdrs = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
+var SUPA = 'https://ejwyguskoiraredinqmb.supabase.co';
+var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
+var AVG = 6.2;
 
-async function fetchPaginated(baseUrl) {
-  let all = [], offset = 0;
-  while (true) {
-    const res = await fetch(baseUrl + '&limit=10000&offset=' + offset, { headers: hdrs });
-    const data = await res.json();
-    all = all.concat(data);
-    if (data.length < 10000) break;
-    offset += 10000;
+fetch(SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_direito,assunto_principal,ano&relator=eq.MIN.%20EDSON%20FACHIN&ano=gte.2015&limit=10000', {
+  headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
+})
+.then(function(r){ return r.json() })
+.then(function(dados){
+  var prov=0, nprov=0, parc=0, ncon=0;
+  var porAno={}, porRamo={}, porAss={};
+
+  for (var i=0; i<dados.length; i++) {
+    var r = dados[i], c = r.categoria_provimento;
+    if (c==='provido') prov++;
+    else if (c==='nao_provido') nprov++;
+    else if (c==='parcial') parc++;
+    else if (c==='nao_conhecido') ncon++;
+
+    var a = r.ano;
+    if (!porAno[a]) porAno[a]={t:0,p:0,np:0,nc:0}; porAno[a].t++;
+    if (c==='provido') porAno[a].p++; else if (c==='nao_provido') porAno[a].np++; else if (c==='nao_conhecido') porAno[a].nc++;
+    var rm = r.ramo_direito || 'N/I';
+    if (!porRamo[rm]) porRamo[rm]={t:0,p:0,np:0,nc:0}; porRamo[rm].t++;
+    if (c==='provido') porRamo[rm].p++; else if (c==='nao_provido') porRamo[rm].np++; else if (c==='nao_conhecido') porRamo[rm].nc++;
+    var as = r.assunto_principal || 'N/I';
+    if (!porAss[as]) porAss[as]={t:0,p:0}; porAss[as].t++; if (c==='provido') porAss[as].p++;
   }
-  return all;
-}
 
-async function main() {
-  // Fetch minister data (filtered by posse year)
-  const minUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
-    + '?select=categoria_provimento,ramo_direito,assunto_principal,ano'
-    + '&relator=eq.' + encodeURIComponent(RELATOR)
-    + '&ano=gte.' + ANO_POSSE;
+  var base = prov + nprov + parc;
+  var taxa = base > 0 ? ((prov/base)*100).toFixed(1) : '0';
+  var acima = parseFloat(taxa) >= AVG;
 
-  // Fetch ALL ministers data for weighted average (same period as this minister)
-  const allUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
-    + '?select=categoria_provimento'
-    + '&ano=gte.' + ANO_POSSE;
+  document.getElementById('hpct').textContent = taxa + '%';
+  document.getElementById('hpct').style.color = acima ? 'var(--gold)' : 'var(--red)';
+  document.getElementById('hdet').textContent = dados.length.toLocaleString('pt-BR') + ' decisoes de merito (2015-2026)';
+  var b = document.getElementById('badge');
+  b.style.opacity='1';
+  b.textContent = (acima?'\u25B2 Acima':'\u25BC Abaixo') + ' da media STF ('+AVG+'%)';
+  b.style.color = acima?'var(--gold)':'var(--red)';
+  b.style.background = acima?'rgba(200,146,42,.1)':'rgba(224,82,82,.1)';
+  b.style.borderColor = acima?'rgba(200,146,42,.3)':'rgba(224,82,82,.3)';
 
-  const [dados, todosSTF] = await Promise.all([
-    fetchPaginated(minUrl),
-    fetchPaginated(allUrl)
-  ]);
+  document.getElementById('v0').textContent = dados.length.toLocaleString('pt-BR');
+  document.getElementById('v1').textContent = prov.toLocaleString('pt-BR');
+  document.getElementById('v2').textContent = nprov.toLocaleString('pt-BR');
+  document.getElementById('v3').textContent = parc.toLocaleString('pt-BR');
+  document.getElementById('v4').textContent = ncon.toLocaleString('pt-BR');
+  document.getElementById('v5').textContent = AVG + '%';
 
-  // Weighted average: providos / total decisoes de merito (all STF, same period)
-  let stfProvido = 0, stfBase = 0;
-  todosSTF.forEach(r => {
-    if (['provido','nao_provido','parcial'].includes(r.categoria_provimento)) {
-      stfBase++;
-      if (r.categoria_provimento === 'provido') stfProvido++;
-    }
-  });
-  const mediaSTF = stfBase > 0 ? ((stfProvido / stfBase) * 100).toFixed(1) : '0';
+  // Legenda
+  var leg = '<div style="display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.7rem">'
+    +'<span><span style="display:inline-block;width:12px;height:12px;background:var(--gold);border-radius:2px;vertical-align:middle;margin-right:4px"></span>Providos</span>'
+    +'<span><span style="display:inline-block;width:12px;height:12px;background:#4a6a84;border-radius:2px;vertical-align:middle;margin-right:4px"></span>N\u00e3o providos</span>'
+    +'<span><span style="display:inline-block;width:12px;height:12px;background:var(--red);border-radius:2px;vertical-align:middle;margin-right:4px"></span>N\u00e3o conhecidos</span>'
+    +'</div>';
 
-  // Minister stats
-  let provido=0, nao_provido=0, parcial=0, nao_conhecido=0;
-  const porAno = {}, porRamo = {}, porAssunto = {};
+  function stackedBar(label, d, maxT, delay) {
+    var wTotal = Math.max(Math.round((d.t/maxT)*100),5);
+    var wP = d.t>0 ? (d.p/d.t*100).toFixed(1) : 0;
+    var wNP = d.t>0 ? (d.np/d.t*100).toFixed(1) : 0;
+    var wNC = d.t>0 ? (d.nc/d.t*100).toFixed(1) : 0;
+    return '<div class="br" style="animation-delay:'+delay+'s">'
+      +'<div class="bl">'+label+'</div>'
+      +'<div class="bt" style="width:'+wTotal+'%;display:flex">'
+        +'<div style="width:'+wP+'%;height:100%;background:var(--gold);display:flex;align-items:center;padding:0 4px;overflow:hidden" title="Providos: '+d.p+'"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(d.p>0?d.p:'')+'</span></div>'
+        +'<div style="width:'+wNP+'%;height:100%;background:#4a6a84;display:flex;align-items:center;padding:0 4px;overflow:hidden" title="N\u00e3o providos: '+d.np+'"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(d.np>0?d.np:'')+'</span></div>'
+        +'<div style="width:'+wNC+'%;height:100%;background:var(--red);display:flex;align-items:center;padding:0 2px;overflow:hidden" title="N\u00e3o conhecidos: '+d.nc+'"><span style="font-family:DM Mono,monospace;font-size:.6rem;color:#fff;white-space:nowrap">'+(d.nc>0?d.nc:'')+'</span></div>'
+      +'</div>'
+      +'<div style="font-family:DM Mono,monospace;font-size:.65rem;color:var(--mut);min-width:30px;text-align:right">'+d.t+'</div>'
+    +'</div>';
+  }
 
-  dados.forEach(r => {
-    if (r.categoria_provimento === 'provido') provido++;
-    else if (r.categoria_provimento === 'nao_provido') nao_provido++;
-    else if (r.categoria_provimento === 'parcial') parcial++;
-    else if (r.categoria_provimento === 'nao_conhecido') nao_conhecido++;
+  var anos = Object.keys(porAno).sort();
+  var mxA = 1; for(var j=0;j<anos.length;j++){if(porAno[anos[j]].t>mxA)mxA=porAno[anos[j]].t;}
+  var hA = leg;
+  for (var j=0; j<anos.length; j++) {
+    hA += stackedBar(anos[j], porAno[anos[j]], mxA, j*0.08);
+  }
+  document.getElementById('cAnos').innerHTML = hA;
 
-    const ano = r.ano || 'N/I';
-    if (!porAno[ano]) porAno[ano] = {t:0,p:0};
-    porAno[ano].t++;
-    if (r.categoria_provimento === 'provido') porAno[ano].p++;
+  var rms = Object.entries(porRamo).sort(function(a,b){return b[1].t-a[1].t}).slice(0,8);
+  var mxR = rms[0]?rms[0][1].t:1;
+  var hR = leg;
+  for (var k=0; k<rms.length; k++) {
+    hR += stackedBar(rms[k][0], rms[k][1], mxR, k*0.06);
+  }
+  document.getElementById('cRamos').innerHTML = hR;
 
-    const ramo = r.ramo_direito || 'Não informado';
-    if (!porRamo[ramo]) porRamo[ramo] = {t:0,p:0};
-    porRamo[ramo].t++;
-    if (r.categoria_provimento === 'provido') porRamo[ramo].p++;
-
-    const assunto = r.assunto_principal || 'Não informado';
-    if (!porAssunto[assunto]) porAssunto[assunto] = {t:0,p:0};
-    porAssunto[assunto].t++;
-    if (r.categoria_provimento === 'provido') porAssunto[assunto].p++;
-  });
-
-  // Individual weighted rate
-  const base = provido + nao_provido + parcial;
-  const taxaIndiv = base > 0 ? ((provido / base) * 100).toFixed(1) : '0';
-
-  // Update hero
-  document.getElementById('hero-total').textContent = dados.length.toLocaleString('pt-BR')
-    + ' decisões colegiadas de mérito (' + ANO_POSSE + '–' + new Date().getFullYear() + ')';
-  document.querySelector('.pct').textContent = taxaIndiv + '%';
-  document.querySelector('.pct').style.color = parseFloat(taxaIndiv) >= parseFloat(mediaSTF) ? '#c8922a' : '#e05252';
-
-  // Stats
-  document.getElementById('s-total').textContent = dados.length.toLocaleString('pt-BR');
-  document.getElementById('s-provido').textContent = provido.toLocaleString('pt-BR');
-  document.getElementById('s-nao-provido').textContent = nao_provido.toLocaleString('pt-BR');
-  document.getElementById('s-parcial').textContent = parcial.toLocaleString('pt-BR');
-  document.getElementById('s-nao-conhecido').textContent = nao_conhecido.toLocaleString('pt-BR');
-  document.getElementById('s-media').textContent = mediaSTF + '%';
-
-  // Chart Anos (only from posse year)
-  const anos = Object.keys(porAno).filter(a => a !== 'N/I' && parseInt(a) >= ANO_POSSE).sort();
-  const maxAnoT = Math.max(...anos.map(a => porAno[a].t));
-  document.getElementById('chart-anos').innerHTML = anos.map(a => {
-    const taxa = porAno[a].t > 0 ? ((porAno[a].p / porAno[a].t) * 100).toFixed(1) : '0';
-    const w = Math.round((porAno[a].t / maxAnoT) * 100);
-    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
-    return '<div class="bar-row">'
-      + '<div class="bar-label">' + a + '</div>'
-      + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+porAno[a].t+')</span></div></div>'
-      + '</div>';
-  }).join('');
-
-  // Chart Ramos
-  const ramosArr = Object.entries(porRamo).sort((a,b) => b[1].t - a[1].t).slice(0,8);
-  const maxRamoT = ramosArr.length > 0 ? ramosArr[0][1].t : 1;
-  document.getElementById('chart-ramos').innerHTML = ramosArr.map(([ramo, v]) => {
-    const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
-    const w = Math.round((v.t / maxRamoT) * 100);
-    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
-    return '<div class="bar-row">'
-      + '<div class="bar-label">' + ramo + '</div>'
-      + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+v.t+')</span></div></div>'
-      + '</div>';
-  }).join('');
-
-  // Table Assuntos
-  const assuntosArr = Object.entries(porAssunto).filter(a => a[1].t >= 5).sort((a,b) => b[1].t - a[1].t).slice(0,15);
-  let html = '<table class="data-table"><thead><tr><th>ASSUNTO</th><th>DECISÕES</th><th>PROVIDOS</th><th>TAXA</th></tr></thead><tbody>';
-  assuntosArr.forEach(([assunto, v]) => {
-    const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
-    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'color:var(--gold)' : 'color:#e05252';
-    html += '<tr><td>'+assunto.replace(/_/g,' ')+'</td><td>'+v.t+'</td><td>'+v.p+'</td><td style="'+c+';font-family:DM Mono,monospace">'+taxa+'%</td></tr>';
-  });
-  html += '</tbody></table>';
-  document.getElementById('table-assuntos').innerHTML = html;
-}
-
-main().catch(e => {
-  document.querySelectorAll('.loading').forEach(el => el.textContent = 'Erro ao carregar: ' + e.message);
-});
+  var allA = Object.entries(porAss).filter(function(a){return a[1].t>=5}).sort(function(a,b){return b[1].t-a[1].t});
+  var top5 = allA.slice(0,5), rest = allA.length - 5;
+  var hT = '<table class="tbl"><thead><tr><th>Assunto</th><th>Dec.</th><th>Prov.</th><th>Taxa</th></tr></thead><tbody>';
+  for (var n=0; n<top5.length; n++) {
+    var an2=top5[n][0], va=top5[n][1];
+    var tx3 = va.t>0?((va.p/va.t)*100).toFixed(1):'0';
+    var co3 = parseFloat(tx3)>=AVG?'color:var(--gold)':'color:var(--red)';
+    hT += '<tr><td>'+an2.replace(/_/g,' ')+'</td><td class="mono">'+va.t+'</td><td class="mono">'+va.p+'</td><td class="mono" style="'+co3+'">'+tx3+'%</td></tr>';
+  }
+  hT += '</tbody></table>';
+  if (rest>0) hT += '<div class="pw"><div style="font-size:.85rem;color:var(--mut)">+ '+rest+' assuntos</div><div style="font-family:Playfair Display,serif;font-size:1rem;color:var(--gold)">Desbloqueie a analise completa</div><a href="/planos">Ver todos os assuntos</a></div>';
+  document.getElementById('cAss').innerHTML = hT;
+})
+.catch(function(e){ console.error('Erro:', e) });
 </script>
 </body>
 </html>
