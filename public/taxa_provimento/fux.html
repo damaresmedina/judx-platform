@@ -163,11 +163,23 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 var SUPA = 'https://ejwyguskoiraredinqmb.supabase.co';
 var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
 var AVG = 6.2;
+var BASE_URL = SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_direito,assunto_principal,ano&relator=eq.MIN.%20LUIZ%20FUX&ano=gte.2011';
 
-fetch(SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_direito,assunto_principal,ano&relator=eq.MIN.%20LUIZ%20FUX&ano=gte.2011&limit=10000', {
-  headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
-})
-.then(function(r){ return r.json() })
+function fetchAll(url) {
+  var all = [], offset = 0;
+  function page() {
+    return fetch(url + '&limit=1000&offset=' + offset, {
+      headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
+    }).then(function(r){ return r.json() }).then(function(d) {
+      all = all.concat(d);
+      if (d.length === 1000) { offset += 1000; return page(); }
+      return all;
+    });
+  }
+  return page();
+}
+
+fetchAll(BASE_URL)
 .then(function(dados){
   var prov=0, nprov=0, parc=0, ncon=0;
   var porAno={}, porRamo={}, porAss={};

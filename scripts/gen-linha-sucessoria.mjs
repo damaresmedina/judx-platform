@@ -51,6 +51,7 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 
 .mr{display:flex;align-items:center;gap:.8rem;padding:.45rem .8rem;margin-bottom:2px;border-radius:4px;cursor:pointer;transition:background .15s;position:relative}
 .mr:hover{background:rgba(200,146,42,.06)}
+a.mr{text-decoration:none;color:inherit;cursor:pointer}
 .mr.at{border-left:3px solid var(--gold)}
 .md{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .my{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--mut);width:75px;flex-shrink:0}
@@ -152,17 +153,18 @@ function render(){
       var anos=m.sa?(m.sa-m.pa):(m.pa?(NOW-m.pa):0);
       var bw=Math.max(anos*4,8);
       var idx=DATA.indexOf(m);
-      var click=m.slug?' onclick="location.href=\\'/taxa_provimento/'+m.slug+'.html\\'"':'';
-      // Short president name
       var shortPres=m.ind?(m.ind.split(' ').pop()):'';
-      h+='<div class="mr'+(m.atual?' at':'')+'" data-i="'+idx+'"'+click+' style="animation:fadeUp .3s ease '+(i*0.02)+'s both;border-left:3px solid '+(m.atual?'var(--gold)':m.cor)+'">'
+      var isLink=!!m.slug;
+      var openTag=isLink?'<a href="/taxa_provimento/'+m.slug+'.html"':'<div';
+      var closeTag=isLink?'</a>':'</div>';
+      h+=openTag+' class="mr'+(m.atual?' at':'')+'" data-i="'+idx+'" style="animation:fadeUp .3s ease '+(i*0.02)+'s both;border-left:3px solid '+(m.atual?'var(--gold)':m.cor)+'">'
         +'<div class="md" style="background:'+m.cor+'"></div>'
         +'<div class="my">'+(m.pa||'?')+(m.sa?'\\u2013'+m.sa:'\\u2013')+'</div>'
-        +'<div class="mn'+(m.atual?' atn':'')+'">'+m.n+(m.g==='F'?' \\u2640':'')+'</div>'
+        +'<div class="mn'+(m.atual?' atn':'')+'">'+m.n+(m.g==='F'?' \\u2640':'')+(isLink?' \\u2192':'')+'</div>'
         +'<div class="mb" style="width:'+bw+'px;background:'+m.cor+'"></div>'
         +'<div class="m-pres" style="color:'+m.cor+'">'+shortPres+'</div>'
         +'<div class="mi">'+anos+'a</div>'
-        +'</div>';
+        +closeTag;
     });
     h+='</div>';
   });
@@ -187,7 +189,7 @@ function showT(e){
   h+='<div class="tr"><span class="tl">Tempo no STF</span><span class="tv">'+anos+' anos</span></div>';
   if(m.ip)h+='<div class="tr"><span class="tl">Idade na posse</span><span class="tv">'+m.ip+' anos</span></div>';
   if(m.ant)h+='<div class="tr"><span class="tl">Antecessor</span><span class="tv">'+m.ant+'</span></div>';
-  if(m.slug)h+='<a href="/taxa_provimento/'+m.slug+'.html" class="tip-link">Ver perfil decis\\u00f3rio \\u2192</a>';
+  if(m.slug)h+='<div style="margin-top:.4rem;font-size:.6rem;color:var(--gold)">Clique na linha para ver o perfil decis\\u00f3rio</div>';
   tip.innerHTML=h;tip.classList.add('show');
 }
 function moveT(e){
