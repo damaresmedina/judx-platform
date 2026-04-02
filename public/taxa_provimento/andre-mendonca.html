@@ -217,17 +217,17 @@ fetch(SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_dire
 
   function stackedBar(label, d, maxT, delay) {
     var wTotal = Math.max(Math.round((d.t/maxT)*100),5);
-    var wP = d.t>0 ? (d.p/d.t*100).toFixed(1) : 0;
-    var wNP = d.t>0 ? (d.np/d.t*100).toFixed(1) : 0;
-    var wNC = d.t>0 ? (d.nc/d.t*100).toFixed(1) : 0;
+    var pP = d.t>0 ? (d.p/d.t*100).toFixed(1) : '0';
+    var pNP = d.t>0 ? (d.np/d.t*100).toFixed(1) : '0';
+    var pNC = d.t>0 ? (d.nc/d.t*100).toFixed(1) : '0';
     return '<div class="br" style="animation-delay:'+delay+'s">'
       +'<div class="bl">'+label+'</div>'
       +'<div class="bt" style="width:'+wTotal+'%;display:flex">'
-        +'<div style="width:'+wP+'%;height:100%;background:var(--gold);display:flex;align-items:center;padding:0 4px;overflow:hidden" title="Providos: '+d.p+'"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(d.p>0?d.p:'')+'</span></div>'
-        +'<div style="width:'+wNP+'%;height:100%;background:#4a6a84;display:flex;align-items:center;padding:0 4px;overflow:hidden" title="N\u00e3o providos: '+d.np+'"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(d.np>0?d.np:'')+'</span></div>'
-        +'<div style="width:'+wNC+'%;height:100%;background:var(--red);display:flex;align-items:center;padding:0 2px;overflow:hidden" title="N\u00e3o conhecidos: '+d.nc+'"><span style="font-family:DM Mono,monospace;font-size:.6rem;color:#fff;white-space:nowrap">'+(d.nc>0?d.nc:'')+'</span></div>'
+        +'<div style="width:'+pP+'%;height:100%;background:var(--gold);display:flex;align-items:center;padding:0 4px;overflow:hidden" title="Providos: '+d.p+' ('+pP+'%)"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(parseFloat(pP)>5?pP+'%':'')+'</span></div>'
+        +'<div style="width:'+pNP+'%;height:100%;background:#4a6a84;display:flex;align-items:center;padding:0 4px;overflow:hidden" title="N\u00e3o providos: '+d.np+' ('+pNP+'%)"><span style="font-family:DM Mono,monospace;font-size:.65rem;color:#fff;white-space:nowrap">'+(parseFloat(pNP)>5?pNP+'%':'')+'</span></div>'
+        +'<div style="width:'+pNC+'%;height:100%;background:var(--red);display:flex;align-items:center;padding:0 2px;overflow:hidden" title="N\u00e3o conhecidos: '+d.nc+' ('+pNC+'%)"><span style="font-family:DM Mono,monospace;font-size:.6rem;color:#fff;white-space:nowrap">'+(parseFloat(pNC)>5?pNC+'%':'')+'</span></div>'
       +'</div>'
-      +'<div style="font-family:DM Mono,monospace;font-size:.65rem;color:var(--mut);min-width:30px;text-align:right">'+d.t+'</div>'
+      +'<div style="font-family:DM Mono,monospace;font-size:.65rem;color:var(--mut);min-width:40px;text-align:right">n='+d.t+'</div>'
     +'</div>';
   }
 
