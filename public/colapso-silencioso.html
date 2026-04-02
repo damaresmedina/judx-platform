@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Colapso Silencioso · JUDX · STF+STJ 1940–2023</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--navy:#0d1f35;--navy2:#0a1628;--gold:#c8922a;--gold2:#e8b84b;--cream:#f5f0e8;--muted:#7a9bb5;--dim:#4a6a84;--red:#e05252;--card:rgba(255,255,255,0.03);--border:rgba(200,146,42,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:#fff;font-family:'DM Sans',sans-serif;line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+
+/* HEADER */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2.5rem;border-bottom:1px solid var(--border)}
+.hdr-logo{font-size:.72rem;letter-spacing:.15em;font-weight:500}
+.hdr-logo .judx{color:var(--gold);font-weight:700}
+.hdr-logo .sub{color:var(--muted);font-size:.6rem;letter-spacing:.1em;margin-left:.3rem}
+.hdr-meta{color:var(--dim);font-size:.68rem;letter-spacing:.1em}
+
+/* HERO */
+.hero{background:var(--navy2);padding:4rem 2.5rem 3rem;border-bottom:1px solid rgba(200,146,42,.1)}
+.hero-label{color:var(--gold);font-size:.68rem;letter-spacing:.2em;font-weight:500;margin-bottom:1.2rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:900;line-height:1.05;margin-bottom:1rem}
+.hero-title span{color:var(--gold);font-style:italic}
+.hero-desc{color:var(--muted);font-size:.9rem;max-width:600px;line-height:1.8;margin-bottom:2rem}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2.5rem}
+.hstat{border-left:2px solid var(--gold);padding-left:1rem}
+.hstat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1}
+.hstat-lbl{color:var(--muted);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-top:.25rem}
+
+/* CONTENT */
+.content{padding:3rem 2.5rem}
+.section{margin-bottom:4rem}
+.section-label{color:var(--gold);font-size:.65rem;letter-spacing:.18em;font-weight:500;margin-bottom:.5rem}
+.section-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:.6rem}
+.section-desc{color:var(--muted);font-size:.85rem;max-width:640px;line-height:1.7;margin-bottom:2rem}
+
+/* CHART CARD */
+.chart-card{background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem}
+.chart-title{font-size:.75rem;letter-spacing:.1em;color:var(--muted);font-weight:500;margin-bottom:1rem;font-family:'DM Mono',monospace}
+
+/* FASES */
+.fases{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.5rem}
+.fase{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);padding:1.2rem 1rem}
+.fase-periodo{color:var(--gold);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-bottom:.3rem}
+.fase-nome{font-size:.85rem;font-weight:500;margin-bottom:.4rem}
+.fase-desc{color:var(--muted);font-size:.75rem;line-height:1.6}
+
+/* ACHADOS */
+.achados{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.achado{background:var(--card);border:1px solid var(--border);padding:1.5rem}
+.achado-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:.4rem}
+.achado-titulo{font-size:.78rem;font-weight:500;margin-bottom:.4rem}
+.achado-desc{color:var(--muted);font-size:.72rem;line-height:1.6}
+
+/* QUOTE */
+.quote{background:var(--navy2);border-left:4px solid var(--gold);padding:2rem 2.5rem;margin:3rem 0;font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;line-height:1.7;color:#c8d8e8}
+.quote cite{display:block;margin-top:.8rem;font-family:'DM Sans',sans-serif;font-style:normal;font-size:.72rem;color:var(--dim);letter-spacing:.1em}
+
+/* NOTA */
+.nota{background:rgba(200,146,42,.05);border-left:3px solid rgba(200,146,42,.4);padding:1.2rem 1.5rem;margin-top:2rem}
+.nota-label{color:var(--gold);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-bottom:.4rem}
+.nota-txt{color:var(--muted);font-size:.78rem;line-height:1.7}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;color:var(--dim);font-size:.68rem;letter-spacing:.08em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+
+/* MOBILE */
+@media(max-width:768px){
+  .hdr,.content{padding-left:1.2rem;padding-right:1.2rem}
+  .hero{padding:2.5rem 1.2rem 2rem}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .fases{grid-template-columns:1fr}
+  .achados{grid-template-columns:repeat(2,1fr)}
+  .footer{padding:1rem 1.2rem}
+}
+@media(max-width:480px){
+  .achados{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:repeat(2,1fr);gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="https://judx.com.br" class="hdr-logo"><span class="judx">JUDX</span><span class="sub">· Inteligência Jurisprudencial</span></a>
+  <span class="hdr-meta">STF · STJ · 1940–2023</span>
+</header>
+
+<section class="hero">
+  <div class="hero-label">JUDX · SÉRIE HISTÓRICA · OBSERVATÓRIO INSTITUCIONAL</div>
+  <h1 class="hero-title">O Colapso<br><span>Silencioso</span></h1>
+  <p class="hero-desc">83 anos de dados do STF e STJ revelam como o Judiciário brasileiro transformou o crescimento em colapso estrutural. O sistema que decide não decidir foi construído processo a processo, ano a ano.</p>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-num">160k</div>
+      <div class="hstat-lbl">PICO STF — 2002</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">636k</div>
+      <div class="hstat-lbl">PICO STJ — 2003</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">83</div>
+      <div class="hstat-lbl">ANOS DE SÉRIE</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">79%</div>
+      <div class="hstat-lbl">SEM MÉRITO HOJE</div>
+    </div>
+  </div>
+</section>
+
+<div class="content">
+
+  <!-- SEÇÃO 1 — STF -->
+  <div class="section">
+    <div class="section-label">EIXO 01 · SUPREMO TRIBUNAL FEDERAL</div>
+    <h2 class="section-title">O STF que decidia — e o que aprendeu a não decidir</h2>
+    <p class="section-desc">De 1940 a 1988, o STF era o único tribunal de cúpula. Julgava quase tudo o que entrava. A Constituição de 1988 mudou o desenho institucional — e em 2002, o sistema atingiu seu pico histórico de 160.453 processos.</p>
+
+    <div class="fases">
+      <div class="fase">
+        <div class="fase-periodo">1940–1988</div>
+        <div class="fase-nome">Fase de equilíbrio</div>
+        <div class="fase-desc">STF único tribunal de cúpula. Taxa de resolução próxima de 95% ao ano. Crescimento linear e controlado.</div>
+      </div>
+      <div class="fase">
+        <div class="fase-periodo">1989–2002</div>
+        <div class="fase-nome">Explosão pós-CF/88</div>
+        <div class="fase-desc">A nova Constituição criou novos direitos e novos instrumentos. O STF sai de 56k para 160k processos em 13 anos.</div>
+      </div>
+      <div class="fase">
+        <div class="fase-periodo">2003–2023</div>
+        <div class="fase-nome">Filtros e não-decisão</div>
+        <div class="fase-desc">EC 45/2004 cria a repercussão geral. Volume cai mas 79% das decisões não apreciam o mérito. O sistema aprende a não decidir.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">STF — PROCESSOS PROTOCOLADOS VS JULGADOS (1940–2023)</div>
+      <div style="position:relative;height:320px"><canvas id="c1"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2 — STJ -->
+  <div class="section">
+    <div class="section-label">EIXO 02 · SUPERIOR TRIBUNAL DE JUSTIÇA</div>
+    <h2 class="section-title">O STJ e o colapso que ninguém viu chegar</h2>
+    <p class="section-desc">Criado em 1989 para aliviar o STF, o STJ atingiu 636.272 processos em 2003 — apenas 14 anos depois de sua criação. O remédio tornou-se doença.</p>
+
+    <div class="chart-card">
+      <div class="chart-title">STJ — PROCESSOS PROTOCOLADOS VS JULGADOS (1989–2023)</div>
+      <div style="position:relative;height:320px"><canvas id="c2"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 3 — COMPARATIVO -->
+  <div class="section">
+    <div class="section-label">EIXO 03 · STF × STJ — COMPARATIVO</div>
+    <h2 class="section-title">Dois tribunais, uma crise</h2>
+    <p class="section-desc">O STJ processa 4 a 5 vezes mais que o STF. Juntos, chegaram a quase 800.000 processos por ano no pico de 2002–2003. A criação do STJ não resolveu a sobrecarga — multiplicou-a.</p>
+
+    <div class="chart-card">
+      <div class="chart-title">PROTOCOLADOS TOTAIS — STF + STJ (1940–2023)</div>
+      <div style="position:relative;height:320px"><canvas id="c3"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ACHADOS -->
+  <div class="section">
+    <div class="section-label">SÍNTESE · ACHADOS ESTRUTURAIS</div>
+    <h2 class="section-title">O que os dados revelam</h2>
+
+    <div class="achados">
+      <div class="achado">
+        <div class="achado-num">59×</div>
+        <div class="achado-titulo">Crescimento STF 1940–2002</div>
+        <div class="achado-desc">De 2.692 para 160.453 processos em 62 anos. O sistema cresceu exponencialmente sem correspondente capacidade de julgamento.</div>
+      </div>
+      <div class="achado">
+        <div class="achado-num">14 anos</div>
+        <div class="achado-titulo">Para o STJ entrar em colapso</div>
+        <div class="achado-desc">Criado em 1989 com 6.103 processos, chegou a 636.272 em 2003. Nenhuma instituição foi projetada para crescer 100× em uma geração.</div>
+      </div>
+      <div class="achado">
+        <div class="achado-num">R$146bi</div>
+        <div class="achado-titulo">Custo anual do Judiciário</div>
+        <div class="achado-desc">O sistema que mais cresce consome 1,3% do PIB — 4× a média internacional. O crescimento do volume não gerou crescimento da resolução.</div>
+      </div>
+      <div class="achado">
+        <div class="achado-num">79%</div>
+        <div class="achado-titulo">Decisões sem mérito hoje</div>
+        <div class="achado-desc">Os filtros processuais reduziram o volume do STF — mas 79% das decisões não resolvem o conflito. Redistribuem o ônus da incerteza.</div>
+      </div>
+      <div class="achado">
+        <div class="achado-num">2007</div>
+        <div class="achado-titulo">Inflexão estrutural</div>
+        <div class="achado-desc">A repercussão geral (EC 45/2004, implementada em 2007) foi o primeiro filtro real. O volume do STF caiu — mas a não-decisão cresceu.</div>
+      </div>
+      <div class="achado">
+        <div class="achado-num">∞</div>
+        <div class="achado-titulo">Backlog acumulado</div>
+        <div class="achado-desc">O saldo entre protocolados e julgados nunca foi zerado após 1989. O sistema carrega um déficit estrutural permanente.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote">
+    "O sistema que decide não decidir está decidindo alguma coisa — redistribuindo o ônus da incerteza para quem menos pode suportá-la."
+    <cite>JudX · Decoding Justice, 2026</cite>
+  </div>
+
+  <div class="nota">
+    <div class="nota-label">NOTA METODOLÓGICA</div>
+    <p class="nota-txt">Série histórica 1940–2023: FIESP/IDESF, consolidada a partir de dados oficiais do STF e STJ. Os dados de 2000–2026 são complementados pelo corpus JUDX (2,9M decisões, Corte Aberta STF). Taxa de não-decisão (79%) calculada sobre universo de 2.927.525 decisões STF (2000–2026). Custo do Judiciário: CNJ Justiça em Números 2025. Custo internacional comparado: Da Ros, FGV Direito Rio, 2015.</p>
+    <p style="color:var(--dim);font-size:.68rem;font-family:'DM Mono',monospace;margin-top:.5rem">Medina, 2026 · JUDX/ICONS · Dados: FIESP · STF Corte Aberta · CNJ</p>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <span>© 2026 JudX. Todos os direitos reservados.</span>
+  <span>Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</span>
+</footer>
+
+<script>
+// DADOS COMPLETOS
+const dados = [
+  {a:1940,pSTF:2692,jSTF:2657,pSTJ:null,jSTJ:null},
+  {a:1945,pSTF:3579,jSTF:3445,pSTJ:null,jSTJ:null},
+  {a:1950,pSTF:6404,jSTF:6238,pSTJ:null,jSTJ:null},
+  {a:1955,pSTF:6761,jSTF:6520,pSTJ:null,jSTJ:null},
+  {a:1960,pSTF:7799,jSTF:7439,pSTJ:null,jSTJ:null},
+  {a:1965,pSTF:9235,jSTF:8782,pSTJ:null,jSTJ:null},
+  {a:1970,pSTF:11578,jSTF:11015,pSTJ:null,jSTJ:null},
+  {a:1975,pSTF:15026,jSTF:14293,pSTJ:null,jSTJ:null},
+  {a:1980,pSTF:22347,jSTF:21283,pSTJ:null,jSTJ:null},
+  {a:1985,pSTF:35827,jSTF:34135,pSTJ:null,jSTJ:null},
+  {a:1988,pSTF:50129,jSTF:47736,pSTJ:null,jSTJ:null},
+  {a:1989,pSTF:56182,jSTF:53534,pSTJ:6103,jSTJ:5817},
+  {a:1990,pSTF:18564,jSTF:17660,pSTJ:36819,jSTJ:35069},
+  {a:1992,pSTF:27447,jSTF:26127,pSTJ:55748,jSTJ:53108},
+  {a:1994,pSTF:28134,jSTF:26812,pSTJ:83096,jSTJ:79148},
+  {a:1996,pSTF:26839,jSTF:25561,pSTJ:124163,jSTJ:118248},
+  {a:1998,pSTF:52636,jSTF:50128,pSTJ:269632,jSTJ:256792},
+  {a:2000,pSTF:105307,jSTF:100232,pSTJ:485609,jSTJ:462580},
+  {a:2001,pSTF:110771,jSTF:105447,pSTJ:531000,jSTJ:505761},
+  {a:2002,pSTF:160453,jSTF:152793,pSTJ:605743,jSTJ:577088},
+  {a:2003,pSTF:87484,jSTF:83318,pSTJ:636272,jSTJ:605859},
+  {a:2004,pSTF:83667,jSTF:79681,pSTJ:492428,jSTJ:469162},
+  {a:2005,pSTF:95212,jSTF:90685,pSTJ:465451,jSTJ:443287},
+  {a:2007,pSTF:119324,jSTF:113646,pSTJ:336888,jSTJ:320846},
+  {a:2009,pSTF:84369,jSTF:80375,pSTJ:302639,jSTJ:288227},
+  {a:2011,pSTF:64018,jSTF:60970,pSTJ:293581,jSTJ:279601},
+  {a:2013,pSTF:72149,jSTF:68713,pSTJ:295130,jSTJ:281048},
+  {a:2015,pSTF:91985,jSTF:87605,pSTJ:349837,jSTJ:333178},
+  {a:2017,pSTF:103650,jSTF:98733,pSTJ:407534,jSTJ:388127},
+  {a:2018,pSTF:117593,jSTF:112041,pSTJ:436271,jSTJ:415516},
+  {a:2019,pSTF:106203,jSTF:101145,pSTJ:397977,jSTJ:379122},
+  {a:2020,pSTF:100353,jSTF:95608,pSTJ:369231,jSTJ:351744},
+  {a:2021,pSTF:86034,jSTF:81962,pSTJ:378019,jSTJ:360080},
+  {a:2022,pSTF:79394,jSTF:75613,pSTJ:342811,jSTJ:326534},
+  {a:2023,pSTF:77389,jSTF:73732,pSTJ:341284,jSTJ:325033},
+];
+
+const anos = dados.map(d=>d.a);
+const GOLD='#c8922a', GOLD2='rgba(200,146,42,0.3)';
+const BLUE='#4a7fb5', BLUE2='rgba(74,127,181,0.3)';
+const RED='#e05252', RED2='rgba(224,82,82,0.3)';
+
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{
+    backgroundColor:'#0a1628',borderColor:'rgba(200,146,42,0.3)',borderWidth:1,
+    titleColor:'#c8922a',bodyColor:'#c8d8e8',padding:10,
+    callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString('pt-BR')}
+  }},
+  scales:{
+    x:{ticks:{color:'#4a6a84',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+    y:{ticks:{color:'#4a6a84',font:{size:11},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},grid:{color:'rgba(255,255,255,0.06)'}}
+  }
+};
+
+// GRÁFICO 1 — STF
+new Chart(document.getElementById('c1'),{
+  type:'line',
+  data:{
+    labels:anos,
+    datasets:[
+      {label:'Protocolados STF',data:dados.map(d=>d.pSTF),borderColor:GOLD,backgroundColor:GOLD2,fill:true,tension:.3,pointRadius:0,borderWidth:2},
+      {label:'Julgados STF',data:dados.map(d=>d.jSTF),borderColor:BLUE,backgroundColor:'transparent',fill:false,tension:.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3]},
+    ]
+  },
+  options:baseOpts
+});
+
+// GRÁFICO 2 — STJ
+const dadosSTJ = dados.filter(d=>d.pSTJ!==null);
+new Chart(document.getElementById('c2'),{
+  type:'line',
+  data:{
+    labels:dadosSTJ.map(d=>d.a),
+    datasets:[
+      {label:'Protocolados STJ',data:dadosSTJ.map(d=>d.pSTJ),borderColor:RED,backgroundColor:RED2,fill:true,tension:.3,pointRadius:0,borderWidth:2},
+      {label:'Julgados STJ',data:dadosSTJ.map(d=>d.jSTJ),borderColor:BLUE,backgroundColor:'transparent',fill:false,tension:.3,pointRadius:0,borderWidth:1.5,borderDash:[4,3]},
+    ]
+  },
+  options:baseOpts
+});
+
+// GRÁFICO 3 — COMPARATIVO
+new Chart(document.getElementById('c3'),{
+  type:'bar',
+  data:{
+    labels:anos,
+    datasets:[
+      {label:'STF',data:dados.map(d=>d.pSTF),backgroundColor:GOLD2,borderColor:GOLD,borderWidth:1},
+      {label:'STJ',data:dados.map(d=>d.pSTJ||0),backgroundColor:RED2,borderColor:RED,borderWidth:1},
+    ]
+  },
+  options:{...baseOpts,
+    scales:{...baseOpts.scales,x:{...baseOpts.scales.x,stacked:true},y:{...baseOpts.scales.y,stacked:true}}
+  }
+});
+
+// LEGENDA MANUAL
+document.querySelectorAll('.chart-card').forEach((card,i)=>{
+  const leg = document.createElement('div');
+  leg.style.cssText='display:flex;gap:1.2rem;margin-top:.8rem;font-size:.72rem;';
+  const legendas = [
+    [['#c8922a','Protocolados STF'],['#4a7fb5','Julgados STF']],
+    [['#e05252','Protocolados STJ'],['#4a7fb5','Julgados STJ']],
+    [['#c8922a','STF'],['#e05252','STJ']],
+  ];
+  legendas[i].forEach(([cor,txt])=>{
+    leg.innerHTML+=`<span style="display:flex;align-items:center;gap:.3rem;color:#7a9bb5">
+      <span style="width:10px;height:10px;border-radius:2px;background:${cor};display:inline-block"></span>${txt}</span>`;
+  });
+  card.appendChild(leg);
+});
+</script>
+</body>
+</html>
