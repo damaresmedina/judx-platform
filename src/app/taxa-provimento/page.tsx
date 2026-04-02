@@ -8,31 +8,37 @@ const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK!
 const STORAGE_KEY = 'judx_consultas'
 const LIMITE = 3
 
-const COMPOSICAO_ATUAL = [
-  'MIN. ALEXANDRE DE MORAES',
-  'MIN. DIAS TOFFOLI',
-  'MIN. FLÁVIO DINO',
-  'MIN. CRISTIANO ZANIN',
+// 11 ministros para query (inclui Barroso — dados históricos)
+const COMPOSICAO_QUERY = [
   'MIN. EDSON FACHIN',
-  'MIN. LUIZ FUX',
-  'MIN. CÁRMEN LÚCIA',
   'MIN. GILMAR MENDES',
+  'MIN. CÁRMEN LÚCIA',
+  'MIN. DIAS TOFFOLI',
+  'MIN. LUIZ FUX',
+  'MIN. ALEXANDRE DE MORAES',
   'MIN. NUNES MARQUES',
   'MIN. ANDRÉ MENDONÇA',
+  'MIN. CRISTIANO ZANIN',
+  'MIN. FLÁVIO DINO',
   'MIN. LUÍS ROBERTO BARROSO',
 ] as const
 
+// 10 ministros em exercício para exibição pública (sem Barroso)
+const COMPOSICAO_EXIBICAO = COMPOSICAO_QUERY.filter(
+  (n) => n !== 'MIN. LUÍS ROBERTO BARROSO'
+)
+
 const FOTOS: Record<string, string> = {
-  'MIN. ALEXANDRE DE MORAES': '/ministros/moraes.jpg',
-  'MIN. DIAS TOFFOLI': '/ministros/toffoli.jpg',
-  'MIN. FLÁVIO DINO': '/ministros/dino.jpg',
-  'MIN. CRISTIANO ZANIN': '/ministros/zanin.jpg',
   'MIN. EDSON FACHIN': '/ministros/fachin.jpg',
-  'MIN. LUIZ FUX': '/ministros/fux.jpg',
-  'MIN. CÁRMEN LÚCIA': '/ministros/carmen.jpg',
   'MIN. GILMAR MENDES': '/ministros/gilmar.jpg',
+  'MIN. CÁRMEN LÚCIA': '/ministros/carmen.jpg',
+  'MIN. DIAS TOFFOLI': '/ministros/toffoli.jpg',
+  'MIN. LUIZ FUX': '/ministros/fux.jpg',
+  'MIN. ALEXANDRE DE MORAES': '/ministros/moraes.jpg',
   'MIN. NUNES MARQUES': '/ministros/nunes.jpg',
   'MIN. ANDRÉ MENDONÇA': '/ministros/andre.jpg',
+  'MIN. CRISTIANO ZANIN': '/ministros/zanin.jpg',
+  'MIN. FLÁVIO DINO': '/ministros/dino.jpg',
   'MIN. LUÍS ROBERTO BARROSO': '/ministros/barroso.jpg',
 }
 
@@ -41,7 +47,9 @@ function nomeExibicao(nomeCompleto: string): string {
 }
 
 function iniciais(nome: string): string {
-  const partes = nomeExibicao(nome).split(' ').filter(p => !['DE', 'DA', 'DO', 'DAS', 'DOS'].includes(p.toUpperCase()))
+  const partes = nomeExibicao(nome)
+    .split(' ')
+    .filter((p) => !['DE', 'DA', 'DO', 'DAS', 'DOS'].includes(p.toUpperCase()))
   if (partes.length >= 2) return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase()
   return partes[0]?.substring(0, 2).toUpperCase() || '??'
 }
@@ -68,7 +76,7 @@ function incrementar(): number {
 }
 
 async function buscarDadosRelator(filtros: { ramo?: string; anoIni: number; anoFim: number }) {
-  const filtroRelatores = COMPOSICAO_ATUAL.map(r => `relator.eq.${encodeURIComponent(r)}`).join(',')
+  const filtroRelatores = COMPOSICAO_QUERY.map((r) => `relator.eq.${encodeURIComponent(r)}`).join(',')
   let url = `${SUPABASE_URL}/rest/v1/v_provimento_merito`
   url += `?select=relator,categoria_provimento,ramo_direito,ano`
   url += `&or=(${filtroRelatores})`
@@ -83,11 +91,7 @@ async function buscarDadosRelator(filtros: { ramo?: string; anoIni: number; anoF
   return res.json()
 }
 
-async function buscarDadosAssunto(filtros: {
-  relator?: string
-  anoIni: number
-  anoFim: number
-}) {
+async function buscarDadosAssunto(filtros: { relator?: string; anoIni: number; anoFim: number }) {
   let url = `${SUPABASE_URL}/rest/v1/v_provimento_merito`
   url += `?select=relator,categoria_provimento,ramo_direito,assunto_principal,ano`
   url += `&ano=gte.${filtros.anoIni}&ano=lte.${filtros.anoFim}`
@@ -107,8 +111,13 @@ function agregarRelator(dados: any[]): Linha[] {
     const chave = row.relator || 'Não informado'
     if (!mapa[chave]) {
       mapa[chave] = {
-        nome: chave, ramo: row.ramo_direito || '',
-        total: 0, provido: 0, nao_provido: 0, parcial: 0, nao_conhecido: 0,
+        nome: chave,
+        ramo: row.ramo_direito || '',
+        total: 0,
+        provido: 0,
+        nao_provido: 0,
+        parcial: 0,
+        nao_conhecido: 0,
       }
     }
     mapa[chave].total++
@@ -132,8 +141,13 @@ function agregarAssunto(dados: any[]): Linha[] {
     const chave = row.assunto_principal || 'Não informado'
     if (!mapa[chave]) {
       mapa[chave] = {
-        nome: chave, ramo: row.ramo_direito || '',
-        total: 0, provido: 0, nao_provido: 0, parcial: 0, nao_conhecido: 0,
+        nome: chave,
+        ramo: row.ramo_direito || '',
+        total: 0,
+        provido: 0,
+        nao_provido: 0,
+        parcial: 0,
+        nao_conhecido: 0,
       }
     }
     mapa[chave].total++
@@ -155,31 +169,69 @@ function agregarAssunto(dados: any[]): Linha[] {
 function formatarAssunto(slug: string): string {
   if (!slug) return ''
   const mapa: Record<string, string> = {
-    'tributario': 'tributário', 'publico': 'público',
-    'processual': 'processual', 'administrativo': 'administrativo',
-    'constitucional': 'constitucional', 'previdenciario': 'previdenciário',
-    'acao': 'ação', 'execucao': 'execução', 'funcao': 'função',
-    'obrigacao': 'obrigação', 'nao': 'não', 'e': 'e',
-    'de': 'de', 'do': 'do', 'da': 'da', 'das': 'das', 'dos': 'dos',
-    'em': 'em', 'com': 'com', 'por': 'por', 'para': 'para',
-    'penal': 'penal', 'civil': 'civil', 'trabalho': 'trabalho',
-    'direito': 'Direito', 'outras': 'outras', 'materia': 'matéria',
-    'materias': 'matérias', 'servidor': 'servidor', 'impostos': 'impostos',
-    'contribuicoes': 'contribuições', 'icms': 'ICMS', 'iss': 'ISS',
-    'ipi': 'IPI', 'ir': 'IR', 'iptu': 'IPTU', 'ipva': 'IPVA',
-    'prisao': 'prisão', 'preventiva': 'preventiva', 'revogacao': 'revogação',
-    'investigacao': 'investigação', 'nulidade': 'nulidade',
-    'cerceamento': 'cerceamento', 'defesa': 'defesa',
-    'liberdade': 'liberdade', 'provisoria': 'provisória',
-    'aplicacao': 'aplicação', 'pena': 'pena', 'parte': 'parte',
-    'geral': 'geral', 'especial': 'especial', 'recurso': 'recurso',
-    'repercussao': 'repercussão', 'mandado': 'mandado',
-    'seguranca': 'segurança', 'habeas': 'habeas', 'corpus': 'corpus',
-    'regimental': 'regimental', 'agravo': 'agravo',
+    tributario: 'tributário',
+    publico: 'público',
+    processual: 'processual',
+    administrativo: 'administrativo',
+    constitucional: 'constitucional',
+    previdenciario: 'previdenciário',
+    acao: 'ação',
+    execucao: 'execução',
+    funcao: 'função',
+    obrigacao: 'obrigação',
+    nao: 'não',
+    e: 'e',
+    de: 'de',
+    do: 'do',
+    da: 'da',
+    das: 'das',
+    dos: 'dos',
+    em: 'em',
+    com: 'com',
+    por: 'por',
+    para: 'para',
+    penal: 'penal',
+    civil: 'civil',
+    trabalho: 'trabalho',
+    direito: 'Direito',
+    outras: 'outras',
+    materia: 'matéria',
+    materias: 'matérias',
+    servidor: 'servidor',
+    impostos: 'impostos',
+    contribuicoes: 'contribuições',
+    icms: 'ICMS',
+    iss: 'ISS',
+    ipi: 'IPI',
+    ir: 'IR',
+    iptu: 'IPTU',
+    ipva: 'IPVA',
+    prisao: 'prisão',
+    preventiva: 'preventiva',
+    revogacao: 'revogação',
+    investigacao: 'investigação',
+    nulidade: 'nulidade',
+    cerceamento: 'cerceamento',
+    defesa: 'defesa',
+    liberdade: 'liberdade',
+    provisoria: 'provisória',
+    aplicacao: 'aplicação',
+    pena: 'pena',
+    parte: 'parte',
+    geral: 'geral',
+    especial: 'especial',
+    recurso: 'recurso',
+    repercussao: 'repercussão',
+    mandado: 'mandado',
+    seguranca: 'segurança',
+    habeas: 'habeas',
+    corpus: 'corpus',
+    regimental: 'regimental',
+    agravo: 'agravo',
   }
   return slug
     .split('_')
-    .map((w) => mapa[w.toLowerCase()] ?? (w.charAt(0).toUpperCase() + w.slice(1)))
+    .map((w) => mapa[w.toLowerCase()] ?? w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ')
 }
 
@@ -195,14 +247,14 @@ function AvatarMinistro({ nome }: { nome: string }) {
         src={foto}
         alt={nomeExibicao(nome)}
         onError={() => setImgErro(true)}
-        className="w-20 h-20 rounded-full object-cover shrink-0 border-2 border-[#c8922a]/40"
+        className="w-14 h-14 lg:w-[72px] lg:h-[72px] rounded-full object-cover shrink-0 border-2 border-[#c8922a]/40"
       />
     )
   }
 
   return (
-    <div className="w-20 h-20 rounded-full bg-[#c8922a] flex items-center justify-center shrink-0">
-      <span className="text-[#0d1f35] font-bold text-xl font-[family-name:var(--font-dm-sans)]">
+    <div className="w-14 h-14 lg:w-[72px] lg:h-[72px] rounded-full bg-[#c8922a] flex items-center justify-center shrink-0">
+      <span className="text-[#0d1f35] font-bold text-base lg:text-xl font-[family-name:var(--font-dm-sans)]">
         {iniciais(nome)}
       </span>
     </div>
@@ -224,13 +276,13 @@ function CardMinistro({
   const larguraBarra = maxTaxa > 0 ? (taxa / maxTaxa) * 100 : 0
 
   return (
-    <div className="bg-white/[0.04] border border-white/10 p-6 flex flex-col items-center gap-4 hover:bg-white/[0.07] transition-colors">
+    <div className="bg-white/[0.04] border border-white/10 p-3 lg:p-5 flex flex-col items-center gap-3 lg:gap-4 hover:bg-white/[0.07] transition-colors">
       <AvatarMinistro nome={ministro.nome} />
-      <h3 className="text-white/90 font-semibold text-sm text-center font-[family-name:var(--font-dm-sans)] leading-tight">
+      <h3 className="text-white/90 font-semibold text-xs lg:text-sm text-center font-[family-name:var(--font-dm-sans)] leading-tight truncate max-w-full">
         {nomeExibicao(ministro.nome)}
       </h3>
       <div
-        className="text-4xl font-black font-[family-name:var(--font-playfair)]"
+        className="text-2xl lg:text-3xl font-black font-[family-name:var(--font-playfair)]"
         style={{ color: corTaxa }}
       >
         {ministro.taxa !== null ? `${ministro.taxa}%` : '—'}
@@ -241,7 +293,7 @@ function CardMinistro({
           style={{ width: `${larguraBarra}%`, backgroundColor: corTaxa }}
         />
       </div>
-      <p className="text-white/30 text-xs font-[family-name:var(--font-dm-mono)]">
+      <p className="text-white/30 text-[10px] lg:text-xs font-[family-name:var(--font-dm-mono)]">
         {ministro.total.toLocaleString('pt-BR')} decisões
       </p>
     </div>
@@ -265,10 +317,9 @@ export default function TaxaProvimento() {
 
   useEffect(() => {
     setConsultas(getContador())
-    fetch(
-      `${SUPABASE_URL}/rest/v1/v_provimento_merito?select=ramo_direito,relator&limit=100000`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-    )
+    fetch(`${SUPABASE_URL}/rest/v1/v_provimento_merito?select=ramo_direito,relator&limit=100000`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+    })
       .then((r) => r.json())
       .then((d) => {
         setRamos([...new Set(d.map((x: any) => x.ramo_direito).filter(Boolean))].sort() as string[])
@@ -318,38 +369,44 @@ export default function TaxaProvimento() {
   }
 
   const paywall = consultas > LIMITE
-  const media = dados.length > 0
-    ? dados.reduce((acc, d) => acc + (d.taxa ?? 0), 0) / dados.filter(d => d.taxa !== null).length
+
+  // Média calculada sobre os 11 (integridade histórica — inclui Barroso)
+  const dadosComTaxa = dados.filter((d) => d.taxa !== null)
+  const media = dadosComTaxa.length > 0
+    ? dadosComTaxa.reduce((acc, d) => acc + (d.taxa ?? 0), 0) / dadosComTaxa.length
     : 0
   const maxTaxa = Math.max(...dados.map((d) => d.taxa ?? 0), 1)
 
-  // Aba relator: cards (sem sort de tabela)
-  // Aba assunto: tabela com sort
+  // Cards: exibir apenas os 10 em exercício (sem Barroso)
+  const dadosExibicao = dados.filter((d) =>
+    COMPOSICAO_EXIBICAO.includes(d.nome as any)
+  )
+  const dadosVisiveisCards = paywall ? dadosExibicao.slice(0, 3) : dadosExibicao
+
+  // Tabela assunto: sort + paywall
   const linhasAssunto = [...dados].sort((a: any, b: any) =>
     dir === 'desc' ? (b[col] ?? -1) - (a[col] ?? -1) : (a[col] ?? -1) - (b[col] ?? -1)
   )
-
-  const dadosVisiveisCards = paywall ? dados.slice(0, 3) : dados
   const dadosVisiveisTabela = paywall ? linhasAssunto.slice(0, 3) : linhasAssunto
 
   return (
-    <main className="min-h-screen bg-[#0d1f35] text-white px-6 py-10 max-w-6xl mx-auto font-[family-name:var(--font-dm-sans)]">
-      <div className="mb-8">
+    <main className="min-h-screen bg-[#0d1f35] text-white px-4 sm:px-6 py-8 sm:py-10 max-w-6xl mx-auto font-[family-name:var(--font-dm-sans)]">
+      <div className="mb-6 sm:mb-8">
         <a
           href="/"
           className="text-[#c8922a] text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] hover:text-[#e8b44a] transition-colors"
         >
           &larr; JudX
         </a>
-        <h1 className="text-4xl md:text-5xl font-black mt-3 font-[family-name:var(--font-playfair)] leading-tight tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mt-3 font-[family-name:var(--font-playfair)] leading-tight tracking-tight">
           Taxa de Provimento no STF
         </h1>
-        <p className="text-white/40 mt-2 text-sm tracking-wide font-[family-name:var(--font-dm-mono)]">
+        <p className="text-white/40 mt-2 text-xs sm:text-sm tracking-wide font-[family-name:var(--font-dm-mono)]">
           Baseado em 110.000+ decisões colegiadas de mérito &middot; 2016–2025
         </p>
       </div>
 
-      <div className="flex gap-6 mb-8 border-b border-white/10">
+      <div className="flex gap-4 sm:gap-6 mb-6 sm:mb-8 border-b border-white/10">
         {(['relator', 'assunto'] as const).map((a) => (
           <button
             key={a}
@@ -357,7 +414,7 @@ export default function TaxaProvimento() {
               setAba(a)
               setDados([])
             }}
-            className={`pb-3 px-1 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-medium ${
+            className={`pb-3 px-1 text-[10px] sm:text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-medium ${
               aba === a
                 ? 'border-b-2 border-[#c8922a] text-[#c8922a]'
                 : 'text-white/35 hover:text-white/60 transition-colors'
@@ -368,12 +425,12 @@ export default function TaxaProvimento() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8">
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
         {aba === 'relator' ? (
           <select
             value={ramoSel}
             onChange={(e) => setRamoSel(e.target.value)}
-            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
+            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors flex-1 sm:flex-none"
           >
             <option value="">Todos os ramos</option>
             {ramos.map((r) => (
@@ -386,7 +443,7 @@ export default function TaxaProvimento() {
           <select
             value={relatorSel}
             onChange={(e) => setRelatorSel(e.target.value)}
-            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors"
+            className="bg-white/5 border border-white/15 px-3 py-2 text-sm text-white/80 font-[family-name:var(--font-dm-mono)] focus:border-[#c8922a] focus:outline-none transition-colors flex-1 sm:flex-none"
           >
             <option value="">Todos os ministros</option>
             {relatores.map((r) => (
@@ -424,7 +481,7 @@ export default function TaxaProvimento() {
         <button
           onClick={consultar}
           disabled={loading}
-          className="bg-[#c8922a] hover:bg-[#e8b44a] text-[#0d1f35] font-bold px-8 py-2 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-sans)] disabled:opacity-40 transition-colors"
+          className="bg-[#c8922a] hover:bg-[#e8b44a] text-[#0d1f35] font-bold px-8 py-2 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-sans)] disabled:opacity-40 transition-colors w-full sm:w-auto"
         >
           {loading ? 'Consultando...' : 'Consultar'}
         </button>
@@ -450,20 +507,24 @@ export default function TaxaProvimento() {
       {/* === ABA RELATOR: CARDS === */}
       {!loading && dados.length > 0 && aba === 'relator' && (
         <div className="relative">
-          <div className="text-white/25 text-xs mb-4 font-[family-name:var(--font-dm-mono)] tracking-wide">
-            Composição atual &middot; Média do grupo: {media.toFixed(1)}% &middot;{' '}
+          <div className="text-white/25 text-[10px] sm:text-xs mb-4 font-[family-name:var(--font-dm-mono)] tracking-wide">
+            Média do grupo: {media.toFixed(1)}% &middot;{' '}
             <span className="text-[#c8922a]">dourado</span> = acima da média &middot;{' '}
             <span className="text-[#ef4444]">vermelho</span> = abaixo
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {dadosVisiveisCards.map((m) => (
               <CardMinistro key={m.nome} ministro={m} media={media} maxTaxa={maxTaxa} />
             ))}
           </div>
 
+          <p className="text-white/15 text-[10px] sm:text-xs mt-6 text-center font-[family-name:var(--font-dm-mono)] tracking-wide leading-relaxed">
+            Composição atual &middot; 10 ministros em exercício &middot; 1 vaga aberta (indicação pendente de sabatina)
+          </p>
+
           {!paywall && (
-            <p className="text-white/15 text-xs mt-6 text-right tracking-widest font-[family-name:var(--font-dm-mono)]">
+            <p className="text-white/15 text-[10px] sm:text-xs mt-3 text-right tracking-widest font-[family-name:var(--font-dm-mono)]">
               Consulta {consultas} de {LIMITE} gratuitas
             </p>
           )}
@@ -471,12 +532,12 @@ export default function TaxaProvimento() {
           {paywall && (
             <>
               <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d1f35] to-transparent pointer-events-none" />
-              <div className="flex flex-col items-center py-12 mt-6 border border-[#c8922a]/30 bg-white/[0.02]">
+              <div className="flex flex-col items-center py-10 sm:py-12 mt-6 border border-[#c8922a]/30 bg-white/[0.02]">
                 <div className="w-8 h-px bg-[#c8922a]/50 mb-6" />
-                <h3 className="text-3xl font-black mb-2 font-[family-name:var(--font-playfair)] italic">
+                <h3 className="text-2xl sm:text-3xl font-black mb-2 font-[family-name:var(--font-playfair)] italic">
                   Acesso completo — R$ 97/mês
                 </h3>
-                <p className="text-white/40 text-sm mb-8 text-center max-w-sm leading-relaxed font-[family-name:var(--font-dm-sans)]">
+                <p className="text-white/40 text-sm mb-8 text-center max-w-sm leading-relaxed font-[family-name:var(--font-dm-sans)] px-4">
                   Todas as combinações de relator, assunto e período.
                   <br />
                   Sem limite de consultas.
@@ -500,7 +561,7 @@ export default function TaxaProvimento() {
 
       {/* === ABA ASSUNTO: TABELA === */}
       {!loading && dados.length > 0 && aba === 'assunto' && (
-        <div className="relative">
+        <div className="relative overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-white/30 border-b border-white/10 text-left">
@@ -518,21 +579,21 @@ export default function TaxaProvimento() {
                   Total{col === 'total' ? (dir === 'desc' ? ' ↓' : ' ↑') : ''}
                 </th>
                 <th
-                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors hidden sm:table-cell"
                   onClick={() => ordenar('provido')}
                 >
                   Provido
                   {col === 'provido' ? (dir === 'desc' ? ' ↓' : ' ↑') : ''}
                 </th>
                 <th
-                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors hidden sm:table-cell"
                   onClick={() => ordenar('nao_provido')}
                 >
                   Não Provido
                   {col === 'nao_provido' ? (dir === 'desc' ? ' ↓' : ' ↑') : ''}
                 </th>
                 <th
-                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors"
+                  className="py-3 px-2 cursor-pointer hover:text-white/80 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal transition-colors hidden sm:table-cell"
                   onClick={() => ordenar('parcial')}
                 >
                   Parcial
@@ -544,28 +605,30 @@ export default function TaxaProvimento() {
                 >
                   Taxa %{col === 'taxa' ? (dir === 'desc' ? ' ↓' : ' ↑') : ''}
                 </th>
-                <th className="w-32 py-3 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal text-white/30">Visual</th>
+                <th className="w-24 sm:w-32 py-3 text-xs tracking-widest uppercase font-[family-name:var(--font-dm-mono)] font-normal text-white/30">
+                  Visual
+                </th>
               </tr>
             </thead>
             <tbody>
               {dadosVisiveisTabela.map((row, i) => (
                 <tr key={i} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
-                  <td className="py-3 pr-4 font-medium text-white/90 font-[family-name:var(--font-dm-sans)]">
+                  <td className="py-3 pr-4 font-medium text-white/90 font-[family-name:var(--font-dm-sans)] text-xs sm:text-sm">
                     {formatarAssunto(row.nome)}
                   </td>
-                  <td className="py-3 px-2 text-white/35 font-[family-name:var(--font-dm-mono)] text-sm">
+                  <td className="py-3 px-2 text-white/35 font-[family-name:var(--font-dm-mono)] text-xs sm:text-sm">
                     {row.total.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-3 px-2 text-emerald-400/70 font-[family-name:var(--font-dm-mono)] text-sm">
+                  <td className="py-3 px-2 text-emerald-400/70 font-[family-name:var(--font-dm-mono)] text-sm hidden sm:table-cell">
                     {row.provido.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-3 px-2 text-red-400/60 font-[family-name:var(--font-dm-mono)] text-sm">
+                  <td className="py-3 px-2 text-red-400/60 font-[family-name:var(--font-dm-mono)] text-sm hidden sm:table-cell">
                     {row.nao_provido.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-3 px-2 text-[#c8922a]/70 font-[family-name:var(--font-dm-mono)] text-sm">
+                  <td className="py-3 px-2 text-[#c8922a]/70 font-[family-name:var(--font-dm-mono)] text-sm hidden sm:table-cell">
                     {row.parcial.toLocaleString('pt-BR')}
                   </td>
-                  <td className="py-3 px-2 font-black text-white font-[family-name:var(--font-playfair)] text-lg">
+                  <td className="py-3 px-2 font-black text-white font-[family-name:var(--font-playfair)] text-base sm:text-lg">
                     {row.taxa !== null ? `${row.taxa}%` : '—'}
                   </td>
                   <td>
@@ -575,8 +638,8 @@ export default function TaxaProvimento() {
                           (row.taxa ?? 0) > 40
                             ? 'bg-emerald-400/80'
                             : (row.taxa ?? 0) > 20
-                            ? 'bg-[#c8922a]/80'
-                            : 'bg-red-400/60'
+                              ? 'bg-[#c8922a]/80'
+                              : 'bg-red-400/60'
                         }`}
                         style={{ width: `${Math.min(row.taxa ?? 0, 100)}%` }}
                       />
@@ -596,12 +659,12 @@ export default function TaxaProvimento() {
           {paywall && (
             <>
               <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d1f35] to-transparent pointer-events-none" />
-              <div className="flex flex-col items-center py-12 mt-6 border border-[#c8922a]/30 bg-white/[0.02]">
+              <div className="flex flex-col items-center py-10 sm:py-12 mt-6 border border-[#c8922a]/30 bg-white/[0.02]">
                 <div className="w-8 h-px bg-[#c8922a]/50 mb-6" />
-                <h3 className="text-3xl font-black mb-2 font-[family-name:var(--font-playfair)] italic">
+                <h3 className="text-2xl sm:text-3xl font-black mb-2 font-[family-name:var(--font-playfair)] italic">
                   Acesso completo — R$ 97/mês
                 </h3>
-                <p className="text-white/40 text-sm mb-8 text-center max-w-sm leading-relaxed font-[family-name:var(--font-dm-sans)]">
+                <p className="text-white/40 text-sm mb-8 text-center max-w-sm leading-relaxed font-[family-name:var(--font-dm-sans)] px-4">
                   Todas as combinações de relator, assunto e período.
                   <br />
                   Sem limite de consultas.
