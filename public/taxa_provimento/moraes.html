@@ -100,8 +100,8 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
     <div class="pct-label">TAXA DE PROVIMENTO</div>
     <div class="pct">6.6%</div>
     <h1>Alexandre de Moraes</h1>
-    <div class="role">1ª Turma · STF · 2016–2025</div>
-    <div class="total-label">8.026 decisões colegiadas de mérito analisadas</div>
+    <div class="role">1ª Turma · STF · Posse em 2017</div>
+    <div class="total-label" id="hero-total">Carregando decisões...</div>
   </div>
 </section>
 
@@ -113,7 +113,7 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
     <div class="stat-card"><div class="label">NÃO PROVIDOS</div><div class="value" id="s-nao-provido">...</div></div>
     <div class="stat-card"><div class="label">PARCIALMENTE PROVIDOS</div><div class="value" id="s-parcial">...</div></div>
     <div class="stat-card"><div class="label">NÃO CONHECIDOS</div><div class="value red" id="s-nao-conhecido">...</div></div>
-    <div class="stat-card"><div class="label">MÉDIA GERAL STF</div><div class="value" style="color:var(--text-muted)">3.8%</div></div>
+    <div class="stat-card"><div class="label">MÉDIA PONDERADA STF</div><div class="value" style="color:var(--text-muted)" id="s-media">...</div></div>
   </div>
 
   <div class="chart-container">
@@ -137,16 +137,13 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
 const SUPA_URL = 'https://ejwyguskoiraredinqmb.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
 const RELATOR = 'MIN. ALEXANDRE DE MORAES';
-const AVG = 3.8;
+const ANO_POSSE = 2017;
+const hdrs = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
 
-async function fetchAll() {
+async function fetchPaginated(baseUrl) {
   let all = [], offset = 0;
   while (true) {
-    const url = SUPA_URL + '/rest/v1/v_provimento_merito'
-      + '?select=categoria_provimento,ramo_direito,assunto_principal,ano'
-      + '&relator=eq.' + encodeURIComponent(RELATOR)
-      + '&limit=10000&offset=' + offset;
-    const res = await fetch(url, { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } });
+    const res = await fetch(baseUrl + '&limit=10000&offset=' + offset, { headers: hdrs });
     const data = await res.json();
     all = all.concat(data);
     if (data.length < 10000) break;
@@ -155,7 +152,34 @@ async function fetchAll() {
   return all;
 }
 
-function render(dados) {
+async function main() {
+  // Fetch minister data (filtered by posse year)
+  const minUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
+    + '?select=categoria_provimento,ramo_direito,assunto_principal,ano'
+    + '&relator=eq.' + encodeURIComponent(RELATOR)
+    + '&ano=gte.' + ANO_POSSE;
+
+  // Fetch ALL ministers data for weighted average (same period as this minister)
+  const allUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
+    + '?select=categoria_provimento'
+    + '&ano=gte.' + ANO_POSSE;
+
+  const [dados, todosSTF] = await Promise.all([
+    fetchPaginated(minUrl),
+    fetchPaginated(allUrl)
+  ]);
+
+  // Weighted average: providos / total decisoes de merito (all STF, same period)
+  let stfProvido = 0, stfBase = 0;
+  todosSTF.forEach(r => {
+    if (['provido','nao_provido','parcial'].includes(r.categoria_provimento)) {
+      stfBase++;
+      if (r.categoria_provimento === 'provido') stfProvido++;
+    }
+  });
+  const mediaSTF = stfBase > 0 ? ((stfProvido / stfBase) * 100).toFixed(1) : '0';
+
+  // Minister stats
   let provido=0, nao_provido=0, parcial=0, nao_conhecido=0;
   const porAno = {}, porRamo = {}, porAssunto = {};
 
@@ -181,19 +205,31 @@ function render(dados) {
     if (r.categoria_provimento === 'provido') porAssunto[assunto].p++;
   });
 
+  // Individual weighted rate
+  const base = provido + nao_provido + parcial;
+  const taxaIndiv = base > 0 ? ((provido / base) * 100).toFixed(1) : '0';
+
+  // Update hero
+  document.getElementById('hero-total').textContent = dados.length.toLocaleString('pt-BR')
+    + ' decisões colegiadas de mérito (' + ANO_POSSE + '–' + new Date().getFullYear() + ')';
+  document.querySelector('.pct').textContent = taxaIndiv + '%';
+  document.querySelector('.pct').style.color = parseFloat(taxaIndiv) >= parseFloat(mediaSTF) ? '#c8922a' : '#e05252';
+
+  // Stats
   document.getElementById('s-total').textContent = dados.length.toLocaleString('pt-BR');
   document.getElementById('s-provido').textContent = provido.toLocaleString('pt-BR');
   document.getElementById('s-nao-provido').textContent = nao_provido.toLocaleString('pt-BR');
   document.getElementById('s-parcial').textContent = parcial.toLocaleString('pt-BR');
   document.getElementById('s-nao-conhecido').textContent = nao_conhecido.toLocaleString('pt-BR');
+  document.getElementById('s-media').textContent = mediaSTF + '%';
 
-  // Chart Anos
-  const anos = Object.keys(porAno).filter(a => a !== 'N/I').sort();
+  // Chart Anos (only from posse year)
+  const anos = Object.keys(porAno).filter(a => a !== 'N/I' && parseInt(a) >= ANO_POSSE).sort();
   const maxAnoT = Math.max(...anos.map(a => porAno[a].t));
   document.getElementById('chart-anos').innerHTML = anos.map(a => {
     const taxa = porAno[a].t > 0 ? ((porAno[a].p / porAno[a].t) * 100).toFixed(1) : '0';
     const w = Math.round((porAno[a].t / maxAnoT) * 100);
-    const c = parseFloat(taxa) >= AVG ? 'var(--gold)' : '#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
     return '<div class="bar-row">'
       + '<div class="bar-label">' + a + '</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+porAno[a].t+')</span></div></div>'
@@ -206,7 +242,7 @@ function render(dados) {
   document.getElementById('chart-ramos').innerHTML = ramosArr.map(([ramo, v]) => {
     const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
     const w = Math.round((v.t / maxRamoT) * 100);
-    const c = parseFloat(taxa) >= AVG ? 'var(--gold)' : '#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
     return '<div class="bar-row">'
       + '<div class="bar-label">' + ramo + '</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+v.t+')</span></div></div>'
@@ -218,14 +254,14 @@ function render(dados) {
   let html = '<table class="data-table"><thead><tr><th>ASSUNTO</th><th>DECISÕES</th><th>PROVIDOS</th><th>TAXA</th></tr></thead><tbody>';
   assuntosArr.forEach(([assunto, v]) => {
     const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
-    const c = parseFloat(taxa) >= AVG ? 'color:var(--gold)' : 'color:#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'color:var(--gold)' : 'color:#e05252';
     html += '<tr><td>'+assunto.replace(/_/g,' ')+'</td><td>'+v.t+'</td><td>'+v.p+'</td><td style="'+c+';font-family:DM Mono,monospace">'+taxa+'%</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('table-assuntos').innerHTML = html;
 }
 
-fetchAll().then(render).catch(e => {
+main().catch(e => {
   document.querySelectorAll('.loading').forEach(el => el.textContent = 'Erro ao carregar: ' + e.message);
 });
 </script>

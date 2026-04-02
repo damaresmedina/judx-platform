@@ -7,17 +7,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const dir = 'C:/Users/medin/projetos/judx-platform/public/taxa_provimento';
 
 const ministros = [
-  { nome: 'Alexandre de Moraes', relator: 'MIN. ALEXANDRE DE MORAES', slug: 'moraes', ini: 'AM', pct: 6.6, total: 8026, role: '1\u00aa Turma', foto: 'moraes.jpg' },
-  { nome: 'Fl\u00e1vio Dino', relator: 'MIN. FL\u00c1VIO DINO', slug: 'dino', ini: 'FD', pct: 5.9, total: 2190, role: '1\u00aa Turma', foto: 'dino.jpg' },
-  { nome: 'Lu\u00eds Roberto Barroso', relator: 'MIN. LU\u00cdS ROBERTO BARROSO', slug: 'barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Presidente', foto: 'barroso.jpg' },
-  { nome: 'Edson Fachin', relator: 'MIN. EDSON FACHIN', slug: 'fachin', ini: 'EF', pct: 4.8, total: 8542, role: '1\u00aa Turma', foto: 'fachin.jpg' },
-  { nome: 'Andr\u00e9 Mendon\u00e7a', relator: 'MIN. ANDR\u00c9 MENDON\u00c7A', slug: 'andre-mendonca', ini: 'AM', pct: 4.2, total: 3948, role: '2\u00aa Turma', foto: 'andre.jpg' },
-  { nome: 'Nunes Marques', relator: 'MIN. NUNES MARQUES', slug: 'nunes-marques', ini: 'NM', pct: 4.0, total: 5465, role: '2\u00aa Turma', foto: 'nunes.jpg' },
-  { nome: 'Gilmar Mendes', relator: 'MIN. GILMAR MENDES', slug: 'gilmar-mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2\u00aa Turma', foto: 'gilmar.jpg' },
-  { nome: 'C\u00e1rmen L\u00facia', relator: 'MIN. C\u00c1RMEN L\u00daCIA', slug: 'carmen-lucia', ini: 'CL', pct: 3.0, total: 8370, role: '1\u00aa Turma', foto: 'carmen.jpg' },
-  { nome: 'Cristiano Zanin', relator: 'MIN. CRISTIANO ZANIN', slug: 'zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1\u00aa Turma', foto: 'zanin.jpg' },
-  { nome: 'Dias Toffoli', relator: 'MIN. DIAS TOFFOLI', slug: 'toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2\u00aa Turma', foto: 'toffoli.jpg' },
-  { nome: 'Luiz Fux', relator: 'MIN. LUIZ FUX', slug: 'fux', ini: 'LF', pct: 1.9, total: 8357, role: '2\u00aa Turma', foto: 'fux.jpg' },
+  { nome: 'Alexandre de Moraes', relator: 'MIN. ALEXANDRE DE MORAES', slug: 'moraes', ini: 'AM', pct: 6.6, total: 8026, role: '1\u00aa Turma', foto: 'moraes.jpg', posse: 2017 },
+  { nome: 'Fl\u00e1vio Dino', relator: 'MIN. FL\u00c1VIO DINO', slug: 'dino', ini: 'FD', pct: 5.9, total: 2190, role: '1\u00aa Turma', foto: 'dino.jpg', posse: 2024 },
+  { nome: 'Lu\u00eds Roberto Barroso', relator: 'MIN. LU\u00cdS ROBERTO BARROSO', slug: 'barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Presidente', foto: 'barroso.jpg', posse: 2013 },
+  { nome: 'Edson Fachin', relator: 'MIN. EDSON FACHIN', slug: 'fachin', ini: 'EF', pct: 4.8, total: 8542, role: '1\u00aa Turma', foto: 'fachin.jpg', posse: 2015 },
+  { nome: 'Andr\u00e9 Mendon\u00e7a', relator: 'MIN. ANDR\u00c9 MENDON\u00c7A', slug: 'andre-mendonca', ini: 'AM', pct: 4.2, total: 3948, role: '2\u00aa Turma', foto: 'andre.jpg', posse: 2021 },
+  { nome: 'Nunes Marques', relator: 'MIN. NUNES MARQUES', slug: 'nunes-marques', ini: 'NM', pct: 4.0, total: 5465, role: '2\u00aa Turma', foto: 'nunes.jpg', posse: 2020 },
+  { nome: 'Gilmar Mendes', relator: 'MIN. GILMAR MENDES', slug: 'gilmar-mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2\u00aa Turma', foto: 'gilmar.jpg', posse: 2002 },
+  { nome: 'C\u00e1rmen L\u00facia', relator: 'MIN. C\u00c1RMEN L\u00daCIA', slug: 'carmen-lucia', ini: 'CL', pct: 3.0, total: 8370, role: '1\u00aa Turma', foto: 'carmen.jpg', posse: 2006 },
+  { nome: 'Cristiano Zanin', relator: 'MIN. CRISTIANO ZANIN', slug: 'zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1\u00aa Turma', foto: 'zanin.jpg', posse: 2023 },
+  { nome: 'Dias Toffoli', relator: 'MIN. DIAS TOFFOLI', slug: 'toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2\u00aa Turma', foto: 'toffoli.jpg', posse: 2009 },
+  { nome: 'Luiz Fux', relator: 'MIN. LUIZ FUX', slug: 'fux', ini: 'LF', pct: 1.9, total: 8357, role: '2\u00aa Turma', foto: 'fux.jpg', posse: 2011 },
 ];
 
 const AVG = 3.8;
@@ -126,8 +126,8 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
     <div class="pct-label">TAXA DE PROVIMENTO</div>
     <div class="pct">${m.pct.toFixed(1)}%</div>
     <h1>${m.nome}</h1>
-    <div class="role">${m.role} \u00b7 STF \u00b7 2016\u20132025</div>
-    <div class="total-label">${m.total.toLocaleString('pt-BR')} decis\u00f5es colegiadas de m\u00e9rito analisadas</div>
+    <div class="role">${m.role} \u00b7 STF \u00b7 Posse em ${m.posse}</div>
+    <div class="total-label" id="hero-total">Carregando decis\u00f5es...</div>
   </div>
 </section>
 
@@ -139,7 +139,7 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
     <div class="stat-card"><div class="label">N\u00c3O PROVIDOS</div><div class="value" id="s-nao-provido">...</div></div>
     <div class="stat-card"><div class="label">PARCIALMENTE PROVIDOS</div><div class="value" id="s-parcial">...</div></div>
     <div class="stat-card"><div class="label">N\u00c3O CONHECIDOS</div><div class="value red" id="s-nao-conhecido">...</div></div>
-    <div class="stat-card"><div class="label">M\u00c9DIA GERAL STF</div><div class="value" style="color:var(--text-muted)">${AVG}%</div></div>
+    <div class="stat-card"><div class="label">M\u00c9DIA PONDERADA STF</div><div class="value" style="color:var(--text-muted)" id="s-media">...</div></div>
   </div>
 
   <div class="chart-container">
@@ -163,16 +163,13 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
 const SUPA_URL = '${SUPABASE_URL}';
 const SUPA_KEY = '${SUPABASE_KEY}';
 const RELATOR = '${m.relator}';
-const AVG = ${AVG};
+const ANO_POSSE = ${m.posse};
+const hdrs = { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY };
 
-async function fetchAll() {
+async function fetchPaginated(baseUrl) {
   let all = [], offset = 0;
   while (true) {
-    const url = SUPA_URL + '/rest/v1/v_provimento_merito'
-      + '?select=categoria_provimento,ramo_direito,assunto_principal,ano'
-      + '&relator=eq.' + encodeURIComponent(RELATOR)
-      + '&limit=10000&offset=' + offset;
-    const res = await fetch(url, { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } });
+    const res = await fetch(baseUrl + '&limit=10000&offset=' + offset, { headers: hdrs });
     const data = await res.json();
     all = all.concat(data);
     if (data.length < 10000) break;
@@ -181,7 +178,34 @@ async function fetchAll() {
   return all;
 }
 
-function render(dados) {
+async function main() {
+  // Fetch minister data (filtered by posse year)
+  const minUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
+    + '?select=categoria_provimento,ramo_direito,assunto_principal,ano'
+    + '&relator=eq.' + encodeURIComponent(RELATOR)
+    + '&ano=gte.' + ANO_POSSE;
+
+  // Fetch ALL ministers data for weighted average (same period as this minister)
+  const allUrl = SUPA_URL + '/rest/v1/v_provimento_merito'
+    + '?select=categoria_provimento'
+    + '&ano=gte.' + ANO_POSSE;
+
+  const [dados, todosSTF] = await Promise.all([
+    fetchPaginated(minUrl),
+    fetchPaginated(allUrl)
+  ]);
+
+  // Weighted average: providos / total decisoes de merito (all STF, same period)
+  let stfProvido = 0, stfBase = 0;
+  todosSTF.forEach(r => {
+    if (['provido','nao_provido','parcial'].includes(r.categoria_provimento)) {
+      stfBase++;
+      if (r.categoria_provimento === 'provido') stfProvido++;
+    }
+  });
+  const mediaSTF = stfBase > 0 ? ((stfProvido / stfBase) * 100).toFixed(1) : '0';
+
+  // Minister stats
   let provido=0, nao_provido=0, parcial=0, nao_conhecido=0;
   const porAno = {}, porRamo = {}, porAssunto = {};
 
@@ -207,19 +231,31 @@ function render(dados) {
     if (r.categoria_provimento === 'provido') porAssunto[assunto].p++;
   });
 
+  // Individual weighted rate
+  const base = provido + nao_provido + parcial;
+  const taxaIndiv = base > 0 ? ((provido / base) * 100).toFixed(1) : '0';
+
+  // Update hero
+  document.getElementById('hero-total').textContent = dados.length.toLocaleString('pt-BR')
+    + ' decis\u00f5es colegiadas de m\u00e9rito (' + ANO_POSSE + '\u2013' + new Date().getFullYear() + ')';
+  document.querySelector('.pct').textContent = taxaIndiv + '%';
+  document.querySelector('.pct').style.color = parseFloat(taxaIndiv) >= parseFloat(mediaSTF) ? '#c8922a' : '#e05252';
+
+  // Stats
   document.getElementById('s-total').textContent = dados.length.toLocaleString('pt-BR');
   document.getElementById('s-provido').textContent = provido.toLocaleString('pt-BR');
   document.getElementById('s-nao-provido').textContent = nao_provido.toLocaleString('pt-BR');
   document.getElementById('s-parcial').textContent = parcial.toLocaleString('pt-BR');
   document.getElementById('s-nao-conhecido').textContent = nao_conhecido.toLocaleString('pt-BR');
+  document.getElementById('s-media').textContent = mediaSTF + '%';
 
-  // Chart Anos
-  const anos = Object.keys(porAno).filter(a => a !== 'N/I').sort();
+  // Chart Anos (only from posse year)
+  const anos = Object.keys(porAno).filter(a => a !== 'N/I' && parseInt(a) >= ANO_POSSE).sort();
   const maxAnoT = Math.max(...anos.map(a => porAno[a].t));
   document.getElementById('chart-anos').innerHTML = anos.map(a => {
     const taxa = porAno[a].t > 0 ? ((porAno[a].p / porAno[a].t) * 100).toFixed(1) : '0';
     const w = Math.round((porAno[a].t / maxAnoT) * 100);
-    const c = parseFloat(taxa) >= AVG ? 'var(--gold)' : '#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
     return '<div class="bar-row">'
       + '<div class="bar-label">' + a + '</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+porAno[a].t+')</span></div></div>'
@@ -232,7 +268,7 @@ function render(dados) {
   document.getElementById('chart-ramos').innerHTML = ramosArr.map(([ramo, v]) => {
     const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
     const w = Math.round((v.t / maxRamoT) * 100);
-    const c = parseFloat(taxa) >= AVG ? 'var(--gold)' : '#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'var(--gold)' : '#e05252';
     return '<div class="bar-row">'
       + '<div class="bar-label">' + ramo + '</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+c+'"><span>'+taxa+'% ('+v.t+')</span></div></div>'
@@ -244,14 +280,14 @@ function render(dados) {
   let html = '<table class="data-table"><thead><tr><th>ASSUNTO</th><th>DECIS\u00d5ES</th><th>PROVIDOS</th><th>TAXA</th></tr></thead><tbody>';
   assuntosArr.forEach(([assunto, v]) => {
     const taxa = v.t > 0 ? ((v.p / v.t) * 100).toFixed(1) : '0';
-    const c = parseFloat(taxa) >= AVG ? 'color:var(--gold)' : 'color:#e05252';
+    const c = parseFloat(taxa) >= parseFloat(mediaSTF) ? 'color:var(--gold)' : 'color:#e05252';
     html += '<tr><td>'+assunto.replace(/_/g,' ')+'</td><td>'+v.t+'</td><td>'+v.p+'</td><td style="'+c+';font-family:DM Mono,monospace">'+taxa+'%</td></tr>';
   });
   html += '</tbody></table>';
   document.getElementById('table-assuntos').innerHTML = html;
 }
 
-fetchAll().then(render).catch(e => {
+main().catch(e => {
   document.querySelectorAll('.loading').forEach(el => el.textContent = 'Erro ao carregar: ' + e.message);
 });
 </script>
