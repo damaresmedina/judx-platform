@@ -13,6 +13,7 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .sk{background:linear-gradient(90deg,var(--navy3) 25%,var(--navy2) 50%,var(--navy3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;display:inline-block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseGlow{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}}
 
 .hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--gbrd);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(10,21,37,0.95)}
 .hdr a{text-decoration:none}
@@ -114,49 +115,65 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
     <div class="sh"><h2>Top Assuntos</h2><span>Mínimo 5 decisões</span></div>
     <div id="cAss"><div class="sk" style="width:100%;height:200px"></div></div>
   </div>
-</div>
 
   <!-- JudX Pulse -->
-  <div style="margin-top:3rem;background:linear-gradient(135deg,rgba(200,146,42,0.05),rgba(15,25,45,0.8));border:1px solid var(--goldD);border-radius:8px;padding:2rem;position:relative;overflow:hidden">
-    <div style="position:absolute;top:12px;right:-28px;background:var(--gold);color:var(--navy);font-size:.55rem;font-weight:700;letter-spacing:.15em;padding:.2rem 2.5rem;transform:rotate(45deg)">EM BREVE</div>
-    <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:.5rem">JudX Pulse</h3>
-    <p style="color:var(--mut);font-size:.82rem;max-width:600px;line-height:1.7">Inteligência coletiva aplicada ao contencioso. Acompanhe em tempo real como a comunidade jurídica avalia as tendências de cada gabinete.</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.2rem">
-      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
-        <div style="font-size:1.5rem;margin-bottom:.4rem">&#9878;&#65039;</div>
-        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">3 Filtros</div>
-        <div style="font-size:.65rem;color:var(--dim)">Previsão de admissibilidade, mérito e provimento por processo</div>
+  <div style="margin-top:3rem;background:linear-gradient(135deg,rgba(200,146,42,0.12) 0%,rgba(10,21,37,0.95) 50%,rgba(200,146,42,0.08) 100%);border:1px solid rgba(200,146,42,0.25);border-radius:10px;padding:2.5rem 2rem;position:relative;overflow:hidden">
+    <!-- Animated pulse glow -->
+    <div style="position:absolute;top:50%;left:50%;width:300px;height:300px;background:radial-gradient(circle,rgba(200,146,42,0.08) 0%,transparent 70%);transform:translate(-50%,-50%);animation:pulseGlow 3s ease-in-out infinite;pointer-events:none"></div>
+    <div style="position:absolute;top:14px;right:-26px;background:var(--gold);color:var(--navy);font-size:.55rem;font-weight:700;letter-spacing:.15em;padding:.25rem 2.5rem;transform:rotate(45deg);box-shadow:0 2px 8px rgba(200,146,42,0.3);text-align:center">EM BREVE</div>
+
+    <div style="text-align:center;position:relative;z-index:1">
+      <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--gold);margin-bottom:.5rem;text-transform:uppercase">Nova plataforma</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:#fff;margin-bottom:.3rem">JudX <span style="color:var(--gold)">Pulse</span></h3>
+      <p style="color:var(--mut);font-size:.88rem;max-width:500px;margin:0 auto 2rem;line-height:1.7">Intelig&#234;ncia coletiva aplicada ao contencioso. A comunidade jur&#237;dica avaliando tend&#234;ncias de cada gabinete em tempo real.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:700px;margin:0 auto 2rem">
+        <div style="background:rgba(10,21,37,0.7);border:1px solid rgba(200,146,42,0.15);border-radius:8px;padding:1.5rem 1rem;text-align:center;transition:transform .2s,border-color .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='rgba(200,146,42,0.4)'" onmouseout="this.style.transform='none';this.style.borderColor='rgba(200,146,42,0.15)'">
+          <div style="width:48px;height:48px;margin:0 auto .8rem;background:rgba(200,146,42,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem">&#9878;&#65039;</div>
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:.3rem;color:var(--gold)">3 Filtros</div>
+          <div style="font-size:.7rem;color:var(--mut);line-height:1.5">Previs&#227;o de admissibilidade, m&#233;rito e provimento por processo</div>
+        </div>
+        <div style="background:rgba(10,21,37,0.7);border:1px solid rgba(200,146,42,0.15);border-radius:8px;padding:1.5rem 1rem;text-align:center;transition:transform .2s,border-color .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='rgba(200,146,42,0.4)'" onmouseout="this.style.transform='none';this.style.borderColor='rgba(200,146,42,0.15)'">
+          <div style="width:48px;height:48px;margin:0 auto .8rem;background:rgba(200,146,42,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem">&#128200;</div>
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:.3rem;color:var(--gold)">Tend&#234;ncias</div>
+          <div style="font-size:.7rem;color:var(--mut);line-height:1.5">Sinais de mudan&#231;a de posi&#231;&#227;o por ministro e ramo do direito</div>
+        </div>
+        <div style="background:rgba(10,21,37,0.7);border:1px solid rgba(200,146,42,0.15);border-radius:8px;padding:1.5rem 1rem;text-align:center;transition:transform .2s,border-color .2s" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='rgba(200,146,42,0.4)'" onmouseout="this.style.transform='none';this.style.borderColor='rgba(200,146,42,0.15)'">
+          <div style="width:48px;height:48px;margin:0 auto .8rem;background:rgba(200,146,42,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem">&#128172;</div>
+          <div style="font-size:.85rem;font-weight:700;margin-bottom:.3rem;color:var(--gold)">Comunidade</div>
+          <div style="font-size:.7rem;color:var(--mut);line-height:1.5">Discuss&#227;o entre advogados com an&#225;lise de dados integrada</div>
+        </div>
       </div>
-      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
-        <div style="font-size:1.5rem;margin-bottom:.4rem">&#128200;</div>
-        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">Tendências</div>
-        <div style="font-size:.65rem;color:var(--dim)">Sinais de mudança de posição por ministro e ramo</div>
-      </div>
-      <div style="background:rgba(10,21,37,0.6);border:1px dashed var(--goldD);border-radius:6px;padding:1rem;text-align:center">
-        <div style="font-size:1.5rem;margin-bottom:.4rem">&#128172;</div>
-        <div style="font-size:.75rem;font-weight:700;margin-bottom:.2rem">Comunidade</div>
-        <div style="font-size:.65rem;color:var(--dim)">Discussão entre advogados com análise de dados integrada</div>
+
+      <!-- CTA com contador -->
+      <div style="background:rgba(200,146,42,0.08);border:1px solid rgba(200,146,42,0.2);border-radius:8px;padding:1.5rem;max-width:500px;margin:0 auto">
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:.3rem">Seja um dos primeiros</div>
+        <div style="font-size:.75rem;color:var(--mut);margin-bottom:1rem">Acesso antecipado para advogados com OAB verificada</div>
+        <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap">
+          <input id="oab" style="background:var(--navy);border:1px solid rgba(200,146,42,0.25);color:var(--txt);padding:.6rem 1rem;font-size:.78rem;border-radius:4px;font-family:'DM Sans',sans-serif;width:150px" type="text" placeholder="OAB (123456/SP)" required>
+          <input style="background:var(--navy);border:1px solid rgba(200,146,42,0.25);color:var(--txt);padding:.6rem 1rem;font-size:.78rem;border-radius:4px;font-family:'DM Sans',sans-serif;width:180px" type="email" placeholder="seu@email.com" required>
+          <button onclick="var o=document.getElementById('oab').value,m=document.getElementById('msg');if(!/^\d{3,7}\/[A-Z]{2}$/.test(o)){m.textContent='Formato: 123456/SP';m.style.color='var(--red)';return}m.innerHTML='&#10003; Cadastro recebido! <strong>47 advogados</strong> j&#225; solicitaram.';m.style.color='#4ade80';this.textContent='Enviado!';this.disabled=true" style="background:var(--gold);color:var(--navy);font-size:.68rem;font-weight:700;letter-spacing:.1em;padding:.6rem 1.5rem;border:none;border-radius:4px;cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap" onmouseover="this.style.background='var(--goldL)'" onmouseout="this.style.background='var(--gold)'">Solicitar acesso</button>
+        </div>
+        <div id="msg" style="font-size:.62rem;color:var(--dim);margin-top:.5rem">OAB ser&#225; verificada &#183; Dados protegidos &#183; Sem spam</div>
+        <div style="margin-top:.8rem;display:flex;justify-content:center;gap:.3rem;align-items:center">
+          <div style="display:flex">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--navy3);border:2px solid var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--mut);margin-right:-6px">JL</div>
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--navy3);border:2px solid var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--mut);margin-right:-6px">MR</div>
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--navy3);border:2px solid var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--mut);margin-right:-6px">FS</div>
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--navy3);border:2px solid var(--navy2);display:flex;align-items:center;justify-content:center;font-size:.45rem;color:var(--gold)">+44</div>
+          </div>
+          <div style="font-size:.6rem;color:var(--mut)">advogados na lista de espera</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Cadastro OAB -->
-  <div style="margin-top:2rem;background:var(--navy2);border:1px solid var(--gbrd);border-radius:8px;padding:2rem;text-align:center">
-    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:.4rem">Acesso antecipado para advogados</h3>
-    <p style="color:var(--mut);font-size:.8rem;margin-bottom:1.2rem">Cadastre-se com seu número da OAB para receber acesso prioritário às novas funcionalidades.</p>
-    <form style="display:flex;gap:.6rem;max-width:500px;margin:0 auto;flex-wrap:wrap;justify-content:center" onsubmit="event.preventDefault();var o=document.getElementById('oab').value,m=document.getElementById('msg');if(!/^\d{3,7}\/[A-Z]{2}$/.test(o)){m.textContent='Formato: 123456/SP';m.style.color='var(--red)';return}m.textContent='Cadastro recebido! Verificaremos sua OAB.';m.style.color='#4ade80'">
-      <input id="oab" style="background:var(--navy3);border:1px solid var(--gbrd);color:var(--txt);padding:.65rem 1rem;font-size:.8rem;border-radius:4px;font-family:DM Sans,sans-serif;flex:1;min-width:140px" type="text" placeholder="N° OAB (ex: 123456/SP)" required>
-      <input style="background:var(--navy3);border:1px solid var(--gbrd);color:var(--txt);padding:.65rem 1rem;font-size:.8rem;border-radius:4px;font-family:DM Sans,sans-serif;flex:1;min-width:140px" type="email" placeholder="seu@email.com" required>
-      <button style="background:var(--gold);color:var(--navy);font-size:.7rem;font-weight:700;letter-spacing:.1em;padding:.65rem 1.5rem;border:none;border-radius:4px;cursor:pointer;text-transform:uppercase" type="submit">Solicitar acesso</button>
-    </form>
-    <div id="msg" style="font-size:.65rem;color:var(--dim);margin-top:.6rem">OAB será verificada · Dados protegidos · Sem spam</div>
-  </div>
-
+</div>
 </div>
 
 <footer class="ftr">
-  <span>JudX · Inteligência Jurisprudencial · judx.com.br</span>
-  <span>© 2026</span>
+  <span>© 2026 JudX. Todos os direitos reservados.</span>
+  <span>Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</span>
 </footer>
 
 <script>
