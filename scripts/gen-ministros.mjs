@@ -7,17 +7,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const dir = 'C:/Users/medin/projetos/judx-platform/public/taxa_provimento';
 
 const ministros = [
-  { nome: 'Alexandre de Moraes', slug: 'moraes', ini: 'AM', pct: 6.6, total: 8026, role: '1\u00aa Turma', foto: 'moraes.jpg' },
-  { nome: 'Fl\u00e1vio Dino', slug: 'dino', ini: 'FD', pct: 5.9, total: 2190, role: '1\u00aa Turma', foto: 'dino.jpg' },
-  { nome: 'Lu\u00eds Roberto Barroso', slug: 'barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Presidente', foto: 'barroso.jpg' },
-  { nome: 'Edson Fachin', slug: 'fachin', ini: 'EF', pct: 4.8, total: 8542, role: '1\u00aa Turma', foto: 'fachin.jpg' },
-  { nome: 'Andr\u00e9 Mendon\u00e7a', slug: 'andre-mendonca', ini: 'AM', pct: 4.2, total: 3948, role: '2\u00aa Turma', foto: 'andre.jpg' },
-  { nome: 'Nunes Marques', slug: 'nunes-marques', ini: 'NM', pct: 4.0, total: 5465, role: '2\u00aa Turma', foto: 'nunes.jpg' },
-  { nome: 'Gilmar Mendes', slug: 'gilmar-mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2\u00aa Turma', foto: 'gilmar.jpg' },
-  { nome: 'C\u00e1rmen L\u00facia', slug: 'carmen-lucia', ini: 'CL', pct: 3.0, total: 8370, role: '1\u00aa Turma', foto: 'carmen.jpg' },
-  { nome: 'Cristiano Zanin', slug: 'zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1\u00aa Turma', foto: 'zanin.jpg' },
-  { nome: 'Dias Toffoli', slug: 'toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2\u00aa Turma', foto: 'toffoli.jpg' },
-  { nome: 'Luiz Fux', slug: 'fux', ini: 'LF', pct: 1.9, total: 8357, role: '2\u00aa Turma', foto: 'fux.jpg' },
+  { nome: 'Alexandre de Moraes', relator: 'MIN. ALEXANDRE DE MORAES', slug: 'moraes', ini: 'AM', pct: 6.6, total: 8026, role: '1\u00aa Turma', foto: 'moraes.jpg' },
+  { nome: 'Fl\u00e1vio Dino', relator: 'MIN. FL\u00c1VIO DINO', slug: 'dino', ini: 'FD', pct: 5.9, total: 2190, role: '1\u00aa Turma', foto: 'dino.jpg' },
+  { nome: 'Lu\u00eds Roberto Barroso', relator: 'MIN. LU\u00cdS ROBERTO BARROSO', slug: 'barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Presidente', foto: 'barroso.jpg' },
+  { nome: 'Edson Fachin', relator: 'MIN. EDSON FACHIN', slug: 'fachin', ini: 'EF', pct: 4.8, total: 8542, role: '1\u00aa Turma', foto: 'fachin.jpg' },
+  { nome: 'Andr\u00e9 Mendon\u00e7a', relator: 'MIN. ANDR\u00c9 MENDON\u00c7A', slug: 'andre-mendonca', ini: 'AM', pct: 4.2, total: 3948, role: '2\u00aa Turma', foto: 'andre.jpg' },
+  { nome: 'Nunes Marques', relator: 'MIN. NUNES MARQUES', slug: 'nunes-marques', ini: 'NM', pct: 4.0, total: 5465, role: '2\u00aa Turma', foto: 'nunes.jpg' },
+  { nome: 'Gilmar Mendes', relator: 'MIN. GILMAR MENDES', slug: 'gilmar-mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2\u00aa Turma', foto: 'gilmar.jpg' },
+  { nome: 'C\u00e1rmen L\u00facia', relator: 'MIN. C\u00c1RMEN L\u00daCIA', slug: 'carmen-lucia', ini: 'CL', pct: 3.0, total: 8370, role: '1\u00aa Turma', foto: 'carmen.jpg' },
+  { nome: 'Cristiano Zanin', relator: 'MIN. CRISTIANO ZANIN', slug: 'zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1\u00aa Turma', foto: 'zanin.jpg' },
+  { nome: 'Dias Toffoli', relator: 'MIN. DIAS TOFFOLI', slug: 'toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2\u00aa Turma', foto: 'toffoli.jpg' },
+  { nome: 'Luiz Fux', relator: 'MIN. LUIZ FUX', slug: 'fux', ini: 'LF', pct: 1.9, total: 8357, role: '2\u00aa Turma', foto: 'fux.jpg' },
 ];
 
 const AVG = 3.8;
@@ -162,7 +162,7 @@ body { background:var(--navy); color:#fff; font-family:'DM Sans',sans-serif; lin
 <script>
 const SUPA_URL = '${SUPABASE_URL}';
 const SUPA_KEY = '${SUPABASE_KEY}';
-const RELATOR = '${m.nome}';
+const RELATOR = '${m.relator}';
 const AVG = ${AVG};
 
 async function fetchAll() {
