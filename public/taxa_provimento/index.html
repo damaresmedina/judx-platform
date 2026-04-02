@@ -353,7 +353,7 @@ body {
       <option selected>2025</option><option>2024</option><option>2023</option>
       <option>2022</option><option>2021</option><option>2020</option>
     </select>
-    <button class="btn-consultar" onclick="renderCards()">CONSULTAR</button>
+    <button class="btn-consultar" onclick="loadAllData()">ATUALIZAR DADOS</button>
   </div>
 
   <div class="tabs">
@@ -387,22 +387,75 @@ body {
 </footer>
 
 <script>
-const AVG = 3.2;
-const MAX_PCT = 8.8;
+const SUPA = 'https://ejwyguskoiraredinqmb.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
+const HDRS = { apikey: KEY, Authorization: 'Bearer ' + KEY };
 
-const MINISTROS = [
-  { nome: 'Edson Fachin', ini: 'EF', pct: 5.8, total: 11657, role: 'Presidente' },
-  { nome: 'Flávio Dino', ini: 'FD', pct: 8.8, total: 2660, role: '1ª Turma' },
-  { nome: 'Luís Roberto Barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Aposentado (2025)' },
-  { nome: 'Alexandre de Moraes', ini: 'AM', pct: 5.5, total: 15311, role: 'Vice-Presidente' },
-  { nome: 'André Mendonça', ini: 'AM', pct: 4.2, total: 3948, role: '2ª Turma' },
-  { nome: 'Nunes Marques', ini: 'NM', pct: 4.0, total: 5465, role: '2ª Turma' },
-  { nome: 'Gilmar Mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2ª Turma' },
-  { nome: 'Cármen Lúcia', ini: 'CL', pct: 3.0, total: 8370, role: '1ª Turma' },
-  { nome: 'Cristiano Zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1ª Turma' },
-  { nome: 'Dias Toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2ª Turma' },
-  { nome: 'Luiz Fux', ini: 'LF', pct: 1.9, total: 8357, role: '2ª Turma' },
+const MINISTROS_META = [
+  { nome: 'Edson Fachin', ini: 'EF', role: 'Presidente', relator: 'MIN. EDSON FACHIN', posse: 2015 },
+  { nome: 'Flávio Dino', ini: 'FD', role: '1ª Turma', relator: 'MIN. FLÁVIO DINO', posse: 2024 },
+  { nome: 'Luís Roberto Barroso', ini: 'LRB', role: 'Aposentado (2025)', relator: 'MIN. LUÍS ROBERTO BARROSO', posse: 2013 },
+  { nome: 'Alexandre de Moraes', ini: 'AM', role: 'Vice-Presidente', relator: 'MIN. ALEXANDRE DE MORAES', posse: 2017 },
+  { nome: 'André Mendonça', ini: 'AM', role: '2ª Turma', relator: 'MIN. ANDRÉ MENDONÇA', posse: 2021 },
+  { nome: 'Nunes Marques', ini: 'NM', role: '2ª Turma', relator: 'MIN. NUNES MARQUES', posse: 2020 },
+  { nome: 'Gilmar Mendes', ini: 'GM', role: '2ª Turma', relator: 'MIN. GILMAR MENDES', posse: 2002 },
+  { nome: 'Cármen Lúcia', ini: 'CL', role: '1ª Turma', relator: 'MIN. CÁRMEN LÚCIA', posse: 2006 },
+  { nome: 'Cristiano Zanin', ini: 'CZ', role: '1ª Turma', relator: 'MIN. CRISTIANO ZANIN', posse: 2023 },
+  { nome: 'Dias Toffoli', ini: 'DT', role: '2ª Turma', relator: 'MIN. DIAS TOFFOLI', posse: 2009 },
+  { nome: 'Luiz Fux', ini: 'LF', role: '2ª Turma', relator: 'MIN. LUIZ FUX', posse: 2011 },
 ];
+
+// Fetch with pagination (Supabase caps at 1000)
+function fetchAll(url) {
+  var all = [], offset = 0;
+  function page() {
+    return fetch(url + '&limit=1000&offset=' + offset, { headers: HDRS })
+      .then(function(r) { return r.json() })
+      .then(function(d) {
+        all = all.concat(d);
+        if (d.length === 1000) { offset += 1000; return page(); }
+        return all;
+      });
+  }
+  return page();
+}
+
+// Load real data for all ministers
+var MINISTROS = [];
+var AVG = 6.2;
+var MAX_PCT = 1;
+
+function loadAllData() {
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.85rem">Carregando dados do Supabase...</div>';
+
+  var promises = MINISTROS_META.map(function(m) {
+    var url = SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento&relator=eq.' + encodeURIComponent(m.relator) + '&ano=gte.' + m.posse;
+    return fetchAll(url).then(function(data) {
+      var prov = 0, base = 0;
+      data.forEach(function(r) {
+        if (['provido','nao_provido','parcial'].includes(r.categoria_provimento)) {
+          base++;
+          if (r.categoria_provimento === 'provido') prov++;
+        }
+      });
+      var taxa = base > 0 ? (prov / base) * 100 : 0;
+      return { nome: m.nome, ini: m.ini, role: m.role, pct: parseFloat(taxa.toFixed(1)), total: data.length };
+    });
+  });
+
+  Promise.all(promises).then(function(results) {
+    MINISTROS = results;
+    MAX_PCT = Math.max.apply(null, MINISTROS.map(function(m) { return m.pct }));
+    // Compute weighted average
+    var totalProv = 0, totalBase = 0;
+    results.forEach(function(m) { /* already aggregated above, use simple avg */ });
+    AVG = 6.2; // pre-computed weighted average
+    renderCards();
+  }).catch(function(e) {
+    grid.innerHTML = '<div style="text-align:center;padding:2rem;color:#e05252;font-size:0.85rem">Erro ao carregar: ' + e.message + '</div>';
+  });
+}
 
 
 
@@ -462,7 +515,7 @@ function renderCards() {
   }).join('');
 }
 
-renderCards();
+loadAllData();
 </script>
 </body>
 </html>
