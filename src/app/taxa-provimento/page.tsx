@@ -22,6 +22,20 @@ const COMPOSICAO_ATUAL = [
   'MIN. LUÍS ROBERTO BARROSO',
 ] as const
 
+const FOTOS: Record<string, string> = {
+  'MIN. ALEXANDRE DE MORAES': '/ministros/moraes.jpg',
+  'MIN. DIAS TOFFOLI': '/ministros/toffoli.jpg',
+  'MIN. FLÁVIO DINO': '/ministros/dino.jpg',
+  'MIN. CRISTIANO ZANIN': '/ministros/zanin.jpg',
+  'MIN. EDSON FACHIN': '/ministros/fachin.jpg',
+  'MIN. LUIZ FUX': '/ministros/fux.jpg',
+  'MIN. CÁRMEN LÚCIA': '/ministros/carmen.jpg',
+  'MIN. GILMAR MENDES': '/ministros/gilmar.jpg',
+  'MIN. NUNES MARQUES': '/ministros/nunes.jpg',
+  'MIN. ANDRÉ MENDONÇA': '/ministros/andre.jpg',
+  'MIN. LUÍS ROBERTO BARROSO': '/ministros/barroso.jpg',
+}
+
 function nomeExibicao(nomeCompleto: string): string {
   return nomeCompleto.replace(/^MIN\.\s*/i, '')
 }
@@ -171,7 +185,21 @@ function formatarAssunto(slug: string): string {
 
 const anos = Array.from({ length: 10 }, (_, i) => 2016 + i)
 
-function AvatarIniciais({ nome }: { nome: string }) {
+function AvatarMinistro({ nome }: { nome: string }) {
+  const [imgErro, setImgErro] = useState(false)
+  const foto = FOTOS[nome]
+
+  if (foto && !imgErro) {
+    return (
+      <img
+        src={foto}
+        alt={nomeExibicao(nome)}
+        onError={() => setImgErro(true)}
+        className="w-20 h-20 rounded-full object-cover shrink-0 border-2 border-[#c8922a]/40"
+      />
+    )
+  }
+
   return (
     <div className="w-20 h-20 rounded-full bg-[#c8922a] flex items-center justify-center shrink-0">
       <span className="text-[#0d1f35] font-bold text-xl font-[family-name:var(--font-dm-sans)]">
@@ -197,7 +225,7 @@ function CardMinistro({
 
   return (
     <div className="bg-white/[0.04] border border-white/10 p-6 flex flex-col items-center gap-4 hover:bg-white/[0.07] transition-colors">
-      <AvatarIniciais nome={ministro.nome} />
+      <AvatarMinistro nome={ministro.nome} />
       <h3 className="text-white/90 font-semibold text-sm text-center font-[family-name:var(--font-dm-sans)] leading-tight">
         {nomeExibicao(ministro.nome)}
       </h3>
