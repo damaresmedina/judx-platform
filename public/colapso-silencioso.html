@@ -13,14 +13,11 @@
 body{background:var(--navy);color:#fff;font-family:'DM Sans',sans-serif;line-height:1.6}
 a{color:var(--gold);text-decoration:none}
 
-/* HEADER */
 .hdr{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2.5rem;border-bottom:1px solid var(--border)}
-.hdr-logo{font-size:.72rem;letter-spacing:.15em;font-weight:500}
-.hdr-logo .judx{color:var(--gold);font-weight:700}
+.hdr-logo .judx{color:var(--gold);font-size:.75rem;letter-spacing:.18em;font-weight:700}
 .hdr-logo .sub{color:var(--muted);font-size:.6rem;letter-spacing:.1em;margin-left:.3rem}
 .hdr-meta{color:var(--dim);font-size:.68rem;letter-spacing:.1em}
 
-/* HERO */
 .hero{background:var(--navy2);padding:4rem 2.5rem 3rem;border-bottom:1px solid rgba(200,146,42,.1)}
 .hero-label{color:var(--gold);font-size:.68rem;letter-spacing:.2em;font-weight:500;margin-bottom:1.2rem}
 .hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:900;line-height:1.05;margin-bottom:1rem}
@@ -31,44 +28,56 @@ a{color:var(--gold);text-decoration:none}
 .hstat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1}
 .hstat-lbl{color:var(--muted);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-top:.25rem}
 
-/* CONTENT */
 .content{padding:3rem 2.5rem}
 .section{margin-bottom:4rem}
 .section-label{color:var(--gold);font-size:.65rem;letter-spacing:.18em;font-weight:500;margin-bottom:.5rem}
 .section-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:.6rem}
 .section-desc{color:var(--muted);font-size:.85rem;max-width:640px;line-height:1.7;margin-bottom:2rem}
 
-/* CHART CARD */
 .chart-card{background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem}
 .chart-title{font-size:.75rem;letter-spacing:.1em;color:var(--muted);font-weight:500;margin-bottom:1rem;font-family:'DM Mono',monospace}
+.chart-wrap{background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem}
+.chart-container{position:relative}
 
-/* FASES */
 .fases{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.5rem}
 .fase{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);padding:1.2rem 1rem}
 .fase-periodo{color:var(--gold);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-bottom:.3rem}
 .fase-nome{font-size:.85rem;font-weight:500;margin-bottom:.4rem}
 .fase-desc{color:var(--muted);font-size:.75rem;line-height:1.6}
 
-/* ACHADOS */
 .achados{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
 .achado{background:var(--card);border:1px solid var(--border);padding:1.5rem}
 .achado-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:.4rem}
 .achado-titulo{font-size:.78rem;font-weight:500;margin-bottom:.4rem}
 .achado-desc{color:var(--muted);font-size:.72rem;line-height:1.6}
 
-/* QUOTE */
 .quote{background:var(--navy2);border-left:4px solid var(--gold);padding:2rem 2.5rem;margin:3rem 0;font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;line-height:1.7;color:#c8d8e8}
 .quote cite{display:block;margin-top:.8rem;font-family:'DM Sans',sans-serif;font-style:normal;font-size:.72rem;color:var(--dim);letter-spacing:.1em}
 
-/* NOTA */
 .nota{background:rgba(200,146,42,.05);border-left:3px solid rgba(200,146,42,.4);padding:1.2rem 1.5rem;margin-top:2rem}
 .nota-label{color:var(--gold);font-size:.65rem;letter-spacing:.12em;font-weight:500;margin-bottom:.4rem}
 .nota-txt{color:var(--muted);font-size:.78rem;line-height:1.7}
 
-/* FOOTER */
+.legend{display:flex;gap:1.5rem;margin-bottom:1rem;font-size:.75rem}
+.leg{display:flex;align-items:center;gap:.4rem}
+.leg-dot{width:12px;height:12px;border-radius:2px}
+
+.kpi{background:var(--card);border:1px solid var(--border);padding:1.2rem;text-align:center}
+.kpi-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--gold);line-height:1}
+.kpi-label{color:var(--muted);font-size:.6rem;letter-spacing:.12em;margin-top:.3rem}
+.kpi-sub{color:var(--dim);font-size:.65rem;margin-top:.2rem;font-family:'DM Mono',monospace}
+
+.insight-box{background:rgba(224,82,82,.05);border-left:3px solid var(--red);padding:1.5rem;margin-bottom:2rem}
+.insight-title{font-size:.7rem;letter-spacing:.12em;font-weight:700;margin-bottom:.5rem}
+.insight-text{color:var(--muted);font-size:.8rem;line-height:1.7}
+
+.phase{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);padding:1.2rem 1rem}
+.phase-period{color:var(--gold);font-size:.6rem;letter-spacing:.12em;font-weight:500;margin-bottom:.3rem}
+.phase-name{font-size:.85rem;font-weight:500;margin-bottom:.3rem}
+.phase-desc{color:var(--muted);font-size:.72rem;line-height:1.6}
+
 .footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;color:var(--dim);font-size:.68rem;letter-spacing:.08em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
 
-/* MOBILE */
 @media(max-width:768px){
   .hdr,.content{padding-left:1.2rem;padding-right:1.2rem}
   .hero{padding:2.5rem 1.2rem 2rem}
@@ -117,7 +126,6 @@ a{color:var(--gold);text-decoration:none}
 
 <div class="content">
 
-  <!-- SEÇÃO 1 — STF -->
   <div class="section">
     <div class="section-label">EIXO 01 · SUPREMO TRIBUNAL FEDERAL</div>
     <h2 class="section-title">O STF que decidia — e o que aprendeu a não decidir</h2>
@@ -147,7 +155,6 @@ a{color:var(--gold);text-decoration:none}
     </div>
   </div>
 
-  <!-- SEÇÃO 2 — STJ -->
   <div class="section">
     <div class="section-label">EIXO 02 · SUPERIOR TRIBUNAL DE JUSTIÇA</div>
     <h2 class="section-title">O STJ e o colapso que ninguém viu chegar</h2>
@@ -159,7 +166,6 @@ a{color:var(--gold);text-decoration:none}
     </div>
   </div>
 
-  <!-- SEÇÃO 3 — COMPARATIVO -->
   <div class="section">
     <div class="section-label">EIXO 03 · STF × STJ — COMPARATIVO</div>
     <h2 class="section-title">Dois tribunais, uma crise</h2>
@@ -171,7 +177,6 @@ a{color:var(--gold);text-decoration:none}
     </div>
   </div>
 
-  <!-- ACHADOS -->
   <div class="section">
     <div class="section-label">SÍNTESE · ACHADOS ESTRUTURAIS</div>
     <h2 class="section-title">O que os dados revelam</h2>
@@ -215,6 +220,95 @@ a{color:var(--gold);text-decoration:none}
     <cite>JudX · Decoding Justice, 2026</cite>
   </div>
 
+  <div class="section">
+    <div class="section-label">A CIRCULARIDADE · 2010–2025</div>
+    <h2 class="section-title">O processo que não termina</h2>
+    <p class="section-desc">
+      O deslocamento para o STJ não resolveu o colapso — expandiu o circuito.
+      O mesmo litígio percorre STJ e STF em loop: ARE inadmitido vira Rcl,
+      Rcl gera novo ARE, o processo circula por anos sem desfecho de mérito.
+      A Rcl cresceu 245× entre 2010 e 2024.
+    </p>
+
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#e05252"></div><span style="color:#e05252">Reclamações (Rcl)</span></div>
+      <div class="leg"><div class="leg-dot" style="background:#c8922a"></div><span style="color:#c8922a">Agravos em RE (ARE)</span></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">RCL + ARE NO CORPUS JUDX · 2010–2025</div>
+      <div class="chart-container" style="height:260px"><canvas id="circChart"></canvas></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem">
+      <div class="kpi">
+        <div class="kpi-num" style="color:var(--red)">245×</div>
+        <div class="kpi-label">CRESCIMENTO RCL</div>
+        <div class="kpi-sub">17 (2010) → 4.161 (2024)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">76%</div>
+        <div class="kpi-label">ARE NO CORPUS</div>
+        <div class="kpi-sub">76.058 de 99.803 decisões</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num" style="color:var(--red)">23%</div>
+        <div class="kpi-label">RCL NO CORPUS</div>
+        <div class="kpi-sub">22.937 reclamações mapeadas</div>
+      </div>
+    </div>
+
+    <div class="insight-box" style="border-left-color:var(--red)">
+      <div class="insight-title" style="color:var(--red)">A CIRCULARIDADE COMO POLÍTICA</div>
+      <div class="insight-text">
+        A Reclamação existe para garantir a autoridade das decisões do STF.
+        Na prática, tornou-se o instrumento preferido para reabrir litígios já decididos —
+        especialmente pela Fazenda Pública, que usa a Rcl para questionar aplicações de
+        precedentes desfavoráveis em instâncias inferiores. O mesmo processo que foi
+        julgado no STJ retorna ao STF via Rcl. O que retorna do STF vai ao STJ via conflito
+        de competência. O volume é contingencial — mas a circularidade é estrutural e permanente.
+        Ela remunera advogados públicos a cada volta.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">CARDÁPIO ANALÍTICO</div>
+    <h2 class="section-title">O que esses dados permitem construir</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem">
+      <div class="phase" style="border-left-color:#5b9bd5">
+        <div class="phase-period" style="color:#5b9bd5">DISPONÍVEL</div>
+        <div class="phase-name">Taxa de Provimento por Relator</div>
+        <div class="phase-desc">110k decisões de mérito. Quem decide, como decide, em que ramo.</div>
+      </div>
+      <div class="phase" style="border-left-color:#5b9bd5">
+        <div class="phase-period" style="color:#5b9bd5">DISPONÍVEL</div>
+        <div class="phase-name">Análise de Risco Processual</div>
+        <div class="phase-desc">Tipo de parte × relator × ramo. 445 combinações. Dado que escritórios pagam.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-period">EM CONSTRUÇÃO</div>
+        <div class="phase-name">Perfil de Ministro + Função Pivotal</div>
+        <div class="phase-desc">Rede de coalizões, quem forma maioria com quem, voto decisivo.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-period">EM CONSTRUÇÃO</div>
+        <div class="phase-name">Trajetória Processual</div>
+        <div class="phase-desc">Quantas voltas o processo dá antes de chegar ao mérito — se chegar.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-period">POSSÍVEL</div>
+        <div class="phase-name">Índice de Circularidade</div>
+        <div class="phase-desc">Por relator, por ramo, por tipo de parte. Rcl + ARE como métricas de loop.</div>
+      </div>
+      <div class="phase">
+        <div class="phase-period">POSSÍVEL</div>
+        <div class="phase-name">Custo por Decisão</div>
+        <div class="phase-desc">Cruzar R$146bi/ano do CNJ com volume por tribunal. Quanto custa cada não-decisão.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="nota">
     <div class="nota-label">NOTA METODOLÓGICA</div>
     <p class="nota-txt">Série histórica 1940–2023: FIESP/IDESF, consolidada a partir de dados oficiais do STF e STJ. Os dados de 2000–2026 são complementados pelo corpus JUDX (2,9M decisões, Corte Aberta STF). Taxa de não-decisão (79%) calculada sobre universo de 2.927.525 decisões STF (2000–2026). Custo do Judiciário: CNJ Justiça em Números 2025. Custo internacional comparado: Da Ros, FGV Direito Rio, 2015.</p>
@@ -229,7 +323,6 @@ a{color:var(--gold);text-decoration:none}
 </footer>
 
 <script>
-// DADOS COMPLETOS
 const dados = [
   {a:1940,pSTF:2692,jSTF:2657,pSTJ:null,jSTJ:null},
   {a:1945,pSTF:3579,jSTF:3445,pSTJ:null,jSTJ:null},
@@ -286,7 +379,6 @@ const baseOpts = {
   }
 };
 
-// GRÁFICO 1 — STF
 new Chart(document.getElementById('c1'),{
   type:'line',
   data:{
@@ -299,7 +391,6 @@ new Chart(document.getElementById('c1'),{
   options:baseOpts
 });
 
-// GRÁFICO 2 — STJ
 const dadosSTJ = dados.filter(d=>d.pSTJ!==null);
 new Chart(document.getElementById('c2'),{
   type:'line',
@@ -313,7 +404,6 @@ new Chart(document.getElementById('c2'),{
   options:baseOpts
 });
 
-// GRÁFICO 3 — COMPARATIVO
 new Chart(document.getElementById('c3'),{
   type:'bar',
   data:{
@@ -328,7 +418,6 @@ new Chart(document.getElementById('c3'),{
   }
 });
 
-// LEGENDA MANUAL
 document.querySelectorAll('.chart-card').forEach((card,i)=>{
   const leg = document.createElement('div');
   leg.style.cssText='display:flex;gap:1.2rem;margin-top:.8rem;font-size:.72rem;';
@@ -338,10 +427,32 @@ document.querySelectorAll('.chart-card').forEach((card,i)=>{
     [['#c8922a','STF'],['#e05252','STJ']],
   ];
   legendas[i].forEach(([cor,txt])=>{
-    leg.innerHTML+=`<span style="display:flex;align-items:center;gap:.3rem;color:#7a9bb5">
-      <span style="width:10px;height:10px;border-radius:2px;background:${cor};display:inline-block"></span>${txt}</span>`;
+    leg.innerHTML+='<span style="display:flex;align-items:center;gap:.3rem;color:#7a9bb5"><span style="width:10px;height:10px;border-radius:2px;background:'+cor+';display:inline-block"></span>'+txt+'</span>';
   });
   card.appendChild(leg);
+});
+
+const ANOS_CIRC = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+const RCL = [17,27,39,46,76,153,546,656,728,1397,2093,1793,1760,2837,4161,3835];
+const ARE = [0,137,291,363,662,1878,5126,5728,6627,7007,5279,5741,5825,7758,7918,7704];
+
+new Chart(document.getElementById('circChart'),{
+  type:'bar',
+  data:{
+    labels:ANOS_CIRC,
+    datasets:[
+      {label:'Rcl',data:RCL,backgroundColor:'rgba(224,82,82,0.8)',borderColor:'#e05252',borderWidth:1},
+      {label:'ARE',data:ARE,backgroundColor:'rgba(200,146,42,0.6)',borderColor:'#c8922a',borderWidth:1},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+    scales:{
+      x:{stacked:true,ticks:{color:'#4a6a84',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{stacked:true,ticks:{color:'#4a6a84',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}}
+    }
+  }
 });
 </script>
 </body>
