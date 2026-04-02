@@ -8,6 +8,26 @@ const PAYMENT_LINK = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || '#'
 const STORAGE_KEY = 'judx_risco_consultas'
 const LIMITE = 3
 
+const RAMO_LABEL: Record<string, string> = {
+  'DIREITO ADMINISTRATIVO E OUTRAS MATÉRIAS DE DIREITO PÚBLICO': 'Administrativo / Público',
+  'DIREITO AMBIENTAL': 'Ambiental',
+  'DIREITO CIVIL': 'Civil',
+  'DIREITO DA CRIANÇA E DO ADOLESCENTE': 'Criança e Adolescente',
+  'DIREITO DA SAÚDE': 'Saúde',
+  'DIREITO DO CONSUMIDOR': 'Consumidor',
+  'DIREITO DO TRABALHO': 'Trabalho',
+  'DIREITO ELEITORAL': 'Eleitoral',
+  'DIREITO INTERNACIONAL': 'Internacional',
+  'DIREITO PENAL': 'Penal',
+  'DIREITO PENAL MILITAR': 'Penal Militar',
+  'DIREITO PREVIDENCIÁRIO': 'Previdenciário',
+  'DIREITO PROCESSUAL CIVIL E DO TRABALHO': 'Processual Civil / Trabalho',
+  'DIREITO PROCESSUAL PENAL': 'Processual Penal',
+  'DIREITO PROCESSUAL PENAL MILITAR': 'Processual Penal Militar',
+  'DIREITO TRIBUTÁRIO': 'Tributário',
+  'QUESTÕES DE ALTA COMPLEXIDADE, GRANDE IMPACTO E REPERCUSSÃO': 'Alta Complexidade / Repercussão',
+}
+
 const TIPOS = [
   { value: 'pessoa_fisica', label: 'Pessoa Física', icon: '👤' },
   { value: 'ente_publico', label: 'Ente Público', icon: '🏛️' },
@@ -239,7 +259,7 @@ export default function RiscoProcessual() {
               }}
             >
               <option value="">Selecione o ramo do direito</option>
-              {ramos.map(r => <option key={r} value={r}>{r}</option>)}
+              {ramos.map(r => <option key={r} value={r}>{RAMO_LABEL[r] || r}</option>)}
             </select>
           </div>
         )}
