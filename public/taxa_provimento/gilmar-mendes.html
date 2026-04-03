@@ -183,17 +183,30 @@ var AVG = 6.2;
 var BASE_URL = SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_direito,assunto_principal,ano&relator=eq.MIN.%20GILMAR%20MENDES&ano=gte.2002';
 
 function fetchAll(url) {
-  var all = [], offset = 0;
-  function page() {
+  var all = [], offset = 0, MAX_RETRIES = 3;
+  function page(retries) {
+    retries = retries || 0;
     return fetch(url + '&limit=1000&offset=' + offset, {
       headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
-    }).then(function(r){ return r.json() }).then(function(d) {
+    }).then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' at offset ' + offset);
+      return r.json();
+    }).then(function(d) {
+      if (!Array.isArray(d)) throw new Error('Response is not an array at offset ' + offset);
       all = all.concat(d);
-      if (d.length === 1000) { offset += 1000; return page(); }
+      if (d.length === 1000) { offset += 1000; return page(0); }
+      return all;
+    }).catch(function(err) {
+      if (retries < MAX_RETRIES) {
+        console.warn('fetchAll retry ' + (retries + 1) + '/' + MAX_RETRIES + ': ' + err.message);
+        return new Promise(function(resolve) { setTimeout(resolve, 1000 * (retries + 1)); })
+          .then(function() { return page(retries + 1); });
+      }
+      console.error('fetchAll failed after ' + MAX_RETRIES + ' retries: ' + err.message);
       return all;
     });
   }
-  return page();
+  return page(0);
 }
 
 fetchAll(BASE_URL)

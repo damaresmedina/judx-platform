@@ -407,17 +407,31 @@ const MINISTROS_META = [
 
 // Fetch with pagination (Supabase caps at 1000)
 function fetchAll(url) {
-  var all = [], offset = 0;
-  function page() {
+  var all = [], offset = 0, MAX_RETRIES = 3;
+  function page(retries) {
+    retries = retries || 0;
     return fetch(url + '&limit=1000&offset=' + offset, { headers: HDRS })
-      .then(function(r) { return r.json() })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' at offset ' + offset);
+        return r.json();
+      })
       .then(function(d) {
+        if (!Array.isArray(d)) throw new Error('Response is not an array at offset ' + offset);
         all = all.concat(d);
-        if (d.length === 1000) { offset += 1000; return page(); }
+        if (d.length === 1000) { offset += 1000; return page(0); }
+        return all;
+      })
+      .catch(function(err) {
+        if (retries < MAX_RETRIES) {
+          console.warn('fetchAll retry ' + (retries + 1) + '/' + MAX_RETRIES + ': ' + err.message);
+          return new Promise(function(resolve) { setTimeout(resolve, 1000 * (retries + 1)); })
+            .then(function() { return page(retries + 1); });
+        }
+        console.error('fetchAll failed after ' + MAX_RETRIES + ' retries: ' + err.message);
         return all;
       });
   }
-  return page();
+  return page(0);
 }
 
 // Load real data for all ministers
