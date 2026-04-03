@@ -4,8 +4,8 @@ export const metadata = {
   openGraph: {
     title: 'JudX — O que o Supremo realmente decide.',
     description: '79% das decisões do STF não apreciam o mérito. Sabemos quem ganha, quando e com qual relator.',
-    url: 'https://judx-platform.vercel.app/',
-    images: [{ url: 'https://judx-platform.vercel.app/og.png', width: 1200, height: 630 }],
+    url: 'https://judx.com.br/',
+    images: [{ url: 'https://judx.com.br/og.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
