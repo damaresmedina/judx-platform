@@ -75,7 +75,7 @@ body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;li
 <body>
 
 <header class="hdr">
-  <a href="/"><span class="logo-judx">JUDX</span><span class="logo-sub">· Inteligência Jurisprudencial</span></a>
+  <a href="/taxa_provimento/"><span class="logo-judx">JUDX</span><span class="logo-sub">· Inteligência Jurisprudencial</span></a>
   <a href="/taxa_provimento/" class="back">&#8592; Voltar ao painel</a>
 </header>
 
@@ -183,30 +183,17 @@ var AVG = 6.2;
 var BASE_URL = SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento,ramo_direito,assunto_principal,ano&relator=eq.MIN.%20ANDR%C3%89%20MENDON%C3%87A&ano=gte.2021';
 
 function fetchAll(url) {
-  var all = [], offset = 0, MAX_RETRIES = 3;
-  function page(retries) {
-    retries = retries || 0;
+  var all = [], offset = 0;
+  function page() {
     return fetch(url + '&limit=1000&offset=' + offset, {
       headers: { apikey: KEY, Authorization: 'Bearer ' + KEY }
-    }).then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status + ' at offset ' + offset);
-      return r.json();
-    }).then(function(d) {
-      if (!Array.isArray(d)) throw new Error('Response is not an array at offset ' + offset);
+    }).then(function(r){ return r.json() }).then(function(d) {
       all = all.concat(d);
-      if (d.length === 1000) { offset += 1000; return page(0); }
-      return all;
-    }).catch(function(err) {
-      if (retries < MAX_RETRIES) {
-        console.warn('fetchAll retry ' + (retries + 1) + '/' + MAX_RETRIES + ': ' + err.message);
-        return new Promise(function(resolve) { setTimeout(resolve, 1000 * (retries + 1)); })
-          .then(function() { return page(retries + 1); });
-      }
-      console.error('fetchAll failed after ' + MAX_RETRIES + ' retries: ' + err.message);
+      if (d.length === 1000) { offset += 1000; return page(); }
       return all;
     });
   }
-  return page(0);
+  return page();
 }
 
 fetchAll(BASE_URL)
