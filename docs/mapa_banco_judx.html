@@ -1,0 +1,203 @@
+
+<style>
+  body { margin: 0; padding: 1rem 0; }
+  .section { margin-bottom: 1.5rem; }
+  .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 0.5rem; padding-left: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 10px 12px; cursor: pointer; transition: border-color 0.15s; }
+  .card:hover { border-color: var(--color-border-primary); }
+  .card-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; font-family: var(--font-mono); }
+  .card-meta { font-size: 12px; color: var(--color-text-secondary); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 1px 6px; border-radius: 99px; font-weight: 500; }
+  .badge-rows { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-empty { background: var(--color-background-secondary); color: var(--color-text-tertiary); border: 0.5px solid var(--color-border-tertiary); }
+  .badge-rls { background: #EEEDFE; color: #3C3489; }
+  .card-cols { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; }
+  .detail { display: none; margin-top: 0.75rem; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 0.75rem; }
+  .detail.open { display: block; }
+  .col-row { display: flex; gap: 6px; align-items: baseline; padding: 2px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .col-row:last-child { border-bottom: none; }
+  .col-name { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); min-width: 160px; }
+  .col-type { font-size: 11px; color: var(--color-text-tertiary); }
+  .col-flags { font-size: 11px; color: var(--color-text-secondary); margin-left: auto; }
+</style>
+
+<div id="root"></div>
+
+<script>
+const data = {
+  "STF — núcleo operacional": [
+    { name: "stf_universal", rows: 170302, rls: false, cols: [
+      ["processo","text"],["classe","text"],["incidente","int8"],["relator","text"],["relator_atual","text"],["orgao_julgador","text"],["ramo_direito","text"],["assunto","text"],["assunto_completo","text"],["data_autuacao","date"],["data_decisao","text"],["data_baixa","date"],["tipo_decisao","text"],["tipo_classe","text"],["grupo_origem","text"],["resultado","text"],["tipo_andamento","text"],["cod_andamento","text"],["virtual","bool"],["ambiente_julgamento","text"],["indicador_colegiado","text"],["em_tramitacao","bool"],["preferencia_covid19","bool"],["preferencia_criminal","bool"],["tipo_decisao_norm","enum"],["resultado_norm","enum"],["ambiente_norm","enum"],["orgao_nome","text"],["classe_processual","text"],["assunto_principal","text"],["link_processo","text"],["polo_ativo","text"],["polo_passivo","text"],["advogados","text"],["amicus_curiae","text"],["procuradores","text"],["outras_partes","text"],["total_partes","int4"]
+    ]},
+    { name: "stf_decisoes", rows: 194165, rls: true, cols: [
+      ["id","int8"],["processo","text","NOT NULL"],["orgao_julgador","text"],["relator_decisao","text"],["relator_atual","text"],["data_autuacao","date"],["data_decisao","text"],["data_baixa","date"],["grupo_origem","text"],["tipo_classe","text"],["classe","text"],["ramo_direito","text"],["assunto","text"],["incidente","int8"],["cod_andamento","text"],["descricao_andamento","text"],["extrato_decisao","text"],["tipo_decisao","text"],["decisoes_virtual","bool"],["ambiente_julgamento","text"],["indicador_colegiado","text"],["id_fato_decisao","int8"],["ministro_real","text"],["orgao_decisorio","text"],["ambiente_unificado","text"],["fonte_ambiente","text"]
+    ]},
+    { name: "stf_processos", rows: 21181, rls: true, cols: [
+      ["id","int8"],["processo","text","NOT NULL UNIQUE"],["classe","text"],["numero","int4"],["numero_unico","text"],["incidente","int8"],["link_processo","text"],["relator","text"],["situacao_processual","text"],["grupo_origem","text"],["ramo_direito","text"],["assuntos","text"],["meio_processo","text"],["data_autuacao","date"],["data_ultima_decisao","text"],["data_ultimo_andamento","timestamptz"],["situacao_decisao_final","text"],["processo_sobrestado","bool"],["pedido_vista","bool"]
+    ]},
+    { name: "stf_partes", rows: 1277043, rls: true, cols: [
+      ["id","int8"],["incidente","int8","NOT NULL"],["processo","text"],["papel","text"],["nome","text"],["tipo","text"],["oab","text"],["raw_source","text"]
+    ]},
+    { name: "stf_partes_favoraveis", rows: 442, rls: true, cols: [
+      ["id","int8"],["incidente","int8"],["processo","text"],["classe","text"],["relator","text"],["descricao_andamento","text"],["data_decisao","text"],["papel","text"],["polo","text"],["nome","text"],["tipo","text"],["oab","text"]
+    ]},
+    { name: "stf_amostra_partes", rows: 8910, rls: true, cols: [
+      ["id","int8"],["incidente","int8"],["processo","text"],["classe","text"],["relator","text"],["resultado_normalizado","text"],["data_decisao","text"],["papel","text"],["polo","text"],["nome","text"],["tipo","text"],["oab","text"]
+    ]},
+    { name: "stf_partes_completo", rows: 0, rls: true, cols: [
+      ["id","int8"],["incidente","int8","NOT NULL"],["processo","text"],["papel","text"],["polo","text"],["nome","text"],["tipo","text"],["oab","text"]
+    ]},
+    { name: "stf_composicao_temporal", rows: 92, rls: false, cols: [
+      ["id","int4"],["ministro","text","NOT NULL"],["cargo","text","NOT NULL"],["turma","text"],["data_inicio","date","NOT NULL"],["data_fim","date"],["auditado","bool"],["fonte_doc","text"]
+    ]},
+  ],
+  "Produtos JudX (front-end)": [
+    { name: "risco_processual", rows: 445, rls: false, cols: [
+      ["tipo_polo_ativo","text"],["relator","text"],["ramo_direito","text"],["classe_processual","text"],["processos","int8"],["providos","int8"],["taxa_sucesso","numeric"]
+    ]},
+    { name: "resultado_empirico", rows: 6, rls: false, cols: [
+      ["id","int4"],["metrica","text","NOT NULL"],["valor_absoluto","int8"],["valor_pct","numeric"],["nota","text"],["fonte","text"],["data_calculo","date"],["metodologia","text"]
+    ]},
+    { name: "auditoria_corpus_strings", rows: 1, rls: false, cols: [
+      ["total_decisoes","int8"],["total_processos","int8"],["media_decisoes_por_no","numeric"],["strings_1_decisao","int8"],["pct_string_1","numeric"],["desfecho_monocratica","int8"],["pct_desfecho_mono","numeric"],["apenas_monocratica","int8"],["pct_apenas_mono","numeric"],["pct_chegou_colegiado","numeric"]
+    ]},
+  ],
+  "Referência institucional STF": [
+    { name: "stf_composicao_temporal", rows: 92, rls: false, cols: [["ministro","text"],["cargo","text"],["turma","text"],["data_inicio","date"],["data_fim","date"],["auditado","bool"]] },
+    { name: "composicao_temporal", rows: 92, rls: false, cols: [["tribunal_id","text"],["ministro","text"],["cargo","text"],["orgao_id","int4"],["data_inicio","date"],["data_fim","date"],["auditado","bool"]] },
+    { name: "ministro_tribunal", rows: 11, rls: false, cols: [["tribunal_id","text"],["nome_canonical","text"],["nome_completo","text"],["data_posse","date"],["data_saida","date"],["motivo_saida","text"],["indicado_por","text"]] },
+    { name: "orgao_julgador", rows: 19, rls: false, cols: [["tribunal_id","text"],["sigla","text"],["nome_completo","text"],["tipo_orgao","text"],["composicao_max","int4"],["ativo","bool"],["data_criacao","date"],["data_extincao","date"]] },
+    { name: "tribunal", rows: 5, rls: false, cols: [["id","text"],["nome","text"],["sigla","text"],["tipo","text"],["ativo","bool"]] },
+    { name: "classe_processual", rows: 37, rls: false, cols: [["tribunal_id","text"],["sigla","text"],["nome_completo","text"],["tipo_acao","text"],["classe_pai_sigla","text"],["nivel_recursal","int4"],["ativo","bool"]] },
+    { name: "taxonomia_nao_decisao", rows: 4, rls: false, cols: [["codigo","text"],["nome","text"],["grau","int4"],["fluxo_entrada","text"],["orgao_tipico","text"],["colegial","bool"],["toca_merito","bool"],["descricao","text"],["pct_estimado","numeric"]] },
+    { name: "mapeamento_origem_decisao", rows: 8, rls: false, cols: [["valor_original","text"],["n_decisoes","int8"],["pct_corpus","numeric"],["modo_deliberacao","enum"],["orgao_canonical","text"],["ambiente","text"],["notas","text"]] },
+    { name: "tipo_vinculo_recursal", rows: 7, rls: false, cols: [["codigo","text"],["nome","text"],["descricao","text"],["gera_stf","bool"],["e_nao_decisao","bool"]] },
+    { name: "poder_presidencia", rows: 6, rls: false, cols: [["codigo","text"],["orgao_sigla","text"],["nome","text"],["descricao","text"],["e_exclusivo_presidente","bool"]] },
+    { name: "glossario_campo", rows: 3, rls: false, cols: [["campo","text"],["tabela","text"],["nome_fonte","text"],["descricao","text"],["nao_confundir","text"]] },
+  ],
+  "STJ": [
+    { name: "stj_decisoes_dj", rows: 203478, rls: true, cols: [["seq_documento","int8","UNIQUE"],["data_publicacao","timestamptz"],["tipo_documento","text"],["processo","text"],["ministro","text"],["teor","text"],["assuntos","text"]] },
+    { name: "stj_universal", rows: 6411, rls: false, cols: [["processo","text"],["classe","text"],["relator","text"],["orgao_julgador","text"],["ramo_direito","text"],["situacao_tema","text"],["tema_numero","int4"],["tese_firmada","text"],["data_julgamento","date"],["vinculo_stf","text"]] },
+    { name: "stj_temas", rows: 1420, rls: false, cols: [["numero","int4"],["tipo","text"],["situacao","text"],["ramo_direito","text"],["questao","text"],["tese_firmada","text"],["data_julgamento","date"],["relator","text"]] },
+    { name: "stj_partes", rows: 18332, rls: false, cols: [["processo","text"],["papel","text"],["nome","text"],["tipo","text"],["oab","text"],["polo","text"]] },
+    { name: "stj_fases", rows: 46174, rls: false, cols: [["processo","text"],["data","date"],["texto","text"],["codigo_cnj","text"]] },
+    { name: "stj_precedentes_temas", rows: 2295, rls: true, cols: [["sequencial_precedente","text"],["tipo_precedente","text"],["ministro_relator","text"],["leading_case","text"],["origem_uf","text"],["quantidade_processos_suspenso_na_origem","int4"],["data_julgamento","date"],["situacao_processo_stf","text"]] },
+    { name: "stj_processos_semente", rows: 2539, rls: false, cols: [] },
+    { name: "stj_contramostra", rows: 3902, rls: false, cols: [] },
+    { name: "stj_decisoes_detalhe", rows: 2170, rls: false, cols: [] },
+  ],
+  "Fiscal / macro": [
+    { name: "fiscal_custo_judiciario", rows: 20, rls: false, cols: [["ano","int4"],["custo_total_reais","numeric"],["custo_pib_pct","numeric"],["custo_per_capita_reais","numeric"],["custo_stf_reais","numeric"],["custo_stj_reais","numeric"],["servidores_total","int4"],["magistrados_total","int4"],["processos_novos","int4"],["processos_pendentes","int4"]] },
+    { name: "serie_historica_tribunais", rows: 84, rls: false, cols: [["ano","int4"],["protocolados_stf","int4"],["julgados_stf","int4"],["protocolados_stj","int4"],["julgados_stj","int4"]] },
+    { name: "fiscal_carga_tributaria", rows: 36, rls: false, cols: [["ano","int4"],["carga_tributaria_pib","numeric"],["receita_tributaria_reais","numeric"],["tributos_federais_reais","numeric"],["irpf_reais","numeric"],["cofins_reais","numeric"]] },
+    { name: "fiscal_divida_publica", rows: 34, rls: false, cols: [["ano","int4"],["dlsp_pib","numeric"],["dlgsp_pib","numeric"],["dlsp_reais","numeric"],["divida_externa_reais","numeric"]] },
+    { name: "fiscal_resultado_primario", rows: 26, rls: false, cols: [["ano","int4"],["resultado_primario_reais","numeric"],["resultado_nominal_reais","numeric"],["resultado_primario_pib","numeric"]] },
+    { name: "fiscal_pib", rows: 37, rls: false, cols: [["ano","int4"],["pib_corrente_reais","numeric"],["pib_per_capita_reais","numeric"],["crescimento_real_pct","numeric"]] },
+    { name: "cnj_estatisticas", rows: 16, rls: true, cols: [["ano","int4"],["tribunal","text"],["casos_novos","numeric"],["taxa_congestionamento","numeric"],["magistrados","numeric"],["despesa_rh","numeric"]] },
+    { name: "fiscal_ingest_log", rows: 5, rls: false, cols: [["tabela_destino","text"],["fonte","text"],["registros_inseridos","int4"],["status","text"],["executado_em","timestamptz"]] },
+  ],
+  "Ontologia JudX (modelo analítico)": [
+    { name: "judx_decision", rows: 225601, rls: false, cols: [["case_id","uuid"],["decision_date","date"],["kind","enum"],["result","enum"],["technique","enum"],["session_environment","enum"],["is_highlighted_decision","bool"],["unanimity_signal","bool"],["argumentative_density","enum"],["collegial_fragmentation","enum"],["symbolic_visibility","enum"]] },
+    { name: "judx_case", rows: 139737, rls: false, cols: [["external_number","text","UNIQUE"],["court_id","uuid"],["organ_id","uuid"],["procedural_class_id","uuid"],["main_subject_id","uuid"],["phase","enum"],["filed_at","date"],["decided_at","date"],["state_involved","bool"]] },
+    { name: "judx_judge", rows: 95, rls: false, cols: [["name","text"],["normalized_name","text"],["court_id","uuid"],["primary_organ_id","uuid"],["active_from","date"],["active_to","date"]] },
+    { name: "judx_subject", rows: 3364, rls: false, cols: [["name","text","UNIQUE"],["normalized_name","text","UNIQUE"],["parent_subject_id","uuid"],["description","text"]] },
+    { name: "judx_court", rows: 2, rls: false, cols: [["name","text"],["acronym","text","UNIQUE"],["branch","enum"],["level","enum"],["competence","text"]] },
+    { name: "judx_organ", rows: 15, rls: false, cols: [["court_id","uuid"],["name","text"],["organ_type","text"],["parent_organ_id","uuid"],["competence","text"]] },
+    { name: "judx_procedural_class", rows: 343, rls: false, cols: [["court_id","uuid"],["raw_name","text"],["normalized_name","text"],["hierarchy_level","int4"],["parent_class_id","uuid"]] },
+    { name: "judx_inference_rule", rows: 15, rls: false, cols: [["code","text","UNIQUE"],["name","text"],["description","text"],["active","bool"]] },
+    { name: "judx_system_principle", rows: 10, rls: false, cols: [["code","text","UNIQUE"],["title","text"],["normative_text","text"],["is_active","bool"]] },
+    { name: "judx_text_pattern_catalog", rows: 10, rls: false, cols: [["pattern_regex","text"],["pattern_label","text"],["inferred_field","text"],["inferred_value","text"],["priority","int4"],["default_confidence","numeric"],["active","bool"]] },
+    { name: "judx_prompt_template", rows: 6, rls: false, cols: [["code","text","UNIQUE"],["title","text"],["prompt_body","text"],["target_scope","text"]] },
+  ],
+  "Ontologia JudX (vazia — reservada)": [
+    { name: "judx_litigant", rows: 0, rls: false, cols: [] },
+    { name: "judx_case_litigant", rows: 0, rls: false, cols: [] },
+    { name: "judx_judgment_regime", rows: 0, rls: false, cols: [] },
+    { name: "judx_judgment_environment_event", rows: 0, rls: false, cols: [] },
+    { name: "judx_collegial_context", rows: 0, rls: false, cols: [] },
+    { name: "judx_situated_profile", rows: 0, rls: false, cols: [] },
+    { name: "judx_environmental_profile", rows: 0, rls: false, cols: [] },
+    { name: "judx_decision_line", rows: 0, rls: false, cols: [] },
+    { name: "judx_decisional_dna", rows: 0, rls: false, cols: [] },
+    { name: "judx_regime_outcome_profile", rows: 0, rls: false, cols: [] },
+    { name: "judx_environment_inference", rows: 0, rls: false, cols: [] },
+    { name: "judx_emergent_taxonomy", rows: 0, rls: false, cols: [] },
+    { name: "judx_latent_signal", rows: 0, rls: false, cols: [] },
+    { name: "judx_unknown_pattern_registry", rows: 0, rls: false, cols: [] },
+    { name: "judx_intercourt_relation", rows: 0, rls: false, cols: [] },
+    { name: "judx_intercourt_pattern", rows: 0, rls: false, cols: [] },
+    { name: "judx_relator_prevalence", rows: 0, rls: false, cols: [] },
+    { name: "judx_relator_decision_outcome", rows: 0, rls: false, cols: [] },
+    { name: "judx_ecology", rows: 0, rls: false, cols: [] },
+    { name: "judx_counsel", rows: 0, rls: false, cols: [] },
+    { name: "judx_text_inference", rows: 0, rls: false, cols: [] },
+    { name: "judx_judge_position_in_case", rows: 0, rls: false, cols: [] },
+    { name: "judx_decision_line_case", rows: 0, rls: false, cols: [] },
+    { name: "judx_normalization_log", rows: 0, rls: false, cols: [] },
+    { name: "judx_raw_document", rows: 0, rls: false, cols: [] },
+    { name: "judx_ingest_source", rows: 0, rls: false, cols: [] },
+    { name: "judx_inference_audit", rows: 0, rls: false, cols: [] },
+    { name: "judx_inference_log", rows: 0, rls: false, cols: [] },
+  ],
+  "SaaS / usuários": [
+    { name: "organizations", rows: 0, rls: true, cols: [["id","uuid"],["name","text"],["cnpj","text"],["plan","text"],["stripe_customer_id","text"]] },
+    { name: "alerts", rows: 0, rls: true, cols: [["organization_id","uuid"],["keywords","array"],["ramo_direito","text"],["tribunal","text"],["active","bool"]] },
+  ],
+  "Modelo processual (vazio)": [
+    { name: "processo_no", rows: 0, rls: false, cols: [] },
+    { name: "processo_string_evento", rows: 0, rls: false, cols: [] },
+    { name: "processo_ancoragem", rows: 0, rls: false, cols: [] },
+  ]
+};
+
+const root = document.getElementById('root');
+let openCard = null;
+
+Object.entries(data).forEach(([section, tables]) => {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  sec.innerHTML = `<div class="section-title">${section}</div>`;
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  tables.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const rowsBadge = t.rows > 0
+      ? `<span class="badge badge-rows">${t.rows.toLocaleString('pt-BR')} rows</span>`
+      : `<span class="badge badge-empty">vazia</span>`;
+    const rlsBadge = t.rls ? `<span class="badge badge-rls">RLS</span>` : '';
+    const colCount = t.cols.length > 0 ? `${t.cols.length} colunas` : '';
+
+    card.innerHTML = `
+      <div class="card-name">${t.name}</div>
+      <div class="card-meta">${rowsBadge}${rlsBadge}</div>
+      ${colCount ? `<div class="card-cols">${colCount}</div>` : ''}
+      ${t.cols.length > 0 ? `<div class="detail" id="d-${t.name}">
+        ${t.cols.map(c => `<div class="col-row">
+          <span class="col-name">${c[0]}</span>
+          <span class="col-type">${c[1]}</span>
+          ${c[2] ? `<span class="col-flags">${c[2]}</span>` : ''}
+        </div>`).join('')}
+      </div>` : ''}
+    `;
+
+    if (t.cols.length > 0) {
+      card.addEventListener('click', () => {
+        const det = card.querySelector('.detail');
+        if (!det) return;
+        const wasOpen = det.classList.contains('open');
+        if (openCard && openCard !== det) openCard.classList.remove('open');
+        det.classList.toggle('open', !wasOpen);
+        openCard = wasOpen ? null : det;
+      });
+    }
+
+    grid.appendChild(card);
+  });
+
+  sec.appendChild(grid);
+  root.appendChild(sec);
+});
+</script>

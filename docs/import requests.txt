@@ -1,0 +1,348 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import time
+
+# Lista de links dos processos que você forneceu
+links = [
+    links = [
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2185105",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5257024",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5320379",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1605752",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258857",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258854",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2287108",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2544561",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2556011",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=3879523",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4203204",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4244427",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4325746",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4998973",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5005055",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5266042",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5458217",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5820876",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840274",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840373",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840552",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5844852",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5854147",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6058144",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6080599",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081805",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6119877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6330827",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6333675",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6349777",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4288299",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2505793",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4783560",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081690",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389004",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389107",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389572",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6390218",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492335",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5372688",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644740",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6650464",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6671500",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6412389",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4450343",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4787333",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5994515",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6000454",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6230877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6336659",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6348844",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6399725",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6421727",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6469033",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5566769",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492174",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644949",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644925",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840348",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6052447",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6261856",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6295478",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6297902",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6381263",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6398316",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6752782",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4272384",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4356051",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5872275",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5961530",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5697588",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5749423",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5868326",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6413021",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6415460",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6444706",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6562618",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=657040
+
+
+
+
+
+Você disse:
+reescreva todo o script completo por favor
+O ChatGPT disse:
+ChatGPT
+Aqui está o código completo, incluindo todos os links fornecidos, e pronto para execução:
+
+Código Python Completo com Todos os Links
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import time
+
+# Lista de links dos processos fornecidos
+links = [
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2185105",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5257024",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5320379",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1605752",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258857",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258854",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2287108",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2544561",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2556011",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=3879523",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4203204",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4244427",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4325746",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4998973",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5005055",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5266042",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5458217",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5820876",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840274",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840373",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840552",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5844852",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5854147",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6058144",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6080599",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081805",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6119877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6330827",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6333675",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6349777",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4288299",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2505793",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4783560",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081690",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389004",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389107",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389572",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6390218",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492335",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5372688",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644740",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6650464",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6671500",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6412389",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4450343",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4787333",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5994515",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6000454",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6230877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6336659",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6348844",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6399725",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6421727",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6469033",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5566769",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492174",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644949",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644925",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840348",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6052447",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6261856",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6295478",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6297902",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6381263",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6398316",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6752782",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4272384",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4356051",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5872275",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5961530",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5697588",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5749423",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5868326",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6413021",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6415460",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6444706",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6562618",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6570400",
+    "https://portal.stf.jus.br/processos/detalhe.asp?inc
+
+
+
+
+
+Você disse:
+continue completo
+O ChatGPT disse:
+ChatGPT
+Claro, aqui está o código completo com todos os links que você forneceu. Agora inclui a continuação da lista de links:
+
+python
+Copiar código
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import time
+
+# Lista de links dos processos fornecidos
+links = [
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2185105",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5257024",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5320379",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1502236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=1605752",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258857",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2258854",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2272225",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2287108",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2544561",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2556011",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=3879523",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4203204",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4244427",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4325746",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4998973",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5005055",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5266042",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5458217",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5820876",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840274",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840373",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840552",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5844852",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5854147",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6058144",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6080599",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081805",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6119877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6330827",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6333675",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6349777",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4288299",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=2505793",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4783560",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6081690",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389004",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389107",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6389572",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6390218",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492335",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5372688",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644740",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6650464",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6671500",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6412389",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4450343",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4787333",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5994515",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6000454",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6230877",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6336659",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6348844",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6399725",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6421727",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6469033",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5566769",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6492174",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644949",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6644925",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5840348",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6052447",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6261856",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6295478",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6297902",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6381263",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6398316",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6752782",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4272384",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4356051",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5872275",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5961530",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5697588",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5749423",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5868326",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6413021",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6415460",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6444706",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6562618",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6570400",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6585921",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6617018",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6666088",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=3889914",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4032750",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4032750",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4531713",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4650144",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4694303",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4766104",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4864567",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4930112",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4945134",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=4952236",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5109720",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5378231",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5562994",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5959896",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=5975355",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6145647",
+    "https://portal.stf.jus.br/processos/detalhe.asp?incidente=6291425",
+]
+
+def extrair_andamento(url):
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+    
+        andamento = soup.find_all('div', class_='andamento-processo') 
+        if andamento:
+            return ' | '.join([item.text.strip() for item in andamento])
+        else:
+            return 'Sem informações de andamento encontradas'
+    
+    except Exception as e:
+        return f"Erro ao acessar o link: {e}"
+
+resultados = []
+
+for link in links:
+    print(f"Extraindo dados do link: {link}")
+    andamento = extrair_andamento(link)
+    resultados.append({'link': link, 'andamento': andamento})
+    time.sleep(1)  # Espera entre requisições para evitar sobrecarregar o servidor
+
+# Converter os resultados em um DataFrame
+df = pd.DataFrame(resultados)
+
+# Salvar os resultados em um arquivo Excel
+df.to_excel('andamentos_processos_STF.xlsx', index=False)
+
+print("Informações de andamento extraídas e salvas com sucesso!")
