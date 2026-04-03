@@ -113,3 +113,102 @@ judx-platform/
 11. **NUNCA sobrescrever** — sempre acumular informação (append, não overwrite)
 12. **Autonomia incremental** — pode aplicar melhorias sem perguntar. Confirmar antes: tabelas novas, deploy, push, decisões sobre argumento acadêmico
 13. **Ao reiniciar** — salvar estado exato no STATUS.md, retomar automaticamente na próxima sessão
+
+## Fronteiras do Banco de Dados
+
+REGRA ABSOLUTA: cada tabela tem uma fronteira declarada.
+Nunca alterar sem autorização explícita da Damares.
+
+### CAMADA 0 — BRUTO (HD local, nunca sobe para Supabase)
+Localização: C:\Users\medin\Desktop\bkp\
+- 27 CSVs Corte Aberta (2,9M decisões, 2000–2026)
+- partes_portal_FINAL.csv e arquivos do scraper
+- Arquivos fiscais originais (STN, RFB, BCB)
+REGRA: nunca modificar. nunca deletar. nunca subir para Supabase direto.
+É o arquivo histórico do projeto. Se precisar usar, copiar primeiro.
+
+### CAMADA 1 — STAGING (entrada controlada)
+Tabelas com sufixo _staging ou prefixo stage_
+REGRA: dados novos chegam AQUI primeiro, nunca direto em produção.
+Fluxo obrigatório:
+  1. Dado novo → tabela _staging
+  2. Claude Code verifica: duplicatas, sobreposição, qualidade
+  3. Claude Code gera relatório para a Damares
+  4. Damares aprova
+  5. Só então migra para produção
+NUNCA pular essa etapa. NUNCA inserir dado novo direto em FONTE ou NÚCLEO.
+
+### CAMADA 2 — FONTE (somente leitura após ingestão aprovada)
+- stf_decisoes (194k) — decisões STF brutas do crawler
+- stf_processos (21k) — metadados de cabeçalho
+- stf_partes (1,28M) — partes do scraper portal
+- stj_decisoes_dj (203k) — fonte bruta STJ
+REGRA: SELECT permitido. INSERT/UPDATE/DELETE proibido sem
+autorização explícita e documentada da Damares.
+
+### CAMADA 3 — NÚCLEO (verdade oficial do produto)
+- stf_universal — tabela-mãe, normalizada e auditada
+- stf_partes_completo — destino final das partes (aguarda scraper)
+- stf_composicao_temporal — composição ministerial auditada
+- ministro_tribunal, orgao_julgador, tribunal, classe_processual
+- taxonomia_nao_decisao, mapeamento_origem_decisao
+- stj_universal, stj_temas, stj_partes, stj_fases
+REGRA: alterações só com script versionado em /scripts
+e confirmação explícita da Damares. Nunca editar diretamente.
+
+### CAMADA 4 — PRODUTO (recalculável, serve o front-end)
+- risco_processual — recalcular quando corpus mudar
+- resultado_empirico — atualizar após auditoria aprovada
+- auditoria_corpus_strings — cache estático dos números do hero
+REGRA: podem ser apagadas e recriadas. Sempre fazer backup antes.
+
+### CAMADA 5 — DESENVOLVIMENTO (não alimenta produto)
+- stf_partes_favoraveis, stf_amostra_partes — amostras de teste
+- judx_decision (225k), judx_case (139k) — ingestão piloto incompleta
+  (technique, effective_environment, unanimity_signal = 100% nulos)
+REGRA: não usar em queries de produção. não popular sem decisão
+documentada. limpar antes de nova ingestão judx_*.
+
+### CAMADA 6 — RESERVADO (schema definido, dados ausentes)
+- Todas as judx_* vazias (judx_litigant, judx_ecology, etc.)
+- processo_no, processo_ancoragem, processo_string_evento
+- organizations, alerts
+REGRA: não popular sem decisão explícita da Damares.
+Existem como intenção de arquitetura futura.
+
+---
+
+## Nulos esperados — não são erros
+
+Ao inspecionar o banco, os seguintes nulos são normais e conhecidos:
+- stf_partes.oab: 57% nulo — correto, só advogados têm OAB
+- stf_universal.polo_ativo/passivo: 79–86% nulo — partes ficam
+  em stf_partes, não aqui
+- stf_universal.ambiente_julgamento: 85% nulo — limitação das
+  Resoluções STF 642/2019 e 669/2020, campo não preenchido antes
+  de 2020
+- judx_decision.technique/effective_environment/unanimity_signal:
+  100% nulo — piloto incompleto, esperado
+- judx_case.filed_at: 100% nulo — piloto incompleto, esperado
+NÃO tentar corrigir esses nulos sem instrução da Damares.
+NÃO tratar como problema a resolver automaticamente.
+
+---
+
+## Fluxo de entrada de dados novos
+
+Toda vez que houver dado novo para entrar no banco:
+
+1. VERIFICAR origem: de qual fonte veio? Corte Aberta, scraper
+   portal, Qlik, Datajud?
+2. SALVAR bruto: guardar CSV original em
+   C:\Users\medin\Desktop\bkp\ com nome e data
+3. STAGING primeiro: carregar em tabela _staging, nunca direto
+4. RELATÓRIO: gerar para a Damares mostrando:
+   - quantos registros novos
+   - quantos já existem (duplicatas)
+   - quantos têm campos críticos vazios
+   - sobreposição com o que já está em produção
+5. AGUARDAR aprovação da Damares antes de qualquer migração
+6. DOCUMENTAR: registrar no DIARIO_ACHADOS.md o que entrou,
+   quando, de qual fonte e quantos registros
