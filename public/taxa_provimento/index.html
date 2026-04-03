@@ -387,22 +387,46 @@ body {
 </footer>
 
 <script>
-const AVG = 3.2;
-const MAX_PCT = 8.8;
+var AVG = 3.2;
+var MAX_PCT = 8.8;
+var MINISTROS = [];
 
-const MINISTROS = [
-  { nome: 'Edson Fachin', ini: 'EF', pct: 5.8, total: 11657, role: 'Presidente' },
-  { nome: 'Flávio Dino', ini: 'FD', pct: 8.8, total: 2660, role: '1ª Turma' },
-  { nome: 'Luís Roberto Barroso', ini: 'LRB', pct: 5.5, total: 7850, role: 'Aposentado (2025)' },
-  { nome: 'Alexandre de Moraes', ini: 'AM', pct: 5.5, total: 15311, role: 'Vice-Presidente' },
-  { nome: 'André Mendonça', ini: 'AM', pct: 4.2, total: 3948, role: '2ª Turma' },
-  { nome: 'Nunes Marques', ini: 'NM', pct: 4.0, total: 5465, role: '2ª Turma' },
-  { nome: 'Gilmar Mendes', ini: 'GM', pct: 3.0, total: 9696, role: '2ª Turma' },
-  { nome: 'Cármen Lúcia', ini: 'CL', pct: 3.0, total: 8370, role: '1ª Turma' },
-  { nome: 'Cristiano Zanin', ini: 'CZ', pct: 2.6, total: 3499, role: '1ª Turma' },
-  { nome: 'Dias Toffoli', ini: 'DT', pct: 2.4, total: 8686, role: '2ª Turma' },
-  { nome: 'Luiz Fux', ini: 'LF', pct: 1.9, total: 8357, role: '2ª Turma' },
-];
+var SUPA_URL = 'https://ejwyguskoiraredinqmb.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
+var ROLES = {
+  'Edson Fachin': 'Presidente', 'Flávio Dino': '1ª Turma',
+  'Alexandre de Moraes': 'Vice-Presidente', 'André Mendonça': '2ª Turma',
+  'Nunes Marques': '2ª Turma', 'Gilmar Mendes': '2ª Turma',
+  'Cármen Lúcia': '1ª Turma', 'Cristiano Zanin': '1ª Turma',
+  'Dias Toffoli': '2ª Turma', 'Luiz Fux': '2ª Turma',
+};
+var INICIAIS = {
+  'Edson Fachin': 'EF', 'Flávio Dino': 'FD',
+  'Alexandre de Moraes': 'AM', 'André Mendonça': 'AM',
+  'Nunes Marques': 'NM', 'Gilmar Mendes': 'GM',
+  'Cármen Lúcia': 'CL', 'Cristiano Zanin': 'CZ',
+  'Dias Toffoli': 'DT', 'Luiz Fux': 'LF',
+};
+
+(function carregarDados() {
+  fetch(SUPA_URL + '/rest/v1/taxa_por_ministro?select=relator,total,providos,taxa_sucesso&order=taxa_sucesso.desc', {
+    headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+  })
+  .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(function(data) {
+    var totalProv = 0, totalBase = 0;
+    MINISTROS = data.filter(function(d) { return ROLES[d.relator.replace('MIN. ', '')]; }).map(function(d) {
+      var nome = d.relator.replace('MIN. ', '');
+      totalProv += Number(d.providos);
+      totalBase += Number(d.total);
+      return { nome: nome, ini: INICIAIS[nome] || '??', pct: parseFloat(d.taxa_sucesso), total: Number(d.total), role: ROLES[nome] };
+    });
+    MAX_PCT = Math.max.apply(null, MINISTROS.map(function(m) { return m.pct; }));
+    AVG = totalBase > 0 ? parseFloat((100.0 * totalProv / totalBase).toFixed(1)) : 3.2;
+    renderCards();
+  })
+  .catch(function() { renderCards(); });
+})();
 
 
 
@@ -462,7 +486,7 @@ function renderCards() {
   }).join('');
 }
 
-renderCards();
+// renderCards() é chamado automaticamente após carregarDados()
 </script>
 </body>
 </html>
