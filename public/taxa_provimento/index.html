@@ -433,41 +433,43 @@ function fetchAll(url) {
   return page(0);
 }
 
-// Load real data for all ministers
+// Load pre-calculated data from taxa_por_ministro (1 request instead of ~80)
 var MINISTROS = [];
 var AVG = 6.2;
 var MAX_PCT = 1;
 
 function loadAllData() {
   var grid = document.getElementById('grid');
-  grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.85rem">Carregando dados do Supabase...</div>';
+  grid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:0.85rem">Carregando dados...</div>';
 
-  var promises = MINISTROS_META.map(function(m) {
-    var url = SUPA + '/rest/v1/v_provimento_merito?select=categoria_provimento&relator=eq.' + encodeURIComponent(m.relator) + '&ano=gte.' + m.posse;
-    return fetchAll(url).then(function(data) {
-      var prov = 0, base = 0;
-      data.forEach(function(r) {
-        if (['provido','nao_provido','parcial'].includes(r.categoria_provimento)) {
-          base++;
-          if (r.categoria_provimento === 'provido') prov++;
-        }
-      });
-      var taxa = base > 0 ? (prov / base) * 100 : 0;
-      return { nome: m.nome, ini: m.ini, role: m.role, pct: parseFloat(taxa.toFixed(1)), total: data.length };
+  var url = SUPA + '/rest/v1/taxa_por_ministro?select=ministro,total_base,providos,taxa,total_decisoes&order=taxa.desc';
+  fetch(url, { headers: HDRS })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!Array.isArray(data) || data.length === 0) throw new Error('Sem dados na tabela taxa_por_ministro');
+      var totalProv = 0, totalBase = 0;
+      MINISTROS = data.map(function(d) {
+        var meta = MINISTROS_META.find(function(m) { return m.relator === d.ministro; });
+        totalProv += Number(d.providos);
+        totalBase += Number(d.total_base);
+        return {
+          nome: meta ? meta.nome : d.ministro.replace('MIN. ', ''),
+          ini: meta ? meta.ini : d.ministro.charAt(5),
+          role: meta ? meta.role : '',
+          pct: parseFloat(d.taxa),
+          total: Number(d.total_decisoes)
+        };
+      }).filter(function(m) { return m.nome; });
+      MAX_PCT = Math.max.apply(null, MINISTROS.map(function(m) { return m.pct; }));
+      AVG = totalBase > 0 ? parseFloat((100.0 * totalProv / totalBase).toFixed(1)) : 6.2;
+      renderCards();
+    })
+    .catch(function(e) {
+      grid.innerHTML = '<div style="text-align:center;padding:2rem;color:#e05252;font-size:0.85rem">Erro ao carregar: ' + e.message + '</div>';
     });
-  });
-
-  Promise.all(promises).then(function(results) {
-    MINISTROS = results;
-    MAX_PCT = Math.max.apply(null, MINISTROS.map(function(m) { return m.pct }));
-    // Compute weighted average
-    var totalProv = 0, totalBase = 0;
-    results.forEach(function(m) { /* already aggregated above, use simple avg */ });
-    AVG = 6.2; // pre-computed weighted average
-    renderCards();
-  }).catch(function(e) {
-    grid.innerHTML = '<div style="text-align:center;padding:2rem;color:#e05252;font-size:0.85rem">Erro ao carregar: ' + e.message + '</div>';
-  });
 }
 
 
