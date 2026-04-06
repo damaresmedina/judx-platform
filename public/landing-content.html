@@ -7,7 +7,7 @@
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://judx-platform.vercel.app/"/>
 <meta property="og:title" content="JudX — O que o Supremo realmente decide."/>
-<meta property="og:description" content="79% das decisões do STF não apreciam o mérito. Sabemos quem ganha, quando e com qual relator. Inteligência jurisprudencial em tempo real."/>
+<meta property="og:description" content="2,9 milhões de decisões do STF e STJ estruturadas desde 1940. 79% não apreciam o mérito. Sabemos quem ganha, quando e com qual relator."/>
 <meta property="og:image" content="https://judx-platform.vercel.app/og.png"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -27,592 +27,88 @@
   --muted: #6b7280;
   --white: #ffffff;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  background: var(--navy);
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(200,146,42,.12) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem 4rem;
-  position: relative;
-  z-index: 10;
-}
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: .02em;
-}
-
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+.hero { min-height: 100vh; background: var(--navy); display: grid; grid-template-rows: auto 1fr auto; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(200,146,42,.12) 0%, transparent 70%); pointer-events: none; }
+.hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 4rem; position: relative; z-index: 10; }
+.logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--white); letter-spacing: .02em; }
 .logo span { color: var(--gold); }
-
-.nav-right {
-  font-size: .8rem;
-  color: rgba(255,255,255,.4);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.hero-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 4rem 4rem 2rem;
-  position: relative;
-  z-index: 10;
-  max-width: 900px;
-}
-
-.hero-label {
-  font-size: .7rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 500;
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-}
-
-.hero-label::before {
-  content: '';
-  display: block;
-  width: 32px;
-  height: 1px;
-  background: var(--gold);
-}
-
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(3rem, 7vw, 6rem);
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1.05;
-  letter-spacing: -.02em;
-  margin-bottom: 2.5rem;
-}
-
-h1 em {
-  font-style: italic;
-  color: var(--gold);
-}
-
-.hero-sub {
-  font-size: 1.15rem;
-  color: rgba(255,255,255,.6);
-  line-height: 1.7;
-  max-width: 560px;
-  font-weight: 300;
-  margin-bottom: 3rem;
-}
-
-.hero-cta {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: var(--gold);
-  color: var(--navy);
-  padding: .85rem 2.2rem;
-  border: none;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .85rem;
-  font-weight: 500;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all .2s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-primary:hover {
-  background: var(--gold-light);
-  transform: translateY(-1px);
-}
-
-.btn-ghost {
-  color: rgba(255,255,255,.5);
-  font-size: .8rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255,255,255,.2);
-  padding-bottom: 2px;
-  transition: all .2s;
-}
-
+.nav-right { font-size: .8rem; color: rgba(255,255,255,.4); letter-spacing: .12em; text-transform: uppercase; font-weight: 500; }
+.hero-body { display: flex; flex-direction: column; justify-content: center; padding: 4rem 4rem 2rem; position: relative; z-index: 10; max-width: 900px; }
+.hero-label { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 2rem; display: flex; align-items: center; gap: .75rem; }
+.hero-label::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gold); }
+h1 { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 7vw, 6rem); font-weight: 900; color: var(--white); line-height: 1.05; letter-spacing: -.02em; margin-bottom: 2.5rem; }
+h1 em { font-style: italic; color: var(--gold); }
+.hero-sub { font-size: 1.15rem; color: rgba(255,255,255,.6); line-height: 1.7; max-width: 560px; font-weight: 300; margin-bottom: 3rem; }
+.hero-cta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.btn-primary { background: var(--gold); color: var(--navy); padding: .85rem 2.2rem; border: none; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block; }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+.btn-ghost { color: rgba(255,255,255,.5); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.2); padding-bottom: 2px; transition: all .2s; }
 .btn-ghost:hover { color: var(--white); border-color: var(--white); }
-
-.hero-bottom {
-  padding: 2rem 4rem 3rem;
-  display: flex;
-  gap: 4rem;
-  position: relative;
-  z-index: 10;
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-
-.hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: .3rem;
-}
-
-.hero-stat-n {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gold);
-  line-height: 1;
-}
-
-.hero-stat-l {
-  font-size: .72rem;
-  color: rgba(255,255,255,.35);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
-/* ── NUMBERS ── */
-.section-numbers {
-  background: var(--cream);
-  padding: 7rem 4rem;
-}
-
-.section-label {
-  font-size: .7rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  font-weight: 500;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-}
-
-.section-label::before {
-  content: '';
-  display: block;
-  width: 32px;
-  height: 1px;
-  background: var(--gold);
-}
-
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 700;
-  color: var(--navy);
-  line-height: 1.15;
-  max-width: 640px;
-  margin-bottom: 1rem;
-}
-
-.section-desc {
-  font-size: 1rem;
-  color: var(--muted);
-  line-height: 1.7;
-  max-width: 500px;
-  margin-bottom: 4rem;
-}
-
-.numbers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1px;
-  background: var(--cream-dark);
-  border: 1px solid var(--cream-dark);
-}
-
-.number-card {
-  background: var(--cream);
-  padding: 2.5rem;
-  position: relative;
-  overflow: hidden;
-  transition: background .2s;
-}
-
+.hero-bottom { padding: 2rem 4rem 3rem; display: flex; gap: 4rem; position: relative; z-index: 10; border-top: 1px solid rgba(255,255,255,.06); }
+.hero-stat { display: flex; flex-direction: column; gap: .3rem; }
+.hero-stat-n { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.hero-stat-l { font-size: .72rem; color: rgba(255,255,255,.35); letter-spacing: .1em; text-transform: uppercase; }
+.section-numbers { background: var(--cream); padding: 7rem 4rem; }
+.section-label { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: .75rem; }
+.section-label::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gold); }
+.section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; color: var(--navy); line-height: 1.15; max-width: 640px; margin-bottom: 1rem; }
+.section-desc { font-size: 1rem; color: var(--muted); line-height: 1.7; max-width: 500px; margin-bottom: 4rem; }
+.numbers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--cream-dark); border: 1px solid var(--cream-dark); }
+.number-card { background: var(--cream); padding: 2.5rem; position: relative; overflow: hidden; transition: background .2s; }
 .number-card:hover { background: var(--white); }
-
-.number-card::before {
-  content: attr(data-index);
-  position: absolute;
-  top: 1.5rem;
-  right: 2rem;
-  font-family: 'DM Mono', monospace;
-  font-size: .7rem;
-  color: var(--cream-dark);
-  letter-spacing: .05em;
-}
-
-.number-big {
-  font-family: 'Playfair Display', serif;
-  font-size: 3.5rem;
-  font-weight: 900;
-  color: var(--navy);
-  line-height: 1;
-  margin-bottom: .5rem;
-}
-
+.number-card::before { content: attr(data-index); position: absolute; top: 1.5rem; right: 2rem; font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--cream-dark); letter-spacing: .05em; }
+.number-big { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: var(--navy); line-height: 1; margin-bottom: .5rem; }
 .number-big span { color: var(--gold); }
-
-.number-label {
-  font-size: .8rem;
-  font-weight: 500;
-  color: var(--navy);
-  letter-spacing: .05em;
-  margin-bottom: .4rem;
-}
-
-.number-sub {
-  font-size: .78rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.number-source {
-  margin-top: 1.5rem;
-  font-size: .65rem;
-  color: var(--cream-dark);
-  font-family: 'DM Mono', monospace;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-}
-
-/* ── ASYMMETRY ── */
-.section-asymmetry {
-  background: var(--navy);
-  padding: 7rem 4rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.section-asymmetry::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.asym-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5rem;
-  align-items: center;
-  max-width: 1100px;
-}
-
+.number-label { font-size: .8rem; font-weight: 500; color: var(--navy); letter-spacing: .05em; margin-bottom: .4rem; }
+.number-sub { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.number-source { margin-top: 1.5rem; font-size: .65rem; color: var(--cream-dark); font-family: 'DM Mono', monospace; letter-spacing: .05em; text-transform: uppercase; }
+.section-asymmetry { background: var(--navy); padding: 7rem 4rem; position: relative; overflow: hidden; }
+.section-asymmetry::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.asym-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; max-width: 1100px; }
 .asym-text .section-title { color: var(--white); }
 .asym-text .section-desc { color: rgba(255,255,255,.45); }
-
-.asym-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
+.asym-bars { display: flex; flex-direction: column; gap: 1.5rem; }
 .bar-row { display: flex; flex-direction: column; gap: .5rem; }
-
-.bar-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.bar-nome {
-  font-size: .75rem;
-  color: rgba(255,255,255,.6);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.bar-pct {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-
-.bar-track {
-  height: 6px;
-  background: rgba(255,255,255,.08);
-  border-radius: 0;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 0;
-  transition: width 1s ease;
-}
-
-.bar-note {
-  font-size: .68rem;
-  color: rgba(255,255,255,.3);
-  font-style: italic;
-}
-
-/* ── QUOTE ── */
-.section-quote {
-  background: var(--cream);
-  padding: 7rem 4rem;
-  display: flex;
-  justify-content: center;
-}
-
-.quote-inner {
-  max-width: 760px;
-  text-align: center;
-}
-
-.quote-mark {
-  font-family: 'Playfair Display', serif;
-  font-size: 6rem;
-  color: var(--gold);
-  line-height: .5;
-  margin-bottom: 2rem;
-  opacity: .3;
-}
-
-.quote-text {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 400;
-  font-style: italic;
-  color: var(--navy);
-  line-height: 1.5;
-  margin-bottom: 2rem;
-}
-
-.quote-author {
-  font-size: .78rem;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-/* ── PRODUCT ── */
-.section-product {
-  background: var(--white);
-  padding: 7rem 4rem;
-  border-top: 1px solid var(--cream-dark);
-}
-
-.product-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 3rem;
-  margin-top: 4rem;
-}
-
-.product-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid var(--cream-dark);
-  transition: border-color .2s;
-}
-
+.bar-top { display: flex; justify-content: space-between; align-items: baseline; }
+.bar-nome { font-size: .75rem; color: rgba(255,255,255,.6); letter-spacing: .08em; text-transform: uppercase; font-weight: 500; }
+.bar-pct { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; }
+.bar-track { height: 6px; background: rgba(255,255,255,.08); border-radius: 0; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 0; transition: width 1s ease; }
+.bar-note { font-size: .68rem; color: rgba(255,255,255,.3); font-style: italic; }
+.section-quote { background: var(--cream); padding: 7rem 4rem; display: flex; justify-content: center; }
+.quote-inner { max-width: 760px; text-align: center; }
+.quote-mark { font-family: 'Playfair Display', serif; font-size: 6rem; color: var(--gold); line-height: .5; margin-bottom: 2rem; opacity: .3; }
+.quote-text { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 400; font-style: italic; color: var(--navy); line-height: 1.5; margin-bottom: 2rem; }
+.quote-author { font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.section-product { background: var(--white); padding: 7rem 4rem; border-top: 1px solid var(--cream-dark); }
+.product-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3rem; margin-top: 4rem; }
+.product-item { display: flex; flex-direction: column; gap: 1rem; padding-top: 1.5rem; border-top: 2px solid var(--cream-dark); transition: border-color .2s; }
 .product-item:hover { border-color: var(--gold); }
-
-.product-num {
-  font-family: 'DM Mono', monospace;
-  font-size: .7rem;
-  color: var(--gold);
-  letter-spacing: .1em;
-}
-
-.product-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--navy);
-  line-height: 1.2;
-}
-
-.product-desc {
-  font-size: .85rem;
-  color: var(--muted);
-  line-height: 1.65;
-}
-
-/* ── CTA FINAL ── */
-.section-cta {
-  background: var(--navy);
-  padding: 8rem 4rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.section-cta::before {
-  content: 'JudX';
-  position: absolute;
-  font-family: 'Playfair Display', serif;
-  font-size: 20rem;
-  font-weight: 900;
-  color: rgba(255,255,255,.02);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.cta-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  position: relative;
-}
-
+.product-num { font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--gold); letter-spacing: .1em; }
+.product-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+.product-desc { font-size: .85rem; color: var(--muted); line-height: 1.65; }
+.section-cta { background: var(--navy); padding: 8rem 4rem; text-align: center; position: relative; overflow: hidden; }
+.section-cta::before { content: 'JudX'; position: absolute; font-family: 'Playfair Display', serif; font-size: 20rem; font-weight: 900; color: rgba(255,255,255,.02); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; white-space: nowrap; }
+.cta-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: var(--white); line-height: 1.1; margin-bottom: 1.5rem; position: relative; }
 .cta-title em { color: var(--gold); font-style: italic; }
-
-.cta-sub {
-  font-size: 1rem;
-  color: rgba(255,255,255,.45);
-  margin-bottom: 3rem;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.65;
-}
-
-.cta-form {
-  display: flex;
-  gap: 0;
-  max-width: 480px;
-  margin: 0 auto 2rem;
-}
-
-.cta-input {
-  flex: 1;
-  padding: .9rem 1.2rem;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.15);
-  border-right: none;
-  color: var(--white);
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
-  outline: none;
-  transition: border-color .2s;
-}
-
+.cta-sub { font-size: 1rem; color: rgba(255,255,255,.45); margin-bottom: 3rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
+.cta-form { display: flex; gap: 0; max-width: 480px; margin: 0 auto 2rem; }
+.cta-input { flex: 1; padding: .9rem 1.2rem; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); border-right: none; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: .9rem; outline: none; transition: border-color .2s; }
 .cta-input::placeholder { color: rgba(255,255,255,.25); }
 .cta-input:focus { border-color: var(--gold); }
-
-.cta-submit {
-  background: var(--gold);
-  color: var(--navy);
-  border: none;
-  padding: .9rem 1.8rem;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .8rem;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background .2s;
-  white-space: nowrap;
-}
-
+.cta-submit { background: var(--gold); color: var(--navy); border: none; padding: .9rem 1.8rem; font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: background .2s; white-space: nowrap; }
 .cta-submit:hover { background: var(--gold-light); }
-
-.cta-note {
-  font-size: .72rem;
-  color: rgba(255,255,255,.2);
-  letter-spacing: .08em;
-}
-
-/* ── FOOTER ── */
-footer {
-  background: #08131f;
-  padding: 2rem 4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid rgba(255,255,255,.04);
-}
-
-.footer-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  color: rgba(255,255,255,.3);
-}
-
+.cta-note { font-size: .72rem; color: rgba(255,255,255,.2); letter-spacing: .08em; }
+footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,.04); }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 1rem; color: rgba(255,255,255,.3); }
 .footer-logo span { color: var(--gold); }
-
-.footer-text {
-  font-size: .7rem;
-  color: rgba(255,255,255,.15);
-  letter-spacing: .08em;
-}
-
-/* ── RESPONSIVE ── */
+.footer-text { font-size: .7rem; color: rgba(255,255,255,.15); letter-spacing: .08em; }
 @media (max-width: 768px) {
-  nav, .hero-body, .hero-bottom,
-  .section-numbers, .section-asymmetry,
-  .section-quote, .section-product,
-  .section-cta, footer {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
+  nav, .hero-body, .hero-bottom, .section-numbers, .section-asymmetry, .section-quote, .section-product, .section-cta, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
   .hero-bottom { gap: 2rem; flex-wrap: wrap; }
   .asym-grid { grid-template-columns: 1fr; gap: 3rem; }
   .product-grid { grid-template-columns: 1fr; }
@@ -620,13 +116,7 @@ footer {
   .cta-input { border-right: 1px solid rgba(255,255,255,.15); border-bottom: none; }
   footer { flex-direction: column; gap: 1rem; text-align: center; }
 }
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 .hero-label { animation: fadeUp .6s ease both; }
 h1 { animation: fadeUp .6s ease .1s both; }
 .hero-sub { animation: fadeUp .6s ease .2s both; }
@@ -635,88 +125,65 @@ h1 { animation: fadeUp .6s ease .1s both; }
 </style>
 </head>
 <body>
-
-<!-- HERO -->
 <section class="hero">
   <nav>
     <div class="logo">Jud<span>X</span></div>
     <div class="nav-right">Inteligência Jurisprudencial</div>
   </nav>
-
   <div class="hero-body">
     <div class="hero-label">STF · STJ · Dados reais · Universo completo</div>
     <h1>O que o Supremo<br><em>realmente</em> decide.</h1>
-    <p class="hero-sub">169.851 decisões do STF estruturadas e normalizadas. 79% não apreciam o mérito. Sabemos quem ganha, quando e com qual relator.</p>
+    <p class="hero-sub">2,9 milhões de decisões do STF e STJ estruturadas desde 1940. 79% não apreciam o mérito. Sabemos quem ganha, quando e com qual relator.</p>
     <div class="hero-cta">
       <a href="#contato" class="btn-primary">Quero ver uma demonstração</a>
-      <a href="/taxa-provimento" class="btn-ghost">Taxa de Provimento →</a>
+      <a href="/dashboard" class="btn-ghost">Acessar Dashboard →</a>
+      <a href="/serie-historica" class="btn-ghost">Série Histórica →</a>
       <a href="/risco-processual" class="btn-ghost">Análise de Risco →</a>
       <a href="/linha-sucessoria.html" class="btn-ghost">Linha Sucessória →</a>
     </div>
   </div>
-
   <div class="hero-bottom">
-    <div class="hero-stat">
-      <div class="hero-stat-n">169k</div>
-      <div class="hero-stat-l">Decisões STF</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-n">79%</div>
-      <div class="hero-stat-l">Sem mérito</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-n">R$115bi</div>
-      <div class="hero-stat-l">Custo anual estimado</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-n">4×</div>
-      <div class="hero-stat-l">Mais caro entre grandes economias</div>
-    </div>
+    <div class="hero-stat"><div class="hero-stat-n">2,9M</div><div class="hero-stat-l">Decisões STF+STJ</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">79%</div><div class="hero-stat-l">Sem mérito</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">R$115bi</div><div class="hero-stat-l">Custo anual estimado</div></div>
+    <div class="hero-stat"><div class="hero-stat-n">4×</div><div class="hero-stat-l">Mais caro entre grandes economias</div></div>
   </div>
 </section>
-
-<!-- NUMBERS -->
 <section class="section-numbers" id="dados">
   <div class="section-label">Os números</div>
   <h2 class="section-title">O sistema que decide não decidir.</h2>
-  <p class="section-desc">Dados públicos do Corte Aberta STF e do Relatório Justiça em Números 2025 do CNJ, organizados pela primeira vez em um corpus analítico unificado.</p>
-
+  <p class="section-desc">Dados públicos do Corte Aberta STF, STJ e do Relatório Justiça em Números 2025 do CNJ, organizados pela primeira vez em um corpus analítico unificado. 2,9 milhões de decisões classificadas desde 1940.</p>
   <div class="numbers-grid">
     <div class="number-card" data-index="01">
       <div class="number-big">79<span>%</span></div>
       <div class="number-label">Decisões sem apreciação de mérito</div>
       <div class="number-sub">Agravos rejeitados, embargos não conhecidos, negado seguimento. O conflito retorna ao sistema sem resolução.</div>
-      <div class="number-source">Fonte: JudX / Corte Aberta STF · 169.851 decisões</div>
+      <div class="number-source">Fonte: JudX / Corte Aberta STF · 2.927.525 decisões classificadas</div>
     </div>
-
     <div class="number-card" data-index="02">
       <div class="number-big">R$<span>146</span>bi</div>
       <div class="number-label">Orçamento do Judiciário em 2024</div>
       <div class="number-sub">Recorde histórico. Alta real de 5,5%. 89% destinado exclusivamente a pessoal. R$ 689 por habitante por ano.</div>
       <div class="number-source">Fonte: CNJ · Justiça em Números 2025</div>
     </div>
-
     <div class="number-card" data-index="03">
       <div class="number-big">1,3<span>%</span></div>
       <div class="number-label">O mais caro do mundo entre as grandes economias — 4× a média internacional</div>
       <div class="number-sub">A média internacional é 0,3% do PIB. O Brasil gasta mais do que o quádruplo. Apenas El Salvador — menor que o estado de Sergipe — gasta proporcionalmente mais.</div>
       <div class="number-source">Fonte: Tesouro Nacional · 50 países analisados</div>
     </div>
-
     <div class="number-card" data-index="04">
       <div class="number-big">1,9<span>%</span></div>
       <div class="number-label">Taxa de sucesso da pessoa física</div>
       <div class="number-sub">Entes públicos têm 13,1% de taxa de sucesso — 7 vezes mais. Pessoa jurídica: 7,7%. A assimetria é estrutural.</div>
       <div class="number-source">Fonte: JudX · análise de polo ativo × resultado</div>
     </div>
-
     <div class="number-card" data-index="05">
       <div class="number-big">10<span>k</span></div>
       <div class="number-label">Reclamações trabalhistas no corpus</div>
       <div class="number-sub">57% de todas as Rcl do STF são de direito do trabalho. O circuito tese → descumprimento → Rcl realoca risco sistematicamente.</div>
       <div class="number-source">Fonte: JudX · stf_decisoes · classe = RCL</div>
     </div>
-
     <div class="number-card" data-index="06">
       <div class="number-big">~R$<span>115</span>bi</div>
       <div class="number-label">Custo estimado das não-decisões</div>
@@ -725,8 +192,6 @@ h1 { animation: fadeUp .6s ease .1s both; }
     </div>
   </div>
 </section>
-
-<!-- ASYMMETRY -->
 <section class="section-asymmetry">
   <div class="asym-grid">
     <div class="asym-text">
@@ -734,51 +199,28 @@ h1 { animation: fadeUp .6s ease .1s both; }
       <h2 class="section-title">Para quem o STF existe?</h2>
       <p class="section-desc">A taxa de sucesso no polo ativo varia radicalmente conforme o tipo de parte. O custo do litígio é socializado para todos. O ganho é concentrado.</p>
     </div>
-
     <div class="asym-bars">
       <div class="bar-row">
-        <div class="bar-top">
-          <span class="bar-nome">Ente público</span>
-          <span class="bar-pct" style="color:#c8922a">13,1%</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:100%;background:#c8922a"></div>
-        </div>
+        <div class="bar-top"><span class="bar-nome">Ente público</span><span class="bar-pct" style="color:#c8922a">13,1%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#c8922a"></div></div>
         <div class="bar-note">União, Estados, Municípios, autarquias</div>
       </div>
-
       <div class="bar-row">
-        <div class="bar-top">
-          <span class="bar-nome">Pessoa jurídica</span>
-          <span class="bar-pct" style="color:#7b9cc4">7,7%</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:59%;background:#7b9cc4"></div>
-        </div>
+        <div class="bar-top"><span class="bar-nome">Pessoa jurídica</span><span class="bar-pct" style="color:#7b9cc4">7,7%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:59%;background:#7b9cc4"></div></div>
         <div class="bar-note">Empresas, associações, federações</div>
       </div>
-
       <div class="bar-row">
-        <div class="bar-top">
-          <span class="bar-nome">Pessoa física</span>
-          <span class="bar-pct" style="color:rgba(255,255,255,.35)">1,9%</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:14%;background:rgba(255,255,255,.2)"></div>
-        </div>
+        <div class="bar-top"><span class="bar-nome">Pessoa física</span><span class="bar-pct" style="color:rgba(255,255,255,.35)">1,9%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:14%;background:rgba(255,255,255,.2)"></div></div>
         <div class="bar-note">Cidadãos — 7× menos chance que entes públicos</div>
       </div>
-
       <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:.7rem;color:rgba(255,255,255,.2);letter-spacing:.08em;font-family:'DM Mono',monospace">
-          FONTE: JUDX · ANÁLISE DE 1.630 INCIDENTES · EXCLUÍDAS RCL
-        </div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.2);letter-spacing:.08em;font-family:'DM Mono',monospace">FONTE: JUDX · ANÁLISE DE 1.630 INCIDENTES · EXCLUÍDAS RCL</div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- QUOTE -->
 <section class="section-quote">
   <div class="quote-inner">
     <div class="quote-mark">"</div>
@@ -786,33 +228,16 @@ h1 { animation: fadeUp .6s ease .1s both; }
     <div class="quote-author">JudX · Decoding Justice, 2026</div>
   </div>
 </section>
-
-<!-- PRODUCT -->
 <section class="section-product">
   <div class="section-label">O produto</div>
   <h2 class="section-title">Inteligência jurisprudencial em tempo real.</h2>
   <p class="section-desc">O JudX transforma o comportamento decisório dos tribunais em dado estruturado, auditável e acionável.</p>
-
   <div class="product-grid">
-    <div class="product-item">
-      <div class="product-num">01</div>
-      <div class="product-title">Observatório STF + STJ</div>
-      <div class="product-desc">Universo completo de decisões normalizadas. Padrões por relator, ramo, ambiente virtual vs. presencial, colegialidade real vs. formal.</div>
-    </div>
-    <div class="product-item">
-      <div class="product-num">02</div>
-      <div class="product-title">Análise de risco processual</div>
-      <div class="product-desc">Taxa de sucesso por tipo de parte, classe processual e relator. Sinais de instabilidade e recirculação de temas. Fiscal risk constitutionalism quantificado.</div>
-    </div>
-    <div class="product-item">
-      <div class="product-num">03</div>
-      <div class="product-title">Cartografia constitucional</div>
-      <div class="product-desc">Mapa de decidibilidade da Constituição Federal artigo por artigo. Onde o STF efetivamente vive a Constituição e onde há silêncio.</div>
-    </div>
+    <div class="product-item"><div class="product-num">01</div><div class="product-title">Observatório STF + STJ</div><div class="product-desc">Universo completo de decisões normalizadas. Padrões por relator, ramo, ambiente virtual vs. presencial, colegialidade real vs. formal.</div></div>
+    <div class="product-item"><div class="product-num">02</div><div class="product-title">Análise de risco processual</div><div class="product-desc">Taxa de sucesso por tipo de parte, classe processual e relator. Sinais de instabilidade e recirculação de temas. Fiscal risk constitutionalism quantificado.</div></div>
+    <div class="product-item"><div class="product-num">03</div><div class="product-title">Cartografia constitucional</div><div class="product-desc">Mapa de decidibilidade da Constituição Federal artigo por artigo. Onde o STF efetivamente vive a Constituição e onde há silêncio.</div></div>
   </div>
 </section>
-
-<!-- CTA -->
 <section class="section-cta" id="contato">
   <h2 class="cta-title">O que o Supremo<br><em>realmente</em> decide.</h2>
   <p class="cta-sub">Solicite uma demonstração. Sem compromisso, sem cadastro longo — apenas uma conversa sobre os dados.</p>
@@ -822,12 +247,10 @@ h1 { animation: fadeUp .6s ease .1s both; }
   </form>
   <div class="cta-note">Respondemos em até 24 horas · Dados protegidos · Sem spam</div>
 </section>
-
 <footer>
   <div class="footer-logo">Jud<span>X</span> — Decoding Justice</div>
   <div class="footer-text">© 2026 JudX. Todos os direitos reservados. Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</div>
 </footer>
-
 <script>
 function handleSubmit(e) {
   e.preventDefault();
@@ -836,32 +259,11 @@ function handleSubmit(e) {
   btn.textContent = 'Enviado ✓';
   btn.style.background = '#2d7a4f';
   btn.style.color = '#fff';
-  setTimeout(() => {
-    btn.textContent = 'Solicitar acesso';
-    btn.style.background = '';
-    btn.style.color = '';
-    document.getElementById('emailInput').value = '';
-  }, 3000);
-  // Aqui integra com seu backend / Supabase / Mailchimp
+  setTimeout(() => { btn.textContent = 'Solicitar acesso'; btn.style.background = ''; btn.style.color = ''; document.getElementById('emailInput').value = ''; }, 3000);
   console.log('Lead:', email);
 }
-
-// Animate bars on scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.style.opacity = '1';
-      e.target.style.transform = 'translateY(0)';
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.number-card, .product-item').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(16px)';
-  el.style.transition = 'opacity .5s ease, transform .5s ease';
-  observer.observe(el);
-});
+const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.1 });
+document.querySelectorAll('.number-card, .product-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(16px)'; el.style.transition = 'opacity .5s ease, transform .5s ease'; observer.observe(el); });
 </script>
 </body>
 </html>
