@@ -163,37 +163,112 @@
 | `download_corte_aberta.py` | Downloads/ | Script Qlik Engine API |
 | `MODELO_ONTOLOGICO_ICONS.sql` | judx-platform/ | Schema ontológico completo |
 
+### 05-06/abr/2026 — Dia 10: Master4 + Qlik + Partes 9col + judx repopulado + Anatomia do filtro
+
+#### Reparser 9 colunas
+- [x] Parser de partes refatorado: 5col → 9col (polo_ativo, adv_ativo, interessados_ativo, polo_passivo, adv_passivo, interessados_passivo, min_relator, nao_classificado)
+- [x] Normalização de rótulos: acentos removidos, 40+ variantes mapeadas (INVEST→passivo, LITISC→interessado, DP→advogado, etc.)
+- [x] 241.452 registros, 0 erros, 35 residuais (0,01%)
+- [x] Script: `reparser_7col.py`
+
+#### Gap de incidentes resolvido via Qlik
+- [x] 761.014 processos sem incidente no master3 → **0 gaps** via campo `Seq. Objeto Incidente` do Qlik
+- [x] Export: `stf_processo_incidente_qlik.csv` (2.213.991 mapeamentos, 41 MB)
+- [x] Descoberta: `DIM_PROCESSO` tem 141 colunas no Qlik (muito mais do que exportado antes)
+
+#### Master4 — 2 arquivos normalizados
+- [x] `stf_master4_core_norm.csv`: 2.927.525 decisões, 20 colunas, 1.180 MB
+- [x] `stf_master4_premium_norm.csv`: 2.927.525, 3 colunas (observacao_andamento), 298 MB
+- [x] Normalizações: *NI*→vazio, datas→ISO, 341K nomes truncados resolvidos via dicionário 1,3M entidades
+
+#### Partes completo
+- [x] `stf_partes_completo_norm.csv`: 1.153.635 processos (241K portal + 912K Corte Aberta)
+- [x] Advogados vinculados ao polo, interessados separados, nomes resolvidos
+
+#### Upload Supabase — 3 tabelas novas
+- [x] `stf_master`: 2.927.525 rows, 20 colunas, índices em incidente/classe/relator/ano/origem
+- [x] `stf_partes_completo`: 1.153.635 rows, chave incidente
+- [x] `stf_master_premium`: 2.927.525 rows, FK→stf_master
+- [x] Migration: `20260405000000_stf_master4_partes.sql`
+
+#### judx_case e judx_decision — repopulados do zero
+- [x] Backup dos dados antigos (139K cases, 225K decisions) em CSV rastreável
+- [x] Limpeza (TRUNCATE) + repopulação via SQL direto no servidor
+- [x] **judx_case**: 2.212.761 processos (era 139K)
+- [x] **judx_decision**: 2.927.525 decisões classificadas (era 225K)
+- [x] Mapeamento v3: andamento→result com fallback premium (96% classificados, 4% outro)
+- [x] kind/environment derivados de origem_decisao (100% consistentes)
+- [x] decided_at: UPDATE em andamento
+- [x] Script: `populate-judx-case-decision-v3.py`
+
+#### Análise — Anatomia do filtro da Presidência
+- [x] Decomposição completa: Presidência vs Relator vs Turma vs Plenário, por ano e classe
+- [x] Presidência filtra 73-76% dos AREs (2020+), 30-39% dos REs
+- [x] Taxa de provimento sobe de 2,4% (2017) para 6,2% (2025) por encolhimento do denominador
+- [x] Número absoluto de provimentos estável (~2.500-3.500/ano)
+- [x] Relatório: `2026-04-06_anatomia_filtro_presidencia_stf.txt`
+
+#### Série histórica consolidada
+- [x] Cruzamento: Excel (1940-2018) + PDFs oficiais (2018-2025) + Corte Aberta (2000-2026)
+- [x] 87 anos, 16 colunas, 3 fontes
+- [x] **Achado: inconsistência interna do STF** — 2018: Excel=126.433 vs PDF=126.753 vs Corte Aberta=126.757
+- [x] Arquivo: `2026-04-06_stf_serie_historica_v2.csv`
+
+#### Raio-X dos providos
+- [x] 41.827 processos providos (AI+ARE+RE 2010-2026) com partes, relator, classe, ano
+- [x] 42,5% com partes (gap em 2020+ por falta de scraper nessa faixa)
+- [x] Top relatores: Gilmar (5.985), Toffoli (5.489), Cármen Lúcia (3.628)
+- [x] Arquivo: `2026-04-06_raiox_providos_stf.csv`
+
+#### Links processuais
+- [x] Export Qlik: 2.213.991 links `portal.stf.jus.br/processos/detalhe.asp?incidente=N`
+- [x] Arquivo: `stf_incidente_link.csv` (158 MB)
+
+#### Git
+- [x] Commit `9d3599e`: migration stf_master4_partes
+- [x] Commit `ed644f0`: script populate-judx-case-decision-v3
+- [x] Push main
+
 ---
 
-## ⚡ RETOMAR AQUI APÓS REINÍCIO
+## RETOMAR AQUI APÓS REINÍCIO
 
-### EM ANDAMENTO — Scraper partes portal STF (PID 18348)
+### EM ANDAMENTO — Scraper partes portal STF
 - **Script**: `Desktop\backup_judx\resultados\run_scraper.py`
-- **Modo**: rajadas de 300 requests + cooldown 5min (evita ban WAF)
+- **Modo**: rajadas de 300 requests + cooldown 5min
 - **Range**: 5.074.440 → 7.600.000 (~2.5M incidentes)
+- **Checkpoint**: ~5.674.000 (74,6% — estimativa término ~13-14 abril)
 - **Saída**: `Desktop\backup_judx\resultados\partes_portal_FINAL.csv`
-- **Checkpoint**: `Desktop\backup_judx\resultados\cp_final.txt`
 - **HTML bruto**: `Desktop\backup_judx\resultados\html_raw_partes/`
-- **Monitorar**: `wc -l partes_portal_FINAL.csv` + `cat cp_final.txt`
-- **Se cair**: relançar `python run_scraper.py` — retoma do checkpoint
+- **Quando terminar**: rodar `reparser_7col.py` sobre todos os HTMLs, substituir 912K Corte Aberta
 
-### Prioridade 1 — Quando scraper terminar
-1. Cruzar partes_portal_FINAL.csv com decisões para substituir *NI*
-2. Rodar scraper para faixa 1→1.405.086 (pré-2000) e 2.699.257→3.698.186
-3. Reconstruir audit CSVs com dados reais do portal
-4. Passe 2: buscar abaInformacoes só nos encontrados (assunto, data, UF)
+### EM ANDAMENTO — UPDATE judx_case.decided_at
+- Query rodando no Supabase (PID 110633)
+- Atualiza 2.212.761 rows com data da última decisão
+- Verificar ao reiniciar: `SELECT count(*) FROM judx_case WHERE decided_at IS NOT NULL`
 
-### Prioridade 2 — Montagem final
-5. Reprocessar pipeline ontológico com ambiente corrigido
-6. Gerar CSVs finais para auditoria
+### Prioridade 1 — Completar judx_case
+1. Verificar decided_at (pode ter terminado)
+2. Mapear 48K organ_id faltantes
+3. Classificar phase (outra → recursal/originaria/etc.)
+4. Popular judx_subject (vazia)
 
-### Prioridade 3 — Subir para Supabase (SÓ APÓS AUDITORIA)
-7. Criar tabelas ontológicas no banco
-8. Ingerir dados via pipeline de carga
+### Prioridade 2 — Inteiro teor
+5. Investigar API jurisprudencia.stf.jus.br para textos completos
+6. Padrões decisórios a partir dos 421K textos de ementa (premium)
+
+### Prioridade 3 — Quando scraper terminar
+7. Reparser 9col sobre todos os HTMLs
+8. Substituir partes Corte Aberta por portal (nomes completos)
+9. Atualizar stf_partes_completo no Supabase
+
+### Prioridade 4 — Limpeza do banco
+10. Remover 82 tabelas vazias (com confirmação)
+11. Documentar fronteiras atualizadas
 
 ### Pendências anteriores
 - [ ] www.judx.com.br (CNAME no Registro.br)
-- [ ] Ementas STF
+- [ ] Inteiro teor STF (API jurisprudência)
 - [ ] LOA DPU via SIOP
 - [ ] Ancoragem STJ×códigos
 - [ ] Escrita do paper — Circuitos de Enforcement
@@ -202,30 +277,41 @@
 
 ## ESTADO ATUAL DOS BANCOS
 
-### JudX (ejwyguskoiraredinqmb)
+### JudX (ejwyguskoiraredinqmb) — Atualizado 06/abr/2026
 | Tabela | Registros | Status |
 |---|---|---|
-| stf_decisoes | 169.851 | Completo + 4 colunas novas (ministro_real, orgao_decisorio, ambiente_unificado, fonte_ambiente) |
-| judx_case | 139.737 | Completo |
-| judx_decision | 225.366 | Completo |
-| stf_partes | 856.416 | Completo (117.814 incidentes) |
-| stf_universal | 169.851 | 40 colunas — tabela de auditoria |
-| stj_universal | 6.411 | 20 colunas |
-| stj_temas | 1.420 | Completo |
-| stj_processos_semente | 2.509 | Completo |
-| stj_contramostra | 3.902 | Completo |
+| **stf_master** | **2.927.525** | **NOVO** — 20 colunas, 100% incidente, decisões 2000-2026 |
+| **stf_master_premium** | **2.927.525** | **NOVO** — observacao_andamento |
+| **stf_partes_completo** | **1.153.635** | **NOVO** — 9col, portal+Corte Aberta |
+| **judx_case** | **2.212.761** | **REPOPULADO** — processos com metadata |
+| **judx_decision** | **2.927.525** | **REPOPULADO** — 96% classificados (v3) |
+| stj_decisoes_dj | 212.405 | Inalterado (íntegras STJ DJe) |
+| judx_procedural_class | 343 | Referência |
+| judx_judge | 95 | Referência |
+| judx_organ | 15+ | Ampliado |
+| **82 tabelas vazias** | 0 | Limpeza pendente (com confirmação) |
 
-### Dados Locais (não no banco ainda)
+### Tabelas STF legado (VAZIAS — substituídas por stf_master)
+stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_partes, stf_universal
+
+### Dados Locais
 | Dataset | Registros | Local |
 |---|---|---|
 | Corte Aberta decisões | 2.927.525 | Downloads/stf_decisoes_fatias/ (27 CSVs) |
-| Corte Aberta partes | 1.000.000 | Downloads/stf_partes_fatias/ |
-| Master consolidado | 2.927.525 | Downloads/stf_master/ (3 CSVs) |
-| Pipeline ontológico | 2.927.525 | Downloads/stf_pipeline_local/ |
-| basicos crawler | 1.813.780 | Desktop/geral/Fechamento DMA/ |
+| Master4 core normalizado | 2.927.525 | Downloads/stf/stf_data/stf_master/ + backup Desktop |
+| Master4 premium normalizado | 2.927.525 | idem |
+| Partes completo normalizado | 1.153.635 | idem |
+| Processo→Incidente Qlik | 2.213.991 | Downloads/stf_processo_incidente_qlik.csv |
+| Incidente→Link portal | 2.213.991 | backup_judx/resultados/stf_incidente_link.csv |
+| Partes portal 9col | 241.452 | backup_judx/resultados/partes_portal_9col.csv |
+| Raio-X providos | 41.827 | backup_judx/resultados/2026-04-06_raiox_providos_stf.csv |
+| Série histórica | 87 anos | backup_judx/resultados/2026-04-06_stf_serie_historica_v2.csv |
+| Anatomia filtro | — | backup_judx/resultados/2026-04-06_anatomia_filtro_presidencia_stf.txt |
+| Auditoria banco | — | backup_judx/resultados/2026-04-06_auditoria_banco_completa.txt |
+| Memória sessão | — | backup_judx/resultados/2026-04-05_memoria_sessao_completa.md |
 | STJ Datajud | 2.646.620 | Desktop/backup_judx/resultados/stj_datajud/ |
 
-### ICONS (hetuhkhhppxjliiaerlu)
+### ICONS (hetuhkhhppxjliiaerlu) — Inalterado
 | Tabela | Registros | Status |
 |---|---|---|
 | objects | 126.545+ | Completo |
@@ -236,22 +322,40 @@
 ## ACHADOS EMPÍRICOS CONFIRMADOS
 
 ### STF — Corpus 2.927.525 decisões (Corte Aberta completa 2000-2026)
-- **86.4% monocráticas** (2.530.482) — 1 ministro decide
-- **13.6% colegiadas** (397.043) — presencial ou virtual
-- Dentro das colegiadas: 69.7% presencial (277.609), 30.3% virtual (119.434)
+- **86,4% monocráticas** (2.530.482) — 1 ministro decide
+- **13,6% colegiadas** (397.043) — presencial ou virtual
+- Dentro das colegiadas: 69,7% presencial (277.609), 30,3% virtual (119.434)
 - **85% dos processos** nunca chegam ao colegiado
-- **76.6% dos processos** têm apenas 1 decisão
-- **34.9% são não-decisões** (1.021.680) — grau 1: 676K, grau 2: 289K, grau 3: 56K
+- **76,6% dos processos** têm apenas 1 decisão
+- **34,9% são não-decisões** (1.021.680) — grau 1: 676K, grau 2: 289K, grau 3: 56K
 - Evolução ND: ~20% (2007) → ~43% (2022-2024)
 - 47 classes processuais, 2.212.761 processos únicos
 
-### STF — Banco (169.851 decisões enriquecidas)
-- 24 ministros reais mapeados (MINISTRO PRESIDENTE → nome via composição temporal)
-- 6 órgãos decisórios normalizados
-- 12 inconsistências auditadas e documentadas
+### STF — Classificação judx_decision (v3, 05/abr/2026)
+- nao_conhecido: 41,5% | improcedente: 19,9% | prejudicado: 16,8%
+- procedente: 8,6% | outro: 4,0% | sobrestado: 3,5%
+- indeferido: 1,9% | deferido: 1,6% | parcialmente_procedente: 1,5%
+- extinto: 0,5% | convertido: 0,1%
+
+### STF — Anatomia do filtro (05/abr/2026)
+- **Presidência filtra 73-76% dos AREs** (2020-2025)
+- **Presidência filtra 30-39% dos REs** (2021-2025)
+- Taxa de provimento sobe por encolhimento do denominador, não por mais provimentos
+- Provimentos absolutos estáveis: ~2.500-3.500/ano (2013-2025)
+- % que chega ao mérito caiu de 34% (2000) para 19-27% (2020+)
+
+### STF — Inconsistência interna (05/abr/2026)
+- 2018: Relatório Atividades = 126.753 decisões vs Corte Aberta = 126.757
+- Divergência de 4 decisões entre dois sistemas oficiais do mesmo tribunal
+- Sem nota metodológica publicada para "taxa de provimento" (aparece em 2018)
+
+### STF — Taxa de provimento real vs publicada
+- STF publica: 3,7% agregada (AI+ARE+RE 2010-2026, 681K ocorrências)
+- ARE: 1,2% (74% do universo) vs RE: 17,1% (15% do universo) — assimetria de 14x
+- RE Criminal: 24,3% (Qlik) — invisível na taxa agregada
 
 ### STJ
-- **~90% sem mérito** (AREsp: 95%, REsp: 70.9%)
+- **~90% sem mérito** (AREsp: 95%, REsp: 70,9%)
 - 2.646.620 processos (Datajud 2005-2026)
 - 1.420 temas repetitivos
 
@@ -262,12 +366,14 @@
 | Script | Função |
 |---|---|
 | `download_corte_aberta.py` | Baixa decisões STF via Qlik Engine WebSocket API |
-| `download_partes_por_ano.py` | Baixa partes STF via Qlik (pronto, não rodou) |
-| `scraper_playwright_10.py` | Busca incidentes no portal STF (10 workers paralelos) |
+| `reparser_7col.py` | Parser 9col de partes (normalizado, 40+ rótulos) |
+| `normalizar_master4.py` | Normalização dos 3 arquivos master4 |
+| `upload_supabase.py` | Upload stf_master/partes/premium via COPY |
+| `populate-judx-case-decision-v3.py` | Repopula judx_case/decision via SQL direto |
+| `mapeamento_andamento_result.py` | Mapeamento v3 andamento→result (68+ padrões) |
+| `gerar_raiox_providos.py` | Raio-X dos providos com partes e relator |
 | `pipeline_local_stf.py` | Pipeline ontológico local (2.9M decisões) |
 | `montar_master.py` | Consolida decisões + basicos + partes |
-| `refaz_join_numero.py` | Join por número (recupera AI→RE) |
-| `audit-completo-stf.mjs` | Audit banco STF (17 abas) |
 | `bom-dia.mjs` | Diagnóstico matinal + mapa de dados STF |
 
 ---
