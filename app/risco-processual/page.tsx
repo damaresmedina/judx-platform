@@ -188,7 +188,7 @@ export default function RiscoProcessual() {
           <span style={{ color: '#c8922a', fontSize: '0.75rem', letterSpacing: '0.18em', fontWeight: 700, textTransform: 'uppercase' as const }}>JUDX</span>
           <span style={{ color: '#6a8aa5', fontSize: '0.6rem', letterSpacing: '0.1em', marginLeft: '0.3rem' }}>· Inteligência Jurisprudencial</span>
         </a>
-        <a href="/taxa_provimento.html" style={{ color: '#6a8aa5', fontSize: '0.78rem', textDecoration: 'none' }}>← Taxa de Provimento</a>
+        <a href="/" style={{ color: '#6a8aa5', fontSize: '0.78rem', textDecoration: 'none' }}>← JudX</a>
       </header>
 
       {/* Hero */}
