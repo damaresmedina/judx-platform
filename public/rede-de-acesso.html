@@ -93,7 +93,25 @@ footer{padding:1.2rem 3.5rem;display:flex;justify-content:space-between;align-it
 .leg-i{display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:rgba(255,255,255,.3)}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-@media(max-width:768px){nav,.hero,.tabs,.insight-wrap,#chart,.summary,.fonte,footer,.leg{padding-left:1.2rem;padding-right:1.2rem}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  nav,.hero,.insight-wrap,#chart,.summary,.fonte,footer,.leg{padding-left:1rem;padding-right:1rem}
+  .hero h1{font-size:1.5rem}
+  .hero-sub{font-size:.72rem}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .kpi-n{font-size:1rem}
+  .tabs{padding:0 .5rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab{padding:.5rem .7rem;font-size:.62rem;flex-shrink:0}
+  .insight{font-size:.7rem;padding-left:.8rem}
+  #chart{padding:.8rem 1rem}
+  .bar-row{height:22px}
+  .bar-uf{width:30px;font-size:.65rem}
+  .bar-rank{width:14px;font-size:.5rem}
+  .bar-val{width:55px;font-size:.6rem}
+  .bar-pct{width:35px;font-size:.52rem}
+  .tip{max-width:220px;font-size:.68rem}
+  .tip-nome{font-size:.82rem}
+  footer{flex-direction:column;gap:.5rem;text-align:center}
+}
 </style>
 </head>
 <body>

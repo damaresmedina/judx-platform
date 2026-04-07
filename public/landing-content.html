@@ -108,13 +108,33 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
 .footer-logo span { color: var(--gold); }
 .footer-text { font-size: .7rem; color: rgba(255,255,255,.15); letter-spacing: .08em; }
 @media (max-width: 768px) {
-  nav, .hero-body, .hero-bottom, .section-numbers, .section-asymmetry, .section-quote, .section-product, .section-cta, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
-  .hero-bottom { gap: 2rem; flex-wrap: wrap; }
-  .asym-grid { grid-template-columns: 1fr; gap: 3rem; }
+  nav, .hero-body, .hero-bottom, .section-numbers, .section-asymmetry, .section-quote, .section-product, .section-cta, footer { padding-left: 1.2rem; padding-right: 1.2rem; }
+  nav { padding-top: 1rem; padding-bottom: 1rem; }
+  .logo { font-size: 1.2rem; }
+  .nav-right { font-size: .65rem; }
+  h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 1.5rem; }
+  .hero-sub { font-size: 1rem; line-height: 1.6; }
+  .hero-body { padding: 2.5rem 1.2rem 1.5rem; }
+  .hero-cta { flex-direction: column; gap: .8rem; align-items: flex-start; }
+  .btn-primary { width: 100%; text-align: center; padding: .9rem 1.5rem; }
+  .btn-ghost { font-size: .75rem; }
+  .hero-bottom { gap: 1.5rem; flex-wrap: wrap; padding: 1.5rem 1.2rem 2rem; }
+  .hero-stat-n { font-size: 1.5rem; }
+  .hero-stat-l { font-size: .65rem; }
+  .section-title { font-size: clamp(1.5rem, 5vw, 2rem); }
+  .section-numbers { padding: 4rem 1.2rem; }
+  .numbers-grid { grid-template-columns: 1fr; }
+  .number-big { font-size: 2.5rem; }
+  .asym-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .section-asymmetry { padding: 4rem 1.2rem; }
+  .bar-pct { font-size: 1.1rem; }
   .product-grid { grid-template-columns: 1fr; }
+  .section-product { padding: 4rem 1.2rem; }
+  .section-quote { padding: 4rem 1.2rem; }
+  .section-cta { padding: 4rem 1.2rem; }
   .cta-form { flex-direction: column; }
-  .cta-input { border-right: 1px solid rgba(255,255,255,.15); border-bottom: none; }
-  footer { flex-direction: column; gap: 1rem; text-align: center; }
+  .cta-input { border-right: none; border-bottom: 1px solid rgba(255,255,255,.15); width: 100%; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.2rem; }
 }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 .hero-label { animation: fadeUp .6s ease both; }
