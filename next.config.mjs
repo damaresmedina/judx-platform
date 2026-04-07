@@ -7,6 +7,11 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/taxa-provimento',
+        destination: '/',
+        permanent: false,
+      },
     ];
   },
   async rewrites() {
