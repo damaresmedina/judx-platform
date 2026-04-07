@@ -9,6 +9,14 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      { source: '/serie-historica', destination: '/serie-historica.html' },
+      { source: '/rede-de-acesso', destination: '/rede-de-acesso.html' },
+      { source: '/colapso-silencioso', destination: '/colapso-silencioso.html' },
+      { source: '/linha-sucessoria', destination: '/linha-sucessoria.html' },
+    ];
+  },
 };
 
 export default nextConfig;

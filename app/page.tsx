@@ -1,11 +1,11 @@
 export const metadata = {
   title: 'JudX — Inteligência Jurisprudencial',
-  description: '169.851 decisões do STF estruturadas e normalizadas. O que o Supremo realmente decide.',
+  description: 'Quase 3 milhoes de decisoes do STF estruturadas desde 1940. O que o Supremo realmente decide.',
   openGraph: {
     title: 'JudX — O que o Supremo realmente decide.',
-    description: '79% das decisões do STF não apreciam o mérito. Sabemos quem ganha, quando e com qual relator.',
-    url: 'https://judx-platform.vercel.app/',
-    images: [{ url: 'https://judx-platform.vercel.app/og.png', width: 1200, height: 630 }],
+    description: 'Quase 3 milhoes de decisoes do STF desde 1940. 79% nao apreciam o merito. Sabemos quem ganha, quando e com qual relator.',
+    url: 'https://judx.com.br/',
+    images: [{ url: 'https://judx.com.br/og.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
