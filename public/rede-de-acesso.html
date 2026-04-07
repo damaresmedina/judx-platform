@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JudX — Rede de Acesso ao Judiciario Brasileiro</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{--navy:#0a1628;--navy2:#12233d;--navy3:#1a3055;--gold:#c8922a;--gold2:#e8b44a;--gold-dim:rgba(200,146,42,.15);--cream:#f5f0e8;--white:#fff;--muted:#6b7280;--glass:rgba(255,255,255,.03)}
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--gold);color:var(--navy)}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 3.5rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.logo{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.02em}.logo span{color:var(--gold)}
+.nav-r{display:flex;align-items:center;gap:1.5rem}
+.nav-link{font-size:.62rem;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:color .2s}.nav-link:hover{color:var(--gold)}
+.nav-badge{font-size:.54rem;background:var(--gold-dim);color:var(--gold);padding:.2rem .5rem;border-radius:2px;letter-spacing:.08em;font-weight:600}
+
+/* HERO */
+.hero{padding:2.5rem 3.5rem 1.8rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-50px;width:400px;height:400px;background:radial-gradient(circle,rgba(200,146,42,.04) 0%,transparent 70%);pointer-events:none}
+.hero-tag{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem;font-weight:500}
+.hero-tag::before{content:'';width:28px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:900;line-height:1.06;letter-spacing:-.025em;margin-bottom:.55rem}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:.8rem;color:rgba(255,255,255,.32);line-height:1.65;max-width:620px;margin-bottom:1.5rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1.5rem;border-top:1px solid rgba(255,255,255,.05);padding-top:1.2rem;max-width:800px}
+.kpi{position:relative;padding-left:.8rem}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);opacity:.2}
+.kpi-n{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--gold);line-height:1.1}
+.kpi-l{font-size:.54rem;color:rgba(255,255,255,.22);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem;line-height:1.3}
+
+/* TABS */
+.tabs-wrap{border-bottom:1px solid rgba(255,255,255,.04);background:var(--glass)}
+.tabs{display:flex;gap:0;padding:0 3.5rem;overflow-x:auto}
+.tab{padding:.7rem 1.3rem;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.28);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.03em;white-space:nowrap;position:relative}
+.tab:hover{color:rgba(255,255,255,.55)}.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* INSIGHT */
+.insight-wrap{padding:.8rem 3.5rem;background:rgba(200,146,42,.03);border-bottom:1px solid rgba(200,146,42,.08)}
+.insight{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.65;max-width:900px;position:relative;padding-left:1rem}
+.insight::before{content:'';position:absolute;left:0;top:.15rem;bottom:.15rem;width:2px;background:var(--gold);border-radius:1px}
+.insight strong{color:var(--gold);font-weight:600}
+
+/* CHART */
+#chart{width:100%;min-height:200px;position:relative;padding:1rem 3.5rem 1.5rem}
+.chart-title{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.15);margin-bottom:.8rem;font-weight:500}
+
+/* TREEMAP */
+.tm-cell{cursor:pointer;transition:opacity .15s}
+.tm-cell:hover{opacity:.9}
+.tm-label{pointer-events:none;font-family:'DM Sans',sans-serif;font-weight:700;fill:#fff;dominant-baseline:middle;text-anchor:middle}
+.tm-val{pointer-events:none;font-family:'DM Mono',monospace;font-weight:400;fill:rgba(255,255,255,.6);dominant-baseline:middle;text-anchor:middle}
+
+/* BARS */
+.bar-row{display:flex;align-items:center;gap:.5rem;height:26px;margin-bottom:2px;position:relative;cursor:pointer;transition:background .1s;padding:0 .3rem;border-radius:2px}
+.bar-row:hover{background:rgba(255,255,255,.03)}
+.bar-uf{width:36px;font-family:'DM Mono',monospace;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.55);text-align:right;flex-shrink:0}
+.bar-rank{width:18px;font-family:'DM Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.12);text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:16px;background:rgba(255,255,255,.02);border-radius:2px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.bar-val{width:70px;font-family:'DM Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.3);text-align:right;flex-shrink:0}
+.bar-pct{width:42px;font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.15);text-align:right;flex-shrink:0}
+.bar-row.top3 .bar-uf{color:var(--gold)}
+.bar-row.top3 .bar-rank{color:var(--gold);opacity:.5}
+
+/* TIP */
+.tip{position:fixed;background:var(--navy2);border:1px solid rgba(255,255,255,.06);color:#fff;padding:.75rem 1rem;pointer-events:none;opacity:0;transition:opacity .12s;z-index:999;max-width:280px;border-left:3px solid var(--gold);font-size:.74rem;line-height:1.5;border-radius:3px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.tip.on{opacity:1}
+.tip-nome{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.1rem}
+.tip-tipo{font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.4rem}
+.tip-grid{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem}
+.tip-lbl{color:rgba(255,255,255,.4);font-size:.68rem}
+.tip-val{font-family:'DM Mono',monospace;color:var(--gold);font-weight:500;font-size:.7rem;text-align:right}
+.tip-divider{grid-column:1/-1;height:1px;background:rgba(255,255,255,.05);margin:.15rem 0}
+
+/* SUMMARY BAR */
+.summary{padding:.5rem 3.5rem;display:flex;gap:2rem;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.03)}
+.sum-item{font-size:.62rem;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace}
+.sum-item strong{color:rgba(255,255,255,.35)}
+
+/* FOOTER */
+.fonte{text-align:center;padding:.5rem 3.5rem;font-size:.52rem;color:rgba(255,255,255,.1);font-family:'DM Mono',monospace;letter-spacing:.05em}
+footer{padding:1.2rem 3.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.03)}
+.fl{font-family:'Playfair Display',serif;font-size:.85rem;color:rgba(255,255,255,.15);letter-spacing:-.02em}.fl span{color:var(--gold)}
+.ft{font-size:.55rem;color:rgba(255,255,255,.08);letter-spacing:.05em}
+
+/* LEG */
+.leg{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;padding:.6rem 3.5rem}
+.leg-i{display:flex;align-items:center;gap:.3rem;font-size:.62rem;color:rgba(255,255,255,.3)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+@media(max-width:768px){nav,.hero,.tabs,.insight-wrap,#chart,.summary,.fonte,footer,.leg{padding-left:1.2rem;padding-right:1.2rem}.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://judx.com.br" class="logo">Jud<span>X</span></a>
+  <div class="nav-r">
+    <span class="nav-badge">CNJ 2025</span>
+    <a href="https://judx.com.br" class="nav-link">judx.com.br</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">Rede de acesso ao judiciario · ano-base 2024</div>
+  <h1>Para onde vai o <em>peso</em><br>da justica brasileira</h1>
+  <p class="hero-sub">27 tribunais estaduais. Cinco deles concentram metade dos processos e do orcamento. Cada quadrado e proporcional ao volume. Passe o mouse para explorar.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-n">27,1M</div><div class="kpi-l">Casos novos<br>Just. Estadual</div></div>
+    <div class="kpi"><div class="kpi-n">62,2M</div><div class="kpi-l">Acervo<br>pendente</div></div>
+    <div class="kpi"><div class="kpi-n">R$ 91,7 bi</div><div class="kpi-l">Despesa total<br>Just. Estadual</div></div>
+    <div class="kpi"><div class="kpi-n">SP+RJ+MG</div><div class="kpi-l">43% da despesa<br>60% do acervo</div></div>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+<div class="tabs">
+  <div class="tab on" data-v="treemap" onclick="go('treemap',this)">Mapa de concentracao</div>
+  <div class="tab" data-v="cn" onclick="go('cn',this)">Casos novos</div>
+  <div class="tab" data-v="pend" onclick="go('pend',this)">Acervo pendente</div>
+  <div class="tab" data-v="desp" onclick="go('desp',this)">Despesa total</div>
+  <div class="tab" data-v="despHab" onclick="go('despHab',this)">Despesa/habitante</div>
+  <div class="tab" data-v="execFiscPct" onclick="go('execFiscPct',this)">Exec. fiscal</div>
+  <div class="tab" data-v="giro" onclick="go('giro',this)">Giro do acervo</div>
+  <div class="tab" data-v="hierarquia" onclick="go('hierarquia',this)">Hierarquia</div>
+</div>
+</div>
+
+<div class="insight-wrap"><div class="insight" id="insight"></div></div>
+<div id="chart"></div>
+<div class="summary" id="summary"></div>
+
+<div class="tip" id="tip">
+  <div class="tip-nome" id="tn"></div>
+  <div class="tip-tipo" id="tt"></div>
+  <div class="tip-grid" id="tgrid"></div>
+</div>
+
+<div class="leg" id="legenda"></div>
+<div class="fonte">FONTE: CNJ — JUSTICA EM NUMEROS 2025 (ANO-BASE 2024) &middot; DESPESAS CORRIGIDAS IPCA &middot; CALCULOS JUDX</div>
+<footer><div class="fl">Jud<span>X</span> — Decoding Justice</div><div class="ft">&copy; 2026 JudX. Dados sujeitos a verificacao. Nao constitui aconselhamento juridico.</div></footer>
+
+<script>
+// ============================== DADOS ==============================
+const TJ=[
+  {uf:'SP',nome:'Sao Paulo',cn:6806000,pend:19000000,desp:24800,despHab:516.9,cnHab:144.5,giro:31,execFiscPct:45.2,prodMag:3449,pop:47105,regiao:'Sudeste'},
+  {uf:'RJ',nome:'Rio de Janeiro',cn:2482000,pend:6800000,desp:9800,despHab:548.5,cnHab:139.3,giro:24,execFiscPct:39.1,prodMag:4128,pop:17818,regiao:'Sudeste'},
+  {uf:'MG',nome:'Minas Gerais',cn:2041000,pend:11200000,desp:4910,despHab:510.6,cnHab:94.5,giro:38,execFiscPct:25.9,prodMag:2644,pop:21600,regiao:'Sudeste'},
+  {uf:'RS',nome:'Rio G. do Sul',cn:2041000,pend:7200000,desp:5540,despHab:524.4,cnHab:178.0,giro:25,execFiscPct:18.4,prodMag:3294,pop:11466,regiao:'Sul'},
+  {uf:'PR',nome:'Parana',cn:1650000,pend:5800000,desp:5230,despHab:408.3,cnHab:136.6,giro:24,execFiscPct:14.9,prodMag:1983,pop:12079,regiao:'Sul'},
+  {uf:'BA',nome:'Bahia',cn:1857000,pend:5600000,desp:5070,despHab:362.2,cnHab:123.3,giro:18,execFiscPct:7.4,prodMag:3700,pop:15057,regiao:'Nordeste'},
+  {uf:'SC',nome:'Santa Catarina',cn:1273000,pend:3800000,desp:3310,despHab:457.0,cnHab:159.1,giro:22,execFiscPct:29.1,prodMag:3212,pop:8001,regiao:'Sul'},
+  {uf:'GO',nome:'Goias',cn:1210000,pend:2900000,desp:2320,despHab:408.6,cnHab:163.8,giro:12,execFiscPct:12.0,prodMag:3281,pop:7386,regiao:'Centro-Oeste'},
+  {uf:'PE',nome:'Pernambuco',cn:682000,pend:3100000,desp:2560,despHab:272.0,cnHab:70.6,giro:22,execFiscPct:18.2,prodMag:1596,pop:9668,regiao:'Nordeste'},
+  {uf:'CE',nome:'Ceara',cn:654000,pend:2700000,desp:2410,despHab:221.2,cnHab:69.2,giro:20,execFiscPct:8.0,prodMag:1564,pop:9453,regiao:'Nordeste'},
+  {uf:'PA',nome:'Para',cn:546000,pend:2800000,desp:2490,despHab:292.2,cnHab:60.5,giro:25,execFiscPct:27.3,prodMag:1484,pop:9029,regiao:'Norte'},
+  {uf:'MA',nome:'Maranhao',cn:685000,pend:2000000,desp:1640,despHab:288.3,cnHab:94.2,giro:19,execFiscPct:3.3,prodMag:1815,pop:7268,regiao:'Nordeste'},
+  {uf:'MT',nome:'Mato Grosso',cn:662000,pend:1800000,desp:1520,despHab:464.4,cnHab:167.2,giro:16,execFiscPct:13.3,prodMag:2394,pop:3958,regiao:'Centro-Oeste'},
+  {uf:'DF',nome:'Distrito Federal',cn:536000,pend:1350000,desp:3590,despHab:1310.7,cnHab:173.1,giro:19,execFiscPct:26.5,prodMag:1606,pop:3094,regiao:'Centro-Oeste'},
+  {uf:'ES',nome:'Espirito Santo',cn:439000,pend:1500000,desp:1380,despHab:348.3,cnHab:102.1,giro:23,execFiscPct:14.6,prodMag:1772,pop:4303,regiao:'Sudeste'},
+  {uf:'AM',nome:'Amazonas',cn:675000,pend:1600000,desp:1330,despHab:394.2,cnHab:158.1,giro:17,execFiscPct:23.0,prodMag:2765,pop:4269,regiao:'Norte'},
+  {uf:'MS',nome:'Mato G. do Sul',cn:481000,pend:1350000,desp:1050,despHab:514.0,cnHab:166.4,giro:21,execFiscPct:15.7,prodMag:2479,pop:2889,regiao:'Centro-Oeste'},
+  {uf:'PB',nome:'Paraiba',cn:439000,pend:1050000,desp:945,despHab:301.3,cnHab:102.9,giro:16,execFiscPct:7.1,prodMag:1924,pop:4266,regiao:'Nordeste'},
+  {uf:'RN',nome:'Rio G. do Norte',cn:449000,pend:1050000,desp:780,despHab:254.9,cnHab:124.6,giro:18,execFiscPct:14.6,prodMag:2133,pop:3600,regiao:'Nordeste'},
+  {uf:'AL',nome:'Alagoas',cn:507000,pend:1050000,desp:860,despHab:358.0,cnHab:147.8,giro:13,execFiscPct:10.7,prodMag:2117,pop:3428,regiao:'Nordeste'},
+  {uf:'PI',nome:'Piaui',cn:355000,pend:950000,desp:750,despHab:674.7,cnHab:105.8,giro:18,execFiscPct:3.0,prodMag:2067,pop:3358,regiao:'Nordeste'},
+  {uf:'SE',nome:'Sergipe',cn:330000,pend:720000,desp:530,despHab:618.9,cnHab:141.1,giro:16,execFiscPct:10.1,prodMag:1984,pop:2338,regiao:'Nordeste'},
+  {uf:'RO',nome:'Rondonia',cn:332000,pend:720000,desp:520,despHab:576.5,cnHab:174.5,giro:15,execFiscPct:10.9,prodMag:2479,pop:1902,regiao:'Norte'},
+  {uf:'TO',nome:'Tocantins',cn:248000,pend:600000,desp:450,despHab:611.4,cnHab:143.5,giro:24,execFiscPct:11.1,prodMag:1869,pop:1730,regiao:'Norte'},
+  {uf:'AC',nome:'Acre',cn:95000,pend:280000,desp:330,despHab:408.6,cnHab:102.3,giro:15,execFiscPct:10.9,prodMag:1160,pop:928,regiao:'Norte'},
+  {uf:'AP',nome:'Amapa',cn:140000,pend:280000,desp:310,despHab:719.2,cnHab:152.8,giro:11,execFiscPct:0.9,prodMag:1721,pop:915,regiao:'Norte'},
+  {uf:'RR',nome:'Roraima',cn:83000,pend:210000,desp:260,despHab:771.3,cnHab:112.3,giro:12,execFiscPct:2.1,prodMag:1497,pop:741,regiao:'Norte'},
+];
+const RCOR={Sudeste:'#228c50',Sul:'#3a8fc4',Nordeste:'#d4701e',Norte:'#8b6cc1','Centro-Oeste':'#c8922a'};
+const INSIGHTS={
+  treemap:'O TJSP ocupa quase <strong>1/4 do mapa</strong> — sao 6,8 milhoes de casos novos por ano. SP+RJ+MG+RS+PR = <strong>55% de todo o volume estadual</strong>. O tamanho de cada quadrado e proporcional aos casos novos de 2024.',
+  cn:'O <strong>TJSP</strong> sozinho recebe <strong>6,8 milhoes</strong> de casos novos — mais do que toda a Justica Federal (5,3M). O RS lidera em litigiosidade per capita: <strong>178 casos/1000 hab</strong>.',
+  pend:'O TJSP acumula <strong>19 milhoes de processos pendentes</strong>. SP+MG+RS = <strong>37,4M</strong> (60% do acervo). O TJMG leva <strong>3 anos e 2 meses</strong> para girar seu acervo — o pior do pais.',
+  desp:'SP+RJ+MG concentram <strong>R$ 39,5 bi</strong> (43% da despesa estadual). O TJSP custa <strong>R$ 24,8 bi/ano</strong> — mais que o orcamento de 20 estados juntos.',
+  despHab:'O DF gasta <strong>R$ 1.310/hab</strong> — 6x mais que o CE (R$ 221/hab). Estados pequenos do Norte tem custo per capita alto com volumes baixos.',
+  execFiscPct:'TJSP concentra <strong>45% das execucoes fiscais</strong> pendentes. TJSP+TJRJ = <strong>69% do total</strong>. Exec. fiscal = 29% dos pendentes mas taxa de congestionamento de 73%.',
+  giro:'O TJMG precisa de <strong>3 anos e 2 meses</strong> para zerar o acervo. TJSP: 2 anos e 7 meses. O TJAP consegue em <strong>11 meses</strong> — menor do pais.',
+  hierarquia:'A menor bolha governa todas as outras. O STF recebe <strong>87 mil</strong> casos (0,2%) — mas suas decisoes vinculam os <strong>80,6 milhoes</strong> de processos abaixo.'
+};
+
+let view='treemap';
+const totCN=d3.sum(TJ,d=>d.cn),totPend=d3.sum(TJ,d=>d.pend),totDesp=d3.sum(TJ,d=>d.desp);
+
+function go(v,el){
+  view=v;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  document.getElementById('insight').innerHTML=INSIGHTS[v]||'';
+  render();
+}
+
+function render(){
+  const el=document.getElementById('chart');
+  const W=el.clientWidth;
+  el.innerHTML='';
+  document.getElementById('summary').innerHTML='';
+  if(view==='treemap') renderTreemap(el,W);
+  else if(view==='hierarquia') renderHier(el,W);
+  else renderBars(el,W,view);
+  setLeg();
+}
+
+// ============================== TREEMAP ==============================
+function renderTreemap(el,W){
+  const H=Math.max(420,Math.round(W*.48));
+  el.innerHTML=`<div class="chart-title">Concentracao de casos novos por Tribunal de Justica — 2024</div>`;
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const root=d3.hierarchy({children:TJ}).sum(d=>d.cn);
+  d3.treemap().size([W,H]).padding(2).round(true)(root);
+
+  const cell=svg.selectAll('g').data(root.leaves()).join('g').attr('transform',d=>`translate(${d.x0},${d.y0})`).attr('class','tm-cell');
+  cell.append('rect').attr('width',d=>d.x1-d.x0).attr('height',d=>d.y1-d.y0).attr('rx',3)
+    .attr('fill',d=>RCOR[d.data.regiao]).attr('fill-opacity',.7).attr('stroke','rgba(0,0,0,.3)').attr('stroke-width',1);
+
+  cell.each(function(d){
+    const w=d.x1-d.x0,h=d.y1-d.y0;
+    if(w>35&&h>25){
+      d3.select(this).append('text').attr('class','tm-label').attr('x',w/2).attr('y',h/2-5)
+        .attr('font-size',Math.min(18,w/3.5,h/3)).text(d.data.uf);
+      d3.select(this).append('text').attr('class','tm-val').attr('x',w/2).attr('y',h/2+9)
+        .attr('font-size',Math.min(10,w/5,h/4.5)).text(fmtN(d.data.cn));
+    } else if(w>22&&h>18){
+      d3.select(this).append('text').attr('class','tm-label').attr('x',w/2).attr('y',h/2+1)
+        .attr('font-size',Math.min(11,w/3)).text(d.data.uf);
+    }
+  });
+
+  cell.on('mouseover',(ev,d)=>tipTJ(ev,d.data)).on('mousemove',moveTip).on('mouseout',hideTip);
+
+  // Summary
+  const top5=TJ.slice().sort((a,b)=>b.cn-a.cn).slice(0,5);
+  const top5pct=(d3.sum(top5,d=>d.cn)/totCN*100).toFixed(0);
+  document.getElementById('summary').innerHTML=`
+    <span class="sum-item">Top 5: <strong>${top5.map(d=>d.uf).join(', ')}</strong> = ${top5pct}% dos casos novos</span>
+    <span class="sum-item">Total Justica Estadual: <strong>${fmtN(totCN)}</strong> casos novos</span>
+    <span class="sum-item">Acervo: <strong>${fmtN(totPend)}</strong> pendentes</span>
+  `;
+}
+
+// ============================== BARS ==============================
+function renderBars(el,W,metric){
+  const labels={cn:'Casos novos por Tribunal de Justica',pend:'Acervo de processos pendentes por TJ',desp:'Despesa total por TJ (R$ milhoes)',despHab:'Despesa por habitante (R$/hab)',execFiscPct:'Exec. fiscais pendentes (% do acervo)',giro:'Tempo de giro do acervo (meses)'};
+  el.innerHTML=`<div class="chart-title">${labels[metric]||metric} — 2024</div>`;
+  const sorted=[...TJ].sort((a,b)=>b[metric]-a[metric]);
+  const maxVal=d3.max(sorted,d=>d[metric]);
+  const total={cn:totCN,pend:totPend,desp:totDesp}[metric]||0;
+  const container=document.createElement('div');
+  el.appendChild(container);
+
+  sorted.forEach((d,i)=>{
+    const val=d[metric];
+    const pct=total?(val/total*100):0;
+    const row=document.createElement('div');
+    row.className='bar-row'+(i<3?' top3':'');
+    const fmtVal=metric==='desp'?fmtR(val):metric==='despHab'?'R$ '+val.toLocaleString('pt-BR'):metric==='execFiscPct'?val.toFixed(1)+'%':metric==='giro'?fmtGiro(val):fmtN(val);
+    const pctLabel=total?pct.toFixed(1)+'%':(metric==='execFiscPct'||metric==='despHab'||metric==='giro')?'':'';
+    row.innerHTML=`
+      <span class="bar-rank">${i+1}</span>
+      <span class="bar-uf">${d.uf}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(val/maxVal*100).toFixed(1)}%;background:${RCOR[d.regiao]};opacity:.7"></div></div>
+      <span class="bar-val">${fmtVal}</span>
+      <span class="bar-pct">${pctLabel}</span>
+    `;
+    row.addEventListener('mouseover',ev=>tipTJ(ev,d));
+    row.addEventListener('mousemove',moveTip);
+    row.addEventListener('mouseout',hideTip);
+    container.appendChild(row);
+  });
+
+  // Summary
+  const top3=sorted.slice(0,3);
+  if(total){
+    const top3pct=(d3.sum(top3,d=>d[metric])/total*100).toFixed(0);
+    document.getElementById('summary').innerHTML=`<span class="sum-item">Top 3 (<strong>${top3.map(d=>d.uf).join('+')}</strong>): ${top3pct}% do total</span>`;
+  }
+}
+
+// ============================== HIERARQUIA ==============================
+function renderHier(el,W){
+  const HIER=[
+    {id:'STF',label:'STF',nivel:0,seg:'STF',cn:86562,pend:20743,desp:908},
+    {id:'STJ',label:'STJ',nivel:1,seg:'Superior',cn:478035,pend:321661,desp:2100},
+    {id:'TST',label:'TST',nivel:1,seg:'Superior',cn:399876,pend:282000,desp:3100},
+    {id:'TSE',label:'TSE',nivel:1,seg:'Eleitoral',cn:18187,pend:8500,desp:380},
+    {id:'STM',label:'STM',nivel:1,seg:'Militar',cn:650,pend:300,desp:120},
+    {id:'TRFs',label:'TRFs',nivel:2,seg:'Federal',cn:1690000,pend:5220000,desp:5200},
+    {id:'TRTs',label:'TRTs',nivel:2,seg:'Trabalho',cn:1170000,pend:1820000,desp:6800},
+    {id:'TJs',label:'TJs',nivel:2,seg:'Estadual',cn:4050000,pend:9800000,desp:12000},
+    {id:'TREs',label:'TREs',nivel:2,seg:'Eleitoral',cn:92000,pend:68000,desp:1200},
+    {id:'1E',label:'1o Grau\nEstadual',nivel:3,seg:'Estadual',cn:23050000,pend:52400000,desp:79700},
+    {id:'1F',label:'1o Grau\nFederal',nivel:3,seg:'Federal',cn:3610000,pend:6680000,desp:10600},
+    {id:'1T',label:'1o Grau\nTrabalho',nivel:3,seg:'Trabalho',cn:3630000,pend:3180000,desp:13400},
+  ];
+  const HCOR={STF:'#c8922a',Superior:'#3a8fc4',Federal:'#d4701e',Trabalho:'#b53020',Estadual:'#228c50',Eleitoral:'#8b6cc1',Militar:'#7b3fa0'};
+  const LINKS=[['1E','TJs'],['1F','TRFs'],['1T','TRTs'],['TJs','STJ'],['TRFs','STJ'],['TRTs','TST'],['TREs','TSE'],['STJ','STF'],['TST','STF'],['TSE','STF'],['STM','STF']];
+
+  const H=Math.max(550,W*.6);
+  el.innerHTML=`<div class="chart-title">Hierarquia do Judiciario Brasileiro — fluxo recursal</div>`;
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H);
+  svg.append('defs').html('<filter id="glow"><feGaussianBlur stdDeviation="4" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>');
+
+  const nivelY={0:H*.09,1:H*.30,2:H*.56,3:H*.82};
+  const nivelLbl={0:'APEX',1:'TRIBUNAIS SUPERIORES',2:'2o GRAU',3:'1o GRAU'};
+  Object.entries(nivelLbl).forEach(([n,l])=>{
+    svg.append('text').attr('x',12).attr('y',nivelY[n]).text(l).attr('fill','rgba(255,255,255,0.08)').attr('font-size',9).attr('font-family','DM Mono,monospace').attr('letter-spacing','0.14em');
+    svg.append('line').attr('x1',0).attr('x2',W).attr('y1',nivelY[n]+16).attr('y2',nivelY[n]+16).attr('stroke','rgba(255,255,255,0.015)');
+  });
+
+  const maxCN=d3.max(HIER,d=>d.cn),maxR=Math.min(W,H)*.11;
+  const r=d=>Math.max(7,Math.sqrt(d.cn/maxCN)*maxR);
+  const pos={};
+  [0,1,2,3].forEach(nivel=>{
+    const items=HIER.filter(d=>d.nivel===nivel);
+    const margin=W*.13,usable=W-2*margin;
+    items.forEach((d,i)=>{pos[d.id]={x:items.length===1?W/2:margin+(i/(items.length-1))*usable,y:nivelY[nivel]+30,r:r(d)};});
+  });
+
+  LINKS.forEach(([s,t])=>{if(!pos[s]||!pos[t])return;const a=pos[s],b=pos[t],my=(a.y+b.y)/2;
+    svg.append('path').attr('d',`M${a.x},${a.y-a.r} C${a.x},${my} ${b.x},${my} ${b.x},${b.y+b.r}`).attr('fill','none').attr('stroke',HCOR[HIER.find(d=>d.id===s).seg]).attr('stroke-opacity',.08).attr('stroke-width',1.5);});
+
+  HIER.forEach(d=>{const p=pos[d.id],c=HCOR[d.seg];
+    const g=svg.append('g').attr('transform',`translate(${p.x},${p.y})`).style('cursor','pointer');
+    g.append('circle').attr('r',p.r).attr('fill',c).attr('fill-opacity',d.nivel===0?.95:.65).attr('stroke','rgba(255,255,255,.1)').attr('stroke-width',1).attr('filter',d.nivel===0?'url(#glow)':null);
+    d.label.split('\n').forEach((line,i,arr)=>{g.append('text').text(line).attr('text-anchor','middle').attr('dominant-baseline','middle').attr('y',(i-(arr.length-1)/2)*Math.max(8,p.r*.35)).attr('fill','rgba(255,255,255,.88)').attr('font-size',Math.max(7,Math.min(13,p.r*.32))).attr('font-family',d.nivel<=1?'Playfair Display,serif':'DM Sans,sans-serif').attr('font-weight',d.nivel<=1?'700':'600').attr('pointer-events','none');});
+    g.append('text').text(fmtN(d.cn)).attr('text-anchor','middle').attr('y',p.r+13).attr('fill','rgba(255,255,255,.18)').attr('font-size',7.5).attr('font-family','DM Mono,monospace');
+    g.on('mouseover',ev=>{
+      showTip(ev,d.label.replace('\n',' '),d.seg,[['Casos novos',fmtN(d.cn)],['Pendentes',fmtN(d.pend)],['Despesa',fmtR(d.desp)]]);
+    }).on('mousemove',moveTip).on('mouseout',hideTip);
+  });
+
+  // Annotations
+  const sp=pos['STF'],e1=pos['1E'];
+  svg.append('text').text('87 mil casos').attr('x',sp.x+sp.r+10).attr('y',sp.y-6).attr('fill','rgba(255,255,255,.35)').attr('font-size',9.5);
+  svg.append('text').text('mas vincula tudo').attr('x',sp.x+sp.r+10).attr('y',sp.y+7).attr('fill',HCOR.STF).attr('font-size',9.5).attr('font-weight','600');
+  svg.append('text').text('23M casos · 58% do total').attr('x',e1.x+e1.r+10).attr('y',e1.y-6).attr('fill','rgba(255,255,255,.35)').attr('font-size',9.5);
+  svg.append('text').text('a base que sustenta tudo').attr('x',e1.x+e1.r+10).attr('y',e1.y+7).attr('fill',HCOR.Estadual).attr('font-size',9.5).attr('font-weight','600');
+}
+
+// ============================== TOOLTIP ==============================
+function tipTJ(ev,d){
+  const giroTxt=d.giro>=12?Math.floor(d.giro/12)+'a '+(d.giro%12)+'m':d.giro+'m';
+  showTip(ev,'TJ'+d.uf+' — '+d.nome,d.regiao,[
+    ['Casos novos',fmtN(d.cn)],['Acervo pendente',fmtN(d.pend)],
+    ['---'],
+    ['Despesa total',fmtR(d.desp)],['Despesa/hab','R$ '+d.despHab.toLocaleString('pt-BR')],
+    ['---'],
+    ['Casos/1000 hab',d.cnHab.toFixed(1)],['Giro do acervo',giroTxt],
+    ['Exec. fiscal',d.execFiscPct+'% dos pend.'],['Produtividade/mag.',d.prodMag.toLocaleString('pt-BR')+' proc.']
+  ]);
+}
+function showTip(ev,nome,tipo,rows){
+  document.getElementById('tn').textContent=nome;
+  document.getElementById('tt').textContent=tipo;
+  let h='';rows.forEach(([l,v])=>{
+    if(l==='---') h+='<div class="tip-divider"></div>';
+    else h+=`<span class="tip-lbl">${l}</span><span class="tip-val">${v}</span>`;
+  });
+  document.getElementById('tgrid').innerHTML=h;
+  const tip=document.getElementById('tip');
+  tip.style.left=(ev.clientX+16)+'px';tip.style.top=(ev.clientY-12)+'px';
+  tip.classList.add('on');
+}
+function moveTip(ev){const t=document.getElementById('tip');t.style.left=(ev.clientX+16)+'px';t.style.top=(ev.clientY-12)+'px'}
+function hideTip(){document.getElementById('tip').classList.remove('on')}
+function setLeg(){
+  const isHier=view==='hierarquia';
+  const items=isHier?[['STF','#c8922a'],['Superiores','#3a8fc4'],['Federal','#d4701e'],['Trabalho','#b53020'],['Estadual','#228c50'],['Eleitoral','#8b6cc1']]:Object.entries(RCOR);
+  document.getElementById('legenda').innerHTML=items.map(([k,v])=>`<div class="leg-i"><div class="leg-dot" style="background:${v}"></div>${k}</div>`).join('');
+}
+
+// ============================== FORMAT ==============================
+function fmtN(n){if(n>=1e6)return(n/1e6).toFixed(1).replace('.',',')+' M';if(n>=1e3)return Math.round(n/1e3).toLocaleString('pt-BR')+' K';return n.toLocaleString('pt-BR')}
+function fmtR(n){if(n>=1e3)return'R$ '+(n/1e3).toFixed(1).replace('.',',')+' bi';return'R$ '+n+' mi'}
+function fmtGiro(m){return m>=12?Math.floor(m/12)+'a '+(m%12)+'m':m+' meses'}
+
+// Init
+go('treemap',document.querySelector('.tab'));
+let rto;window.addEventListener('resize',()=>{clearTimeout(rto);rto=setTimeout(render,200)});
+</script>
+</body>
+</html>
