@@ -1,9 +1,9 @@
 export const metadata = {
   title: 'JudX — Inteligência Jurisprudencial',
-  description: 'Quase 3 milhoes de decisoes do STF estruturadas desde 1940. O que o Supremo realmente decide.',
+  description: 'Mais de 3 milhões de decisões do STF e STJ, tudo em um só lugar. O que o Supremo realmente decide.',
   openGraph: {
-    title: 'JudX — O judiciario brasileiro, inteiro, legivel.',
-    description: 'Quase 3 milhoes de decisoes do STF desde 1940. 27 tribunais mapeados. Hierarquia, acervo, despesa, produtividade — tudo num lugar so.',
+    title: 'JudX — O judiciário brasileiro, inteiro, legível.',
+    description: 'Mais de 3 milhões de decisões do STF e STJ, tudo em um só lugar. 27 tribunais mapeados.',
     url: 'https://judx.com.br/',
     images: [{ url: 'https://judx.com.br/og.png', width: 1200, height: 630 }],
   },
