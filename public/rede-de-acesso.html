@@ -35,10 +35,9 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 3
 
 /* TABS */
 .tabs-wrap{border-bottom:1px solid rgba(255,255,255,.04);background:var(--glass)}
-.tabs{display:flex;flex-wrap:wrap;gap:4px;padding:.5rem 3.5rem}
-.tab{padding:.45rem .8rem;font-size:.65rem;font-weight:600;color:rgba(255,255,255,.28);cursor:pointer;border:1px solid rgba(255,255,255,.06);border-radius:3px;transition:all .2s;letter-spacing:.03em;background:rgba(255,255,255,.02)}
-.tab:hover{color:rgba(255,255,255,.55);border-color:rgba(255,255,255,.12)}
-.tab.on{color:var(--gold);border-color:var(--gold);background:rgba(200,146,42,.08)}
+.tabs{display:flex;gap:0;padding:0 3.5rem;overflow-x:auto}
+.tab{padding:.7rem 1.3rem;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.28);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.03em;white-space:nowrap;position:relative}
+.tab:hover{color:rgba(255,255,255,.55)}.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
 
 /* INSIGHT */
 .insight-wrap{padding:.8rem 3.5rem;background:rgba(200,146,42,.03);border-bottom:1px solid rgba(200,146,42,.08)}
@@ -100,8 +99,8 @@ footer{padding:1.2rem 3.5rem;display:flex;justify-content:space-between;align-it
   .hero-sub{font-size:.72rem}
   .kpis{grid-template-columns:repeat(2,1fr);gap:1rem}
   .kpi-n{font-size:1rem}
-  .tabs{padding:.4rem .5rem;gap:3px}
-  .tab{padding:.35rem .5rem;font-size:.55rem}
+  .tabs{padding:0 .5rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab{padding:.5rem .7rem;font-size:.62rem;flex-shrink:0}
   .insight{font-size:.7rem;padding-left:.8rem}
   #chart{padding:.8rem 1rem}
   .bar-row{height:22px}
