@@ -16,6 +16,7 @@ const nextConfig = {
   },
   async rewrites() {
     return [
+      { source: '/en', destination: '/landing-en.html' },
       { source: '/serie-historica', destination: '/serie-historica.html' },
       { source: '/rede-de-acesso', destination: '/rede-de-acesso.html' },
       { source: '/colapso-silencioso', destination: '/colapso-silencioso.html' },
