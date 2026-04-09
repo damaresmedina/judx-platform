@@ -40,10 +40,15 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 2.5rem;
-  border-bottom: 1px solid rgba(200,146,42,0.15);
+  border-bottom: none;
 }
 .site-logo { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.15em; font-weight: 500; text-decoration: none; }
 .site-meta { color: var(--text-muted); font-size: 0.7rem; letter-spacing: 0.1em; }
+.jx-nav{display:flex;gap:2px;padding:.4rem 2.5rem;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(200,146,42,.1);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.jx-nav::-webkit-scrollbar{height:0}
+.jx-nb{padding:.55rem 1.2rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);text-decoration:none;color:rgba(255,255,255,.35);font-size:.72rem;font-weight:500;letter-spacing:.03em;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.jx-nb:hover{background:rgba(200,146,42,.08);color:var(--gold);border-color:rgba(200,146,42,.2)}
+.jx-nb.on{background:rgba(200,146,42,.12);color:var(--gold);border-color:rgba(200,146,42,.3);font-weight:600}
 
 /* ── HERO ── */
 .hero {

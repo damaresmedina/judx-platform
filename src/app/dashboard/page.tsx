@@ -8,81 +8,13 @@ import { supabase } from "@/src/lib/supabase";
 type Decision = {
   processo: string;
   relator: string;
-  data: string; // ISO ou vazio
+  data: string;
   tribunal: "STJ" | "STF";
-  ementa: string;
+  descricao: string;
 };
 
-function JudxLogo() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-blue-900 via-blue-700 to-indigo-700 p-[2px]">
-        <div className="flex h-full w-full items-center justify-center rounded-[.75rem] bg-white/10 backdrop-blur">
-          <span className="text-base font-black tracking-tight text-white">
-            J
-          </span>
-        </div>
-      </div>
-      <div className="leading-tight">
-        <div className="text-sm font-semibold text-white/90">JUDX Platform</div>
-        <div className="text-xs text-white/60">Painel de jurisprudência</div>
-      </div>
-    </div>
-  );
-}
-
-function IconSearch(props: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={props.className}
-    >
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.3-4.3" />
-    </svg>
-  );
-}
-
-function IconShield(props: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={props.className}
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
-function IconTable(props: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={props.className}
-    >
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-      <path d="M3 9h18" />
-      <path d="M9 21V9" />
-    </svg>
-  );
+function fmt(n: number) {
+  return n.toLocaleString("pt-BR");
 }
 
 export default function DashboardPage() {
@@ -92,133 +24,84 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [totalSTJ, setTotalSTJ] = useState<number | null>(null);
   const [totalSTF, setTotalSTF] = useState<number | null>(null);
+  const [totalPartes, setTotalPartes] = useState<number | null>(null);
   const [recentRows, setRecentRows] = useState<Decision[]>([]);
-  const [dashboardLoading, setDashboardLoading] = useState(false);
-  const [dashboardError, setDashboardError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const activeAlerts = useMemo(
-    () => [
-      { id: "A1", titulo: "Alerta STJ", detalhes: "Decisões recentes sobre responsabilidade civil." },
-      { id: "A2", titulo: "Alerta STF", detalhes: "Jurisprudência consolidada em liberdade de expressão." },
-    ],
-    []
-  );
-
-  const filteredDecisions = useMemo(() => {
+  const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) {
-      return recentRows;
-    }
-
-    const match = (value: string) => value.toLowerCase().includes(q);
-
+    if (!q) return recentRows;
     return recentRows
-      .filter((d) => {
-        return (
-          match(d.processo) ||
-          match(d.relator) ||
-          match(d.tribunal) ||
-          match(d.ementa)
-        );
-      })
-      .sort((a, b) => {
-        const ta = a.data ? new Date(a.data).getTime() : 0;
-        const tb = b.data ? new Date(b.data).getTime() : 0;
-        return tb - ta;
-      });
+      .filter(
+        (d) =>
+          d.processo.toLowerCase().includes(q) ||
+          d.relator.toLowerCase().includes(q) ||
+          d.tribunal.toLowerCase().includes(q) ||
+          d.descricao.toLowerCase().includes(q)
+      )
+      .sort((a, b) => (b.data || "").localeCompare(a.data || ""));
   }, [recentRows, search]);
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      if (!data.session) { router.replace("/login"); return; }
+      setUserEmail(data.session.user.email ?? null);
+    }).finally(() => { if (mounted) setCheckingAuth(false); });
 
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        if (!isMounted) return;
-        const session = data.session;
-
-        if (!session) {
-          router.replace("/login");
-          return;
-        }
-
-        setUserEmail(session.user.email ?? null);
-      })
-      .finally(() => {
-        if (isMounted) setCheckingAuth(false);
-      });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isMounted) return;
-
-      if (!session) {
-        router.replace("/login");
-        return;
-      }
-
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!mounted) return;
+      if (!session) { router.replace("/login"); return; }
       setUserEmail(session.user.email ?? null);
     });
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
+    return () => { mounted = false; subscription.unsubscribe(); };
   }, [router]);
 
   useEffect(() => {
     if (checkingAuth) return;
-
     let cancelled = false;
 
     (async () => {
-      setDashboardLoading(true);
-      setDashboardError(null);
+      setLoading(true);
+      setError(null);
 
-      const [stjCountRes, stfCountRes, recentRes] = await Promise.all([
-        supabase.from("stj_decisions").select("*", { count: "exact", head: true }),
-        supabase.from("stf_decisions").select("*", { count: "exact", head: true }),
-        supabase
-          .from("stj_decisions")
-          .select("processo, relator, data_julgamento, ementa")
-          .order("data_julgamento", { ascending: false })
-          .limit(10),
+      const [stfCount, stjCount, partesCount, stfRecent, stjRecent] = await Promise.all([
+        supabase.from("stf_master").select("*", { count: "exact", head: true }),
+        supabase.from("stj_decisoes_dj").select("*", { count: "exact", head: true }),
+        supabase.from("stf_partes_completo").select("*", { count: "exact", head: true }),
+        supabase.from("stf_master").select("processo, relator, data_decisao, tipo_decisao").order("data_decisao", { ascending: false }).limit(5),
+        supabase.from("stj_decisoes_dj").select("processo, relator, data_julgamento, ementa").order("data_julgamento", { ascending: false }).limit(5),
       ]);
 
       if (cancelled) return;
 
-      if (stjCountRes.error || stfCountRes.error || recentRes.error) {
-        const msg =
-          stjCountRes.error?.message ??
-          stfCountRes.error?.message ??
-          recentRes.error?.message ??
-          "Erro ao carregar o painel";
-        setDashboardError(msg);
-        setTotalSTJ(0);
-        setTotalSTF(0);
-        setRecentRows([]);
-        setDashboardLoading(false);
+      if (stfCount.error || stjCount.error || partesCount.error) {
+        setError(stfCount.error?.message ?? stjCount.error?.message ?? partesCount.error?.message ?? "Erro");
+        setLoading(false);
         return;
       }
 
-      setTotalSTJ(stjCountRes.count ?? 0);
-      setTotalSTF(stfCountRes.count ?? 0);
-      setRecentRows(
-        (recentRes.data ?? []).map((row) => ({
-          processo: row.processo,
-          relator: row.relator?.trim() ? row.relator : "—",
-          data: row.data_julgamento ?? "",
-          tribunal: "STJ" as const,
-          ementa: row.ementa?.trim() ? row.ementa : "—",
-        }))
-      );
-      setDashboardLoading(false);
-    })();
+      setTotalSTF(stfCount.count ?? 0);
+      setTotalSTJ(stjCount.count ?? 0);
+      setTotalPartes(partesCount.count ?? 0);
 
-    return () => {
-      cancelled = true;
-    };
+      const stfRows: Decision[] = (stfRecent.data ?? []).map((r) => ({
+        processo: r.processo, relator: r.relator || "—",
+        data: r.data_decisao ?? "", tribunal: "STF" as const,
+        descricao: r.tipo_decisao || "—",
+      }));
+      const stjRows: Decision[] = (stjRecent.data ?? []).map((r) => ({
+        processo: r.processo, relator: r.relator || "—",
+        data: r.data_julgamento ?? "", tribunal: "STJ" as const,
+        descricao: r.ementa ? (r.ementa.length > 100 ? r.ementa.slice(0, 100) + "…" : r.ementa) : "—",
+      }));
+
+      setRecentRows([...stfRows, ...stjRows].sort((a, b) => (b.data || "").localeCompare(a.data || "")));
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
   }, [checkingAuth]);
 
   async function handleSignOut() {
@@ -228,221 +111,128 @@ export default function DashboardPage() {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-[#061A33] text-white flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-          <p className="mt-4 text-sm text-white/70">Carregando sua sessão...</p>
-        </div>
+      <div style={{ minHeight: "100vh", background: "#0d1f35", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255,255,255,.5)", fontFamily: "'DM Sans', sans-serif", fontSize: ".9rem" }}>Carregando sessão…</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#061A33] text-white">
-      <header className="sticky top-0 z-10 backdrop-blur bg-[#061A33]/70 border-b border-white/10">
-        <div className="mx-auto max-w-6xl px-4 py-5">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <JudxLogo />
-              <div className="hidden sm:block">
-                <div className="text-sm font-semibold text-white/90">Dashboard</div>
-                <div className="text-xs text-white/60 flex items-center gap-2">
-                  <IconShield className="h-3.5 w-3.5" />
-                  Protegido por Supabase Auth
-                </div>
-              </div>
-            </div>
+    <>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+      <style>{`
+        :root { --navy: #0d1f35; --navy-light: #162d4a; --gold: #c8922a; --gold-light: #e8b44a; --cream: #f5f0e8; --cream-dark: #e8e0d0; --text: #1a1a2e; --muted: #6b7280; --white: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); }
+      `}</style>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden md:block text-right">
-                <div className="text-xs text-white/60">Sessão</div>
-                <div className="text-sm font-medium text-white/90 truncate max-w-[220px]">
-                  {userEmail ?? "Usuário"}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 hover:bg-white/10 transition-colors"
-              >
-                Sair
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section className="border-b border-amber-300/30 bg-gradient-to-r from-amber-400/20 via-yellow-300/20 to-blue-400/20">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-medium text-amber-100">
-            Você está no plano Basic — Faça upgrade para o Plus por R$97/mês
-          </p>
-          <Link
-            href="/planos"
-            className="inline-flex items-center justify-center rounded-xl bg-amber-300 px-4 py-2 text-sm font-semibold text-[#061A33] transition-colors hover:bg-amber-200"
-          >
-            Fazer Upgrade
+      <div style={{ minHeight: "100vh", background: "#f5f0e8" }}>
+        {/* NAV */}
+        <nav style={{ background: "#0d1f35", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem 4rem", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+          <Link href="/" style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.4rem", fontWeight: 700, color: "#fff", textDecoration: "none" }}>
+            Jud<span style={{ color: "#c8922a" }}>X</span>
           </Link>
-        </div>
-      </section>
-
-      <main className="mx-auto max-w-6xl px-4 py-7">
-        <section className="mb-6">
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-              <IconSearch className="h-5 w-5 text-white/70" />
-            </div>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por processo, relator, tribunal ou ementa..."
-              className="w-full rounded-2xl border border-white/15 bg-white/5 py-4 pl-12 pr-4 text-sm outline-none placeholder:text-white/50 focus:border-blue-400/70 focus:ring-2 focus:ring-blue-500/20"
-              aria-label="Buscar por jurisprudência"
-            />
+          <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+            <span style={{ fontSize: ".78rem", color: "rgba(255,255,255,.4)" }}>{userEmail}</span>
+            <button onClick={handleSignOut} style={{ fontSize: ".75rem", color: "rgba(255,255,255,.4)", letterSpacing: ".1em", textTransform: "uppercase", background: "none", border: "1px solid rgba(255,255,255,.15)", padding: ".5rem 1.2rem", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "all .2s" }}>
+              Sair
+            </button>
           </div>
-          <div className="mt-3 text-xs text-white/60">
-            {dashboardError ? (
-              <span className="text-amber-200/90">{dashboardError}</span>
-            ) : search.trim() ? (
-              `${filteredDecisions.length} resultado(s) encontrado(s)`
-            ) : (
-              `Mostrando ${filteredDecisions.length} decisões recentes`
-            )}
+        </nav>
+
+        {/* HERO */}
+        <section style={{ background: "#0d1f35", padding: "4rem 4rem 3rem", position: "relative" }}>
+          <div style={{ fontSize: ".7rem", letterSpacing: ".2em", textTransform: "uppercase", color: "#c8922a", fontWeight: 500, marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: ".75rem" }}>
+            <span style={{ display: "block", width: 32, height: 1, background: "#c8922a" }} />
+            Painel do assinante
+          </div>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.1, marginBottom: "1rem" }}>
+            Seus <em style={{ fontStyle: "italic", color: "#c8922a" }}>dados.</em>
+          </h1>
+          <p style={{ fontSize: "1rem", color: "rgba(255,255,255,.5)", lineHeight: 1.7, maxWidth: 500, fontWeight: 300 }}>
+            Acesso direto ao corpus completo do STF e STJ. Decisões, partes e relatores — tudo auditado.
+          </p>
+
+          <div style={{ display: "flex", gap: "4rem", borderTop: "1px solid rgba(255,255,255,.06)", paddingTop: "2rem", marginTop: "2.5rem", flexWrap: "wrap" }}>
+            <div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 700, color: "#c8922a", lineHeight: 1 }}>
+                {loading ? "…" : totalSTF !== null ? fmt(totalSTF) : "—"}
+              </div>
+              <div style={{ fontSize: ".7rem", color: "rgba(255,255,255,.3)", letterSpacing: ".1em", textTransform: "uppercase", marginTop: ".3rem" }}>Decisões STF</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 700, color: "#4a9eca", lineHeight: 1 }}>
+                {loading ? "…" : totalSTJ !== null ? fmt(totalSTJ) : "—"}
+              </div>
+              <div style={{ fontSize: ".7rem", color: "rgba(255,255,255,.3)", letterSpacing: ".1em", textTransform: "uppercase", marginTop: ".3rem" }}>Decisões STJ</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "2rem", fontWeight: 700, color: "#c8922a", lineHeight: 1 }}>
+                {loading ? "…" : totalPartes !== null ? fmt(totalPartes) : "—"}
+              </div>
+              <div style={{ fontSize: ".7rem", color: "rgba(255,255,255,.3)", letterSpacing: ".1em", textTransform: "uppercase", marginTop: ".3rem" }}>Partes mapeadas</div>
+            </div>
+          </div>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, #c8922a, transparent)" }} />
+        </section>
+
+        {error && (
+          <div style={{ background: "#fef3cd", padding: "1rem 4rem", fontSize: ".85rem", color: "#856404" }}>
+            {error}
+          </div>
+        )}
+
+        {/* BUSCA */}
+        <section style={{ padding: "3rem 4rem 1rem" }}>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por processo, relator, tribunal…"
+            style={{ width: "100%", padding: ".9rem 1.2rem", background: "#fff", border: "1px solid #e8e0d0", fontFamily: "'DM Sans', sans-serif", fontSize: ".9rem", outline: "none", color: "#1a1a2e" }}
+          />
+          <div style={{ marginTop: ".5rem", fontSize: ".75rem", color: "#6b7280" }}>
+            {search.trim() ? `${filtered.length} resultado(s)` : `${filtered.length} decisões recentes`}
           </div>
         </section>
 
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-xs uppercase tracking-wide text-white/60">Total STJ</div>
-                <div className="mt-2 text-3xl font-extrabold">
-                  {dashboardLoading ? "…" : totalSTJ ?? "—"}
-                </div>
-              </div>
-              <div className="h-10 w-10 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center">
-                <span className="text-blue-200 font-bold">STJ</span>
-              </div>
+        {/* TABELA */}
+        <section style={{ padding: "1rem 4rem 4rem" }}>
+          <div style={{ background: "#fff", border: "1px solid #e8e0d0", overflow: "hidden" }}>
+            <div style={{ padding: "1.2rem 1.5rem", borderBottom: "1px solid #e8e0d0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", fontWeight: 700, color: "#0d1f35" }}>Decisões recentes — STF + STJ</span>
+              <span style={{ fontSize: ".7rem", color: "#6b7280", fontFamily: "'DM Mono', monospace" }}>
+                {loading ? "carregando…" : `${filtered.length} registros`}
+              </span>
             </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-xs uppercase tracking-wide text-white/60">Total STF</div>
-                <div className="mt-2 text-3xl font-extrabold">
-                  {dashboardLoading ? "…" : totalSTF ?? "—"}
-                </div>
-              </div>
-              <div className="h-10 w-10 rounded-2xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center">
-                <span className="text-indigo-200 font-bold">STF</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-xs uppercase tracking-wide text-white/60">
-                  Alertas ativos
-                </div>
-                <div className="mt-2 text-3xl font-extrabold">{activeAlerts.length}</div>
-              </div>
-              <div className="h-10 w-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/20 flex items-center justify-center">
-                <span className="text-cyan-200 font-bold">!</span>
-              </div>
-            </div>
-            <div className="mt-3 text-sm text-white/70 space-y-1">
-              {activeAlerts.slice(0, 2).map((a) => (
-                <div key={a.id} className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-300/70" />
-                  <span className="truncate">{a.titulo}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="rounded-3xl border border-white/10 bg-white/5 overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                <IconTable className="h-5 w-5 text-white/80" />
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-white/90">
-                  Decisões recentes
-                </div>
-                <div className="text-xs text-white/60">
-                  Visualize e filtre por jurisprudência
-                </div>
-              </div>
-            </div>
-            <div className="text-xs text-white/60">Atualizadas recentemente</div>
-          </div>
-
-          <div className="overflow-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-[#061A33]/70">
-                <tr className="text-left text-xs uppercase tracking-wider text-white/60">
-                  <th className="py-3 px-5 font-semibold whitespace-nowrap">Processo</th>
-                  <th className="py-3 px-5 font-semibold whitespace-nowrap">Relator</th>
-                  <th className="py-3 px-5 font-semibold whitespace-nowrap">Data</th>
-                  <th className="py-3 px-5 font-semibold whitespace-nowrap">Tribunal</th>
-                  <th className="py-3 px-5 font-semibold">Ementa</th>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".85rem" }}>
+              <thead style={{ background: "#f5f0e8" }}>
+                <tr>
+                  {["Processo", "Relator", "Data", "Tribunal", "Decisão"].map((h) => (
+                    <th key={h} style={{ padding: ".8rem 1.5rem", textAlign: "left", fontSize: ".7rem", letterSpacing: ".1em", textTransform: "uppercase", color: "#6b7280", fontWeight: 600 }}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {dashboardLoading ? (
-                  <tr>
-                    <td colSpan={5} className="py-10 px-5 text-center text-white/70">
-                      Carregando decisões…
-                    </td>
-                  </tr>
-                ) : filteredDecisions.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-10 px-5 text-center text-white/70">
-                      {search.trim()
-                        ? "Nenhuma decisão encontrada para sua busca."
-                        : "Nenhuma decisão cadastrada."}
-                    </td>
-                  </tr>
+                {loading ? (
+                  <tr><td colSpan={5} style={{ padding: "3rem 1.5rem", textAlign: "center", color: "#6b7280" }}>Carregando…</td></tr>
+                ) : filtered.length === 0 ? (
+                  <tr><td colSpan={5} style={{ padding: "3rem 1.5rem", textAlign: "center", color: "#6b7280" }}>
+                    {search.trim() ? "Nenhum resultado." : "Nenhuma decisão encontrada."}
+                  </td></tr>
                 ) : (
-                  filteredDecisions.map((d) => (
-                    <tr
-                      key={d.processo}
-                      className="border-t border-white/5 hover:bg-white/5 transition-colors"
-                    >
-                      <td className="py-4 px-5 whitespace-nowrap font-medium text-white/90">
-                        {d.processo}
+                  filtered.map((d, i) => (
+                    <tr key={i} style={{ borderTop: "1px solid #e8e0d0" }}>
+                      <td style={{ padding: ".8rem 1.5rem", fontWeight: 500, whiteSpace: "nowrap", color: "#1a1a2e" }}>{d.processo}</td>
+                      <td style={{ padding: ".8rem 1.5rem", whiteSpace: "nowrap", color: "#1a1a2e" }}>{d.relator}</td>
+                      <td style={{ padding: ".8rem 1.5rem", whiteSpace: "nowrap", color: "#6b7280" }}>{d.data ? new Date(d.data).toLocaleDateString("pt-BR") : "—"}</td>
+                      <td style={{ padding: ".8rem 1.5rem" }}>
+                        <span style={{
+                          display: "inline-block", padding: ".2rem .6rem", fontSize: ".7rem", fontWeight: 600, letterSpacing: ".05em",
+                          background: d.tribunal === "STF" ? "rgba(200,146,42,.12)" : "rgba(74,158,202,.12)",
+                          color: d.tribunal === "STF" ? "#c8922a" : "#4a9eca",
+                        }}>{d.tribunal}</span>
                       </td>
-                      <td className="py-4 px-5 whitespace-nowrap text-white/75">
-                        {d.relator}
-                      </td>
-                      <td className="py-4 px-5 whitespace-nowrap text-white/75">
-                        {d.data
-                          ? new Date(d.data).toLocaleDateString("pt-BR")
-                          : "—"}
-                      </td>
-                      <td className="py-4 px-5 whitespace-nowrap">
-                        <span
-                          className={
-                            d.tribunal === "STJ"
-                              ? "inline-flex items-center rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1 text-xs font-semibold text-blue-200"
-                              : "inline-flex items-center rounded-full border border-indigo-400/30 bg-indigo-400/10 px-3 py-1 text-xs font-semibold text-indigo-200"
-                          }
-                        >
-                          {d.tribunal}
-                        </span>
-                      </td>
-                      <td className="py-4 px-5">
-                        <div
-                          className="truncate max-w-[320px] text-white/75"
-                          title={d.ementa}
-                        >
-                          {d.ementa}
-                        </div>
-                      </td>
+                      <td style={{ padding: ".8rem 1.5rem", color: "#6b7280", maxWidth: 300 }}>{d.descricao}</td>
                     </tr>
                   ))
                 )}
@@ -450,8 +240,14 @@ export default function DashboardPage() {
             </table>
           </div>
         </section>
-      </main>
-    </div>
+
+        {/* FOOTER */}
+        <footer style={{ background: "#0d1f35", padding: "2rem 4rem", textAlign: "center", borderTop: "1px solid rgba(255,255,255,.06)" }}>
+          <span style={{ fontSize: ".7rem", color: "rgba(255,255,255,.25)", letterSpacing: ".1em" }}>
+            JudX — Inteligência Jurisprudencial · <Link href="/" style={{ color: "#c8922a", textDecoration: "none" }}>judx.com.br</Link> · © 2026
+          </span>
+        </footer>
+      </div>
+    </>
   );
 }
-

@@ -46,7 +46,8 @@ canvas#grafico { width: 100%; display: block; }
 .narrativas::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
 .narrativas .section-title { color: var(--white); }
 .narrativas .section-desc { color: rgba(255,255,255,.45); }
-.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.06); margin-top: 3rem; }
+.cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.06); margin-top: 3rem; }
+@media (max-width: 600px) { .cards-grid { grid-template-columns: 1fr; } }
 .narr-card { background: var(--navy); padding: 2.5rem; transition: background .2s; }
 .narr-card:hover { background: var(--navy-light); }
 .narr-ano { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: .5rem; }
@@ -123,7 +124,7 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
 <!-- NARRATIVAS -->
 <section class="narrativas">
   <div class="section-label">Os momentos</div>
-  <h2 class="section-title">Três inflexões que moldaram o sistema.</h2>
+  <h2 class="section-title">Quatro inflexões que moldaram o sistema.</h2>
   <p class="section-desc">Os dados não são neutros. Cada pico conta uma história sobre o Brasil.</p>
   <div class="cards-grid">
     <div class="narr-card">
@@ -144,6 +145,12 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
       <div class="narr-text">A EC 45/2004 e a regulamentação da repercussão geral em 2007 criaram o primeiro filtro efetivo de acesso ao STF. O resultado foi imediato: de 119.324 processos em 2007, o tribunal caiu para 64.018 em 2011. O sistema aprendeu a dizer não.</div>
       <div class="narr-stat">STF 2007: 119.324 → STF 2011: 64.018 · QUEDA DE 46%</div>
     </div>
+    <div class="narr-card">
+      <div class="narr-ano">2020</div>
+      <div class="narr-title">Escalabilidade — o quarto pilar do Estado Litigante Extrativo</div>
+      <div class="narr-text">As Resoluções STF 642/2019 e 669/2020 equipararam as competências do plenário virtual ao presencial. O julgamento colegiado migrou massivamente para o ambiente eletrônico — sem sustentação oral, sem debate público, sem deliberação visível. O virtual não foi apenas uma adaptação tecnológica: foi a infraestrutura que tornou a não-decisão escalável.</div>
+      <div class="narr-stat">RESOLUÇÕES STF 642/2019 E 669/2020 · VIRTUAL = PRESENCIAL</div>
+    </div>
   </div>
 </section>
 
@@ -163,7 +170,7 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
       <div class="teaser-cta">
         <div class="teaser-cta-title">O que o Supremo <em>realmente</em> decide — e para quem.</div>
         <div class="teaser-cta-sub">Acesso completo ao observatório JudX. Dados desde 1940, atualizados mensalmente, com análise de risco processual por perfil de parte.</div>
-        <a href="/cadastro" class="btn-gold">Solicitar acesso</a>
+        <a href="/#contato" class="btn-gold">Solicitar acesso</a>
         <div class="teaser-lock">🔒 DADOS PREMIUM · ACESSO RESTRITO · PLANO PLUS</div>
       </div>
     </div>
