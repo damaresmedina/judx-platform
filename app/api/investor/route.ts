@@ -62,6 +62,15 @@ export async function GET(req: NextRequest) {
 
     await logAccess(token, tk.investor_name, ip, ua, 'first_access', `IP travado: ${ip}`)
 
+    // Alerta WhatsApp — primeiro acesso
+    await sendWhatsApp(
+      `👁️ *JudX Investor*\n\n` +
+      `*${tk.investor_name}* abriu o brief\n` +
+      `🌐 IP: ${ip}\n` +
+      `🕐 ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC\n` +
+      `🔒 IP travado — link não funciona de outro dispositivo`
+    )
+
     return NextResponse.json({
       status: 'granted',
       investor: tk.investor_name,
@@ -128,7 +137,45 @@ export async function POST(req: NextRequest) {
     })
     .eq('id', tk.id)
 
+  // Alerta WhatsApp
+  await sendWhatsApp(
+    `🔔 *JudX Investor*\n\n` +
+    `*${name}* manifestou interesse\n` +
+    `📧 ${email}\n` +
+    `💶 €${amount?.toLocaleString('de-DE') || '?'}\n` +
+    `📅 ${horizon} anos\n` +
+    `🏷️ Token: ${tk.investor_name}\n` +
+    `🕐 ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC`
+  )
+
   return NextResponse.json({ status: 'ok' })
+}
+
+async function sendWhatsApp(message: string) {
+  const sid = process.env.TWILIO_ACCOUNT_SID
+  const authToken = process.env.TWILIO_AUTH_TOKEN
+  const from = process.env.TWILIO_WHATSAPP_FROM // ex: whatsapp:+14155238886
+  const to = 'whatsapp:+5561995759444'
+
+  if (!sid || !authToken || !from) return // silencioso se não configurado
+
+  try {
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${sid}:${authToken}`).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        From: from,
+        To: to,
+        Body: message,
+      }),
+    })
+  } catch {
+    // Falha silenciosa — não bloqueia o fluxo do investidor
+  }
 }
 
 async function logAccess(

@@ -391,7 +391,7 @@ function InvestorContent() {
                       <div className="r-item"><div className="r-val">{calc.irr}%</div><div className="r-key">IRR est. p.a.</div></div>
                       <div className="r-item"><div className="r-val">{fmt(calc.net)}</div><div className="r-key">Net gain</div></div>
                     </div>
-                    <div className="r-disc">Projections based on conservative institutional revenue model denominated in EUR. The EUR/BRL multiplier (~6×) amplifies operational capacity. Not a guarantee of return.</div>
+                    <div className="r-disc">Forward-looking projection for illustrative purposes only. Does not constitute an offer, solicitation, or guarantee of returns. Actual results may differ materially. Investment involves risk, including potential loss of principal. The EUR/BRL multiplier reflects purchasing power, not guaranteed arbitrage. Consult independent financial and legal advisors before making any investment decision. This document is confidential and intended solely for the named recipient.</div>
                   </div>
                 )}
 
