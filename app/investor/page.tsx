@@ -204,11 +204,11 @@ function InvestorContent() {
             <div className="hero-bg" />
             <div className="hero-grid" />
             <div className="hero-inner">
-              <div className="hero-eye">Investor Brief · Confidential · 2025</div>
+              <div className="hero-eye">Confidential — Investor Brief (EU) — 2026</div>
               <div className="hero-logo">Jud<span className="logo-x">X</span></div>
-              <div className="hero-name">Judicial Intelligence</div>
+              <div className="hero-name">Judicial Intelligence Infrastructure</div>
               <div className="hero-rule" />
-              <div className="hero-tag">Brazil built the most virtualized judiciary on the planet. Nobody built the intelligence layer. Until now.</div>
+              <div className="hero-tag">3.14M STF + STJ decisions. One system. Structural visibility.</div>
               <div className="hero-meta">judx.com.br &nbsp;·&nbsp; European HQ &nbsp;·&nbsp; Brazilian Operations</div>
             </div>
             <div className="scroll-hint">
@@ -217,120 +217,177 @@ function InvestorContent() {
             </div>
           </section>
 
-          {/* DATA PANEL */}
-          <div className="data-panel inv-reveal" style={{ paddingTop: 0 }}>
-            <div className="data-grid">
-              <div className="data-cell">
-                <div className="data-n">3.14M</div>
-                <div className="data-l">Decisions mapped</div>
-                <div className="data-s">STF + STJ · live database</div>
+          {/* 01 — WHAT JUDX DOES */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">01 — What JudX does</div>
+            <h2 className="sec-h">Not legal research.<br /><em>Operational intelligence.</em></h2>
+            <p className="inv-lead">JudX is an operational system for navigating institutional behavior at scale.</p>
+            <div className="cap-grid">
+              <div className="cap-item"><div className="cap-icon">01</div><div className="cap-text">Mapping litigation exposure at Brazil{"'"}s highest courts</div></div>
+              <div className="cap-item"><div className="cap-icon">02</div><div className="cap-text">Anticipating decision environments and their effects</div></div>
+              <div className="cap-item"><div className="cap-icon">03</div><div className="cap-text">Tracking procedural paths that shape outcomes</div></div>
+              <div className="cap-item"><div className="cap-icon">04</div><div className="cap-text">Identifying patterns of decision and non-decision</div></div>
+            </div>
+            <div className="inv-hq"><p>JudX turns judicial systems into actionable infrastructure.</p></div>
+          </div>
+
+          {/* 02 — THE ASSET */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">02 — The Asset</div>
+            <h2 className="sec-h">The core asset is <em>already built</em></h2>
+            <div className="data-panel" style={{ padding: 0 }}>
+              <div className="data-grid">
+                <div className="data-cell">
+                  <div className="data-n">3.14M+</div>
+                  <div className="data-l">Decisions structured</div>
+                  <div className="data-s">STF + STJ</div>
+                </div>
+                <div className="data-cell">
+                  <div className="data-n">2.21M</div>
+                  <div className="data-l">Cases mapped</div>
+                  <div className="data-s">full lifecycle</div>
+                </div>
+                <div className="data-cell">
+                  <div className="data-n">1.38M</div>
+                  <div className="data-l">Litigants indexed</div>
+                  <div className="data-s">parties + counsel</div>
+                </div>
+                <div className="data-cell">
+                  <div className="data-n">Live</div>
+                  <div className="data-l">Ingestion pipeline</div>
+                  <div className="data-s">continuous update</div>
+                </div>
               </div>
-              <div className="data-cell">
-                <div className="data-n">99.6%</div>
-                <div className="data-l">Virtualized</div>
-                <div className="data-s">of new cases — electronic</div>
+            </div>
+            <p className="inv-lead" style={{ marginTop: '1.5rem' }}>Investment accelerates scale — not construction.</p>
+          </div>
+
+          {/* 03 — BUSINESS MODEL */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">03 — Business Model</div>
+            <h2 className="sec-h">Dual structure.<br /><em>Distribution + Revenue.</em></h2>
+            <div className="dual-grid">
+              <div className="dual-box">
+                <div className="dual-label">Freemium</div>
+                <div className="dual-role">Distribution layer</div>
+                <ul className="dual-list">
+                  <li>Broad access</li>
+                  <li>Market penetration</li>
+                  <li>Continuous user growth</li>
+                </ul>
               </div>
-              <div className="data-cell">
-                <div className="data-n">84M</div>
-                <div className="data-l">Cases pending</div>
-                <div className="data-s">global record · +9.4%/year</div>
+              <div className="dual-box dual-box-gold">
+                <div className="dual-label">In-company</div>
+                <div className="dual-role">Revenue layer</div>
+                <ul className="dual-list">
+                  <li>Custom institutional environments</li>
+                  <li>Integration into workflows</li>
+                  <li>High-value contracts</li>
+                </ul>
               </div>
-              <div className="data-cell">
-                <div className="data-n">~6×</div>
-                <div className="data-l">EUR leverage</div>
-                <div className="data-s">every euro · 6× in Brazil</div>
+            </div>
+            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>Freemium distributes. In-company monetizes.</p>
+          </div>
+
+          {/* 04 — COMMERCIAL TRACTION */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">04 — Commercial Traction</div>
+            <h2 className="sec-h">Already operating inside <em>real institutions</em></h2>
+            <p className="inv-lead">A pilot project is currently being structured with one of the largest litigants in Brazil, focused on mapping decision exposure and procedural dynamics at the Supreme Court level.</p>
+            <div className="inv-hq"><p>JudX is already inside the system it maps.</p></div>
+          </div>
+
+          {/* 05 — WHAT MAKES IT DIFFERENT */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">05 — What makes it different</div>
+            <h2 className="sec-h">Legal databases retrieve documents.<br /><em>JudX maps institutional behavior.</em></h2>
+            <div className="diff-grid">
+              <div className="diff-item"><div className="diff-label">Decisions</div></div>
+              <div className="diff-item"><div className="diff-label">Procedural environments</div></div>
+              <div className="diff-item"><div className="diff-label">Actors</div></div>
+              <div className="diff-item"><div className="diff-label">Outcomes</div></div>
+            </div>
+            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>This is structural intelligence, not search.</p>
+          </div>
+
+          {/* 06 — DATA ADVANTAGE */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">06 — Data Advantage</div>
+            <h2 className="sec-h">Replicating JudX <em>requires</em></h2>
+            <div className="moat-list">
+              <div className="moat-item"><span className="moat-n">01</span>Large-scale judicial parsing</div>
+              <div className="moat-item"><span className="moat-n">02</span>Procedural normalization</div>
+              <div className="moat-item"><span className="moat-n">03</span>Relational modeling</div>
+              <div className="moat-item"><span className="moat-n">04</span>Continuous ingestion</div>
+            </div>
+            <div className="inv-hq"><p>JudX has already done this.</p></div>
+          </div>
+
+          {/* 07 — WHY EUROPEAN INVESTOR */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">07 — Why this fits a European investor</div>
+            <h2 className="sec-h">European structure.<br /><em>Brazilian scale.</em></h2>
+            <div className="fit-grid">
+              <div className="fit-item"><div className="fit-icon">EU</div><div className="fit-text">European incorporation</div></div>
+              <div className="fit-item"><div className="fit-icon">6×</div><div className="fit-text">EUR → BRL cost efficiency</div></div>
+              <div className="fit-item"><div className="fit-icon">SYS</div><div className="fit-text">Process-driven model</div></div>
+              <div className="fit-item"><div className="fit-icon">SCL</div><div className="fit-text">Scalable structure</div></div>
+            </div>
+          </div>
+
+          {/* 08 — RISK + MITIGATION */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">08 — Risk Profile</div>
+            <h2 className="sec-h">Risks are <em>identified and mitigated</em></h2>
+            <div className="risk-grid">
+              <div className="risk-col">
+                <div className="risk-header">Risk</div>
+                <div className="risk-item">Institutional adoption cycles</div>
+                <div className="risk-item">Ongoing data ingestion</div>
+              </div>
+              <div className="risk-col risk-col-gold">
+                <div className="risk-header">Mitigation</div>
+                <div className="risk-item">Internalized database</div>
+                <div className="risk-item">Proprietary pipeline</div>
+                <div className="risk-item">Multi-client model</div>
+                <div className="risk-item">European legal structure</div>
               </div>
             </div>
           </div>
 
-          {/* 01 THE INFRASTRUCTURE */}
+          {/* 09 — INVESTMENT FRAME */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">01 — The Infrastructure</div>
-            <h2 className="sec-h">A judiciary that became <em>a data system</em></h2>
-            <p className="inv-lead">In 15 years, Brazil went from 4% to <strong>99.6% digital</strong>. 35 million new cases per year. All electronic. All structured. All machine-readable.</p>
-            <p className="inv-lead">In 2020, the Supreme Court moved to virtual async sessions — thousands of decisions without oral argument, without deliberation. Scale became the engine. <em>Invisibility became the feature.</em></p>
-            <div className="inv-hq"><p>{`"No country in the world has this level of litigation." — Minister Barroso, CNJ, 2024`}</p></div>
-            <div className="tl">
-              <div className="tl-row"><div className="tl-yr">2009</div><div className="tl-track"><div className="tl-dot" /><div className="tl-bar" /></div><div className="tl-c"><div className="tl-ev">PJe launched — electronic filing begins</div><div className="tl-im">4% → paperless</div><div className="tl-op">Process data becomes machine-readable</div></div></div>
-              <div className="tl-row"><div className="tl-yr">2013</div><div className="tl-track"><div className="tl-dot" /><div className="tl-bar" /></div><div className="tl-c"><div className="tl-ev">CNJ mandates digital-first judiciary</div><div className="tl-im">20% electronic · 95M cases pending</div><div className="tl-op">Institutional data accumulates at scale</div></div></div>
-              <div className="tl-row"><div className="tl-yr">2020</div><div className="tl-track"><div className="tl-dot" /><div className="tl-bar" /></div><div className="tl-c"><div className="tl-ev">STF adopts virtual plenary sessions</div><div className="tl-im">Decisions go fully asynchronous</div><div className="tl-op">Industrial-scale ruling without deliberation</div></div></div>
-              <div className="tl-row"><div className="tl-yr">2023</div><div className="tl-track"><div className="tl-dot" /><div className="tl-bar" /></div><div className="tl-c"><div className="tl-ev">99.6% of cases filed electronically</div><div className="tl-im">35M new/year · 84M pending · world record</div><div className="tl-op">Every process is a data object</div></div></div>
-              <div className="tl-row"><div className="tl-yr">2025</div><div className="tl-track"><div className="tl-dot" /></div><div className="tl-c"><div className="tl-ev">CNJ Res. 591 — virtual sessions across all 91 tribunals</div><div className="tl-im">System complete · permanent</div><div className="tl-op"><strong style={{ color: 'var(--white)' }}>The analytics layer is the only thing missing.</strong></div></div></div>
-            </div>
-          </div>
-
-          {/* 02 THE GAP */}
-          <div className="inv-sec inv-reveal">
-            <div className="sec-n">02 — The Gap</div>
-            <h2 className="sec-h">Brazil built the pipes.<br /><em>Nobody built the map.</em></h2>
-            <p className="inv-lead"><strong>86.4% of all STF decisions</strong> are monocrática — issued by a single justice, outside any session, without a vote. At virtual scale, this becomes fiscal policy operating invisibly.</p>
-            <p className="inv-lead">FGTS correction disputes: hundreds of billions of reais. The precatório regime: sovereign debt restructured by court decisions. <strong>No existing product tracks, maps, or makes this legible.</strong></p>
-            <div className="inv-hq"><p>The STF produces its own competence criteria, validates its own inadmission grounds, and activates this circuit using its own precedents. JudX is the first instrument that proves it and quantifies it.</p></div>
-          </div>
-
-          {/* 03 JUDX */}
-          <div className="inv-sec inv-reveal">
-            <div className="sec-n">03 — The Platform</div>
-            <h2 className="sec-h">What <em>JudX</em> is</h2>
-            <p className="inv-lead">3.14 million STF + STJ decisions. Mapped against a full ontological model: who decided, in which environment, under which constitutional phase, with what fiscal consequence.</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'var(--border)', margin: '1.4rem 0', border: '1px solid var(--border)' }}>
-              <div style={{ background: 'var(--navy)', padding: '1.1rem', textAlign: 'center' }}><div style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.5rem', color: 'var(--gold)', fontWeight: 700 }}>1.38M</div><div style={{ fontFamily: "'DM Mono',monospace", fontSize: '.52rem', color: 'var(--gray)', letterSpacing: '.08em', textTransform: 'uppercase' as const, marginTop: '.2rem' }}>Litigants tracked</div></div>
-              <div style={{ background: 'var(--navy)', padding: '1.1rem', textAlign: 'center' }}><div style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.5rem', color: 'var(--gold)', fontWeight: 700 }}>2.21M</div><div style={{ fontFamily: "'DM Mono',monospace", fontSize: '.52rem', color: 'var(--gray)', letterSpacing: '.08em', textTransform: 'uppercase' as const, marginTop: '.2rem' }}>Cases in lifecycle</div></div>
-              <div style={{ background: 'var(--navy)', padding: '1.1rem', textAlign: 'center' }}><div style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.5rem', color: 'var(--gold)', fontWeight: 700 }}>6</div><div style={{ fontFamily: "'DM Mono',monospace", fontSize: '.52rem', color: 'var(--gray)', letterSpacing: '.08em', textTransform: 'uppercase' as const, marginTop: '.2rem' }}>Constitutional phases</div></div>
-              <div style={{ background: 'var(--navy)', padding: '1.1rem', textAlign: 'center' }}><div style={{ fontFamily: "'Playfair Display',serif", fontSize: '1.5rem', color: 'var(--gold)', fontWeight: 700 }}>0</div><div style={{ fontFamily: "'DM Mono',monospace", fontSize: '.52rem', color: 'var(--gray)', letterSpacing: '.08em', textTransform: 'uppercase' as const, marginTop: '.2rem' }}>Competitors</div></div>
-            </div>
-            <p className="inv-lead"><strong>JudX is not a legal search engine. It is institutional intelligence infrastructure.</strong> The only instrument that treats a non-decision as a positive juridical act with traceable fiscal consequences.</p>
-          </div>
-
-          {/* 04 CEF */}
-          <div className="inv-sec inv-reveal">
-            <div className="sec-n">04 — Flagship Client</div>
-            <h2 className="sec-h">Caixa Econômica Federal —<br /><em>the door that opens everything</em></h2>
-            <div className="cef">
-              <div className="cef-top">
-                <div><div className="cef-badge">CEF</div><div className="cef-badge-sub">Flagship target</div></div>
-                <div style={{ fontSize: '.8rem', color: 'var(--navy)', lineHeight: 1.5, fontWeight: 400 }}>{"Brazil's largest public bank."}<br />Its #1 institutional litigant.</div>
-              </div>
-              <div className="cef-body">
-                <div className="cef-hl">{"15.5% of all pending federal cases. Hundreds of thousands of FGTS, housing, and precatório proceedings — all electronic, all in JudX's decisional graph."}</div>
-                <p className="cef-p">{"CEF needs to understand not just its pending cases — but how the court's decisional architecture moves around them, invisibly, at scale."}</p>
-                <p className="cef-p" style={{ fontStyle: 'italic', color: 'var(--lgold)' }}>{"One contract with CEF's legal intelligence unit validates JudX as the institutional standard. Everything that follows builds on that."}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* 05 THE BRIDGE */}
-          <div className="inv-sec inv-reveal">
-            <div className="sec-n">05 — The Bridge</div>
-            <h2 className="sec-h">European capital.<br /><em>Brazilian market.</em></h2>
-            <p className="inv-lead">JudX is European-incorporated, Brazilian-operational. Every euro invested operates at <strong>~6× purchasing power</strong> in Brazil. Costs are BRL. Revenues scale in EUR.</p>
-            <p className="inv-lead">Brazil has <strong>1.3 million registered lawyers</strong> — the largest bar in the world. A judiciary costing 1.2% of GDP. A legal services market generating R$ 50B+ per year. Zero institutional analytics products.</p>
-            <div className="inv-hq"><p>The infrastructure is complete. The intelligence layer does not exist yet. That window does not stay open indefinitely.</p></div>
-          </div>
-
-          {/* 06 TERMS */}
-          <div className="inv-sec inv-reveal">
-            <div className="sec-n">06 — Investment Terms</div>
-            <h2 className="sec-h">Seed participation —<br /><em>early stage</em></h2>
+            <div className="sec-n">09 — Investment Frame</div>
+            <h2 className="sec-h">The current phase <em>is scaling</em></h2>
             <div className="inv-terms">
-              <div className="term-row"><div className="term-k">Structure</div><div className="term-v">Equity or revenue share — seed stage</div></div>
-              <div className="term-row"><div className="term-k">Horizon</div><div className="term-v">5 years · partial exit at Year 3</div></div>
-              <div className="term-row"><div className="term-k">Currency</div><div className="term-v">EUR · European incorporation</div></div>
-              <div className="term-row"><div className="term-k">Risk</div><div className="term-v">Low · institutional data revenue · no speculation</div></div>
-              <div className="term-row"><div className="term-k">Leverage</div><div className="term-v">~6× EUR/BRL operational amplification</div></div>
+              <div className="term-row"><div className="term-k">Horizon</div><div className="term-v">5 years</div></div>
+              <div className="term-row"><div className="term-k">Structure</div><div className="term-v">Equity / Revenue share</div></div>
+              <div className="term-row"><div className="term-k">Profile</div><div className="term-v">Capital preservation + moderate upside</div></div>
+              <div className="term-row"><div className="term-k">Currency</div><div className="term-v">EUR</div></div>
             </div>
-            <p className="inv-lead" style={{ marginTop: '1.1rem', fontSize: '.82rem' }}>No magic. Revenue model: institutional subscriptions, data licensing, public sector analytics. CEF alone represents a contract category no competitor can approach.</p>
           </div>
 
-          {/* 07 FINAL NOTE */}
+          {/* 10 — WHO BUILT THIS */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">07 — A Final Note</div>
-            <h2 className="sec-h">Beyond the <em>return</em></h2>
-            <p className="inv-lead">84 million pending cases. 35 million new per year. All electronic. All structured. Governed by a court whose decisions have fiscal consequences at sovereign scale.</p>
-            <p className="inv-lead">This is a process automation opportunity. A data infrastructure opportunity. An institutional connectivity opportunity between European expertise and a market that has the pipes but not the intelligence to run them.</p>
+            <div className="sec-n">10 — Who built this</div>
+            <h2 className="sec-h">Damares <em>Medina</em></h2>
+            <div className="bio-list">
+              <p className="inv-lead"><strong>Constitutional lawyer</strong> · STF researcher (15+ years)</p>
+              <p className="inv-lead">Founder — <strong>Instituto Constituição Aberta (ICONS)</strong></p>
+              <p className="inv-lead">Visiting Scholar — <strong>Università degli Studi di Milano-Bicocca</strong></p>
+            </div>
+            <div className="bio-books">
+              <div className="bio-book"><em>Amicus Curiae</em> (2010)</div>
+              <div className="bio-book"><em>Repercussão Geral no STF</em> (Saraiva, 2015)</div>
+            </div>
+          </div>
+
+          {/* 11 — CLOSING */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">11 — Closing</div>
             <div className="final-q">
               <div className="fq-mark">{"\u201C"}</div>
-              <p className="fq-text">Beyond the financial return, there may be room to explore what European process expertise could mean in this market. That is a different conversation — and one worth having only after the numbers make sense to you.</p>
+              <p className="fq-text">If the structure makes sense, we can look at numbers in detail.</p>
             </div>
           </div>
 
@@ -592,13 +649,64 @@ const investorStyles = `
 .inv-footer a{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--gold);text-decoration:none;text-transform:uppercase}
 .foot-conf{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;color:var(--gray);text-transform:uppercase;margin-top:.6rem}
 
+/* ── CAPABILITIES GRID (01) ── */
+.cap-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin:1.4rem 0}
+.cap-item{background:var(--navy);padding:1.1rem 1.2rem;display:flex;align-items:center;gap:1rem}
+.cap-icon{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--gold);letter-spacing:.08em;min-width:24px}
+.cap-text{font-size:.88rem;color:var(--mgray);line-height:1.5}
+
+/* ── DUAL MODEL (03) ── */
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin:1.4rem 0}
+.dual-box{background:var(--navy);padding:1.4rem}
+.dual-box-gold{background:rgba(200,146,42,.04)}
+.dual-label{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.2rem}
+.dual-role{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem}
+.dual-list{list-style:none;padding:0}
+.dual-list li{font-size:.82rem;color:var(--mgray);line-height:2;padding-left:.8rem;position:relative}
+.dual-list li::before{content:'';position:absolute;left:0;top:.65rem;width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.5}
+
+/* ── DIFF GRID (05) ── */
+.diff-grid{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.4rem 0}
+.diff-item{padding:.7rem 1.2rem;border:1px solid rgba(200,146,42,.25);background:rgba(200,146,42,.04)}
+.diff-label{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
+
+/* ── MOAT LIST (06) ── */
+.moat-list{margin:1.4rem 0}
+.moat-item{padding:.9rem 0;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--mgray);display:flex;align-items:center;gap:1rem}
+.moat-item:last-child{border-bottom:none}
+.moat-n{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--gold);letter-spacing:.08em;min-width:24px}
+
+/* ── FIT GRID (07) ── */
+.fit-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin:1.4rem 0}
+.fit-item{background:var(--navy);padding:1.3rem 1.2rem;display:flex;align-items:center;gap:1rem}
+.fit-icon{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500;color:var(--gold);letter-spacing:.06em;min-width:32px;text-align:center}
+.fit-text{font-size:.82rem;color:var(--mgray)}
+
+/* ── RISK GRID (08) ── */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin:1.4rem 0}
+.risk-col{background:var(--navy);padding:1.2rem}
+.risk-col-gold{background:rgba(200,146,42,.04)}
+.risk-header{font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.risk-item{font-size:.82rem;color:var(--mgray);line-height:2;padding-left:.8rem;position:relative}
+.risk-item::before{content:'';position:absolute;left:0;top:.6rem;width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.4}
+
+/* ── BIO (10) ── */
+.bio-list{margin-bottom:1.2rem}
+.bio-books{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.bio-book{padding:.6rem 1rem;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mgray);letter-spacing:.04em}
+.bio-book em{color:var(--gold);font-style:italic}
+
 @keyframes inv-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes inv-pulse{0%,100%{opacity:.3}50%{opacity:1}}
 .inv-reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
 .inv-vis{opacity:1;transform:none}
 
+@media(max-width:639px){
+  .dual-grid,.fit-grid,.risk-grid{grid-template-columns:1fr}
+}
 @media(min-width:640px){
   .data-grid{grid-template-columns:repeat(4,1fr)}
+  .cap-grid{grid-template-columns:1fr 1fr}
   .calc-sheet{border-radius:12px 12px 0 0}
 }
 @media print{.inv-page::after{content:'CONFIDENTIAL';position:fixed;inset:0;background:rgba(13,31,53,.97);display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:3rem;color:#c8922a;z-index:99999}}
