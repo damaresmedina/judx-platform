@@ -24,7 +24,6 @@ function InvestorContent() {
       .then(d => {
         if (d.status === 'granted') {
           setInvestorName(d.investor || '')
-          setFname(d.investor || '')
           setStatus('granted')
           setTimeout(() => setFadeIn(true), 100)
         } else {
