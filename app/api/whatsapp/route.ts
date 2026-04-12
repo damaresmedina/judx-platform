@@ -6,7 +6,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const ALLOWED_NUMBER = 'whatsapp:+5561995759444'
+const ALLOWED_NUMBERS = [
+  'whatsapp:+5561995759444',
+  'whatsapp:+556195759444',
+]
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData()
@@ -14,8 +17,8 @@ export async function POST(req: NextRequest) {
   const body = (formData.get('Body') as string || '').trim()
 
   // Só aceita comandos do número da empresa
-  if (from !== ALLOWED_NUMBER) {
-    return twiml('Access denied.')
+  if (!ALLOWED_NUMBERS.includes(from)) {
+    return twiml(`Access denied. Your number: ${from}`)
   }
 
   // /token nome [valor] [en|pt] [dias]
