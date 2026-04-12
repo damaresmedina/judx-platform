@@ -12,18 +12,6 @@ function InvestorContent() {
   const [investorName, setInvestorName] = useState('')
   const [fadeIn, setFadeIn] = useState(false)
 
-  // Calculator state
-  const [horizonYears, setHorizonYears] = useState(5)
-  const [amount, setAmount] = useState('')
-  const [calcOpen, setCalcOpen] = useState(false)
-  const [showResult, setShowResult] = useState(false)
-  const [amtHint, setAmtHint] = useState('')
-  const [proceedEnabled, setProceedEnabled] = useState(false)
-
-  // Form state
-  const [formStep, setFormStep] = useState<1 | 2 | 3>(1)
-  const [fname, setFname] = useState('')
-  const [femail, setFemail] = useState('')
 
   // Validate token on load
   useEffect(() => {
@@ -99,54 +87,6 @@ function InvestorContent() {
     }
   }, [])
 
-  function getEuros(): number {
-    return parseFloat(amount.replace(/[^0-9.]/g, '')) || 0
-  }
-
-  function calcUpdate(val: string, horizon?: number) {
-    const euros = parseFloat(val.replace(/[^0-9.]/g, '')) || 0
-    if (euros > 0 && euros < 5000) {
-      setAmtHint('Minimum investment: €5,000')
-      setShowResult(false); setProceedEnabled(false); return
-    }
-    setAmtHint('')
-    if (euros < 5000) { setShowResult(false); setProceedEnabled(false); return }
-    setShowResult(true)
-    setProceedEnabled(true)
-  }
-
-  function getCalc() {
-    const euros = getEuros()
-    const mult = horizonYears === 5 ? 3.8 : 2.2
-    const irr = horizonYears === 5 ? 18 : 14
-    const gross = euros * mult
-    const net = gross - euros
-    return { mult, irr, gross, net }
-  }
-
-  function fmt(n: number) {
-    if (n >= 1000000) return '€' + (n / 1000000).toFixed(2) + 'M'
-    return '€' + Math.round(n).toLocaleString('de-DE')
-  }
-
-  async function submitInterest() {
-    setFormStep(3)
-    try {
-      await fetch('/api/investor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          name: fname,
-          email: femail,
-          amount: getEuros(),
-          horizon: horizonYears,
-        }),
-      })
-    } catch { /* silent — already showed confirmation */ }
-  }
-
-  const calc = getCalc()
   const wmText = investorName ? `CONFIDENTIAL · ${investorName.toUpperCase()}` : 'CONFIDENTIAL'
 
   // ── DENIED SCREEN ──
@@ -354,15 +294,13 @@ function InvestorContent() {
             </div>
           </div>
 
-          {/* 09 — INVESTMENT FRAME */}
+          {/* 09 — INVESTMENT SCOPE */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">09 — Investment Frame</div>
-            <h2 className="sec-h">The current phase <em>is scaling</em></h2>
+            <div className="sec-n">09 — Investment scope (current phase)</div>
+            <h2 className="sec-h">€500,000 — <em>allocated to scaling and commercial structuring</em></h2>
             <div className="inv-terms">
               <div className="term-row"><div className="term-k">Horizon</div><div className="term-v">5 years</div></div>
-              <div className="term-row"><div className="term-k">Structure</div><div className="term-v">Equity / Revenue share</div></div>
-              <div className="term-row"><div className="term-k">Profile</div><div className="term-v">Capital preservation + moderate upside</div></div>
-              <div className="term-row"><div className="term-k">Currency</div><div className="term-v">EUR</div></div>
+              <div className="term-row"><div className="term-k">Profile</div><div className="term-v">Structured return profile</div></div>
             </div>
           </div>
 
@@ -381,17 +319,19 @@ function InvestorContent() {
             </div>
           </div>
 
-          {/* 11 — CLOSING */}
+          {/* 11 — ACCESS */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">11 — Closing</div>
+            <div className="sec-n">11 — Access</div>
+            <h2 className="sec-h">This is not <em>a public offering</em></h2>
+            <p className="inv-lead">Access is limited and discussed directly.</p>
+          </div>
+
+          {/* 12 — CLOSING */}
+          <div className="inv-sec inv-reveal">
+            <div className="sec-n">12 — Next step</div>
             <div className="final-q">
               <div className="fq-mark">{"\u201C"}</div>
-              <p className="fq-text">If the structure makes sense, we can look at numbers in detail.</p>
-            </div>
-            <div className="inv-cta-final">
-              <button className="invest-btn" onClick={() => { setCalcOpen(true); document.body.style.overflow = 'hidden' }}>
-                I want to invest →
-              </button>
+              <p className="fq-text">If the structure aligns with your investment logic, we can go through the numbers in detail.</p>
             </div>
           </div>
 
@@ -399,85 +339,6 @@ function InvestorContent() {
             <a href="https://judx.com.br" target="_blank" rel="noopener">judx.com.br</a>
             <div className="foot-conf">Confidential · {investorName} · Not for distribution</div>
           </footer>
-        </div>
-
-        {/* CALCULATOR OVERLAY */}
-        <div
-          className={`calc-overlay ${calcOpen ? 'open' : ''}`}
-          onClick={e => { if (e.target === e.currentTarget) { setCalcOpen(false); document.body.style.overflow = '' } }}
-        >
-          <div className="calc-sheet">
-            <div className="calc-handle" />
-
-            {formStep === 1 && (
-              <div>
-                <div className="calc-title">I want to invest</div>
-                <div className="calc-sub">Estimate your projected return</div>
-
-                <div className="c-label">Investment amount (EUR)</div>
-                <input
-                  className="c-input"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="e.g.: 25.000"
-                  value={amount}
-                  onChange={e => { setAmount(e.target.value); calcUpdate(e.target.value) }}
-                />
-                <div className="c-hint">{amtHint}</div>
-
-                <div className="c-label">Exit horizon</div>
-                <div className="horizon-row">
-                  <button className={`h-btn ${horizonYears === 3 ? 'active' : ''}`} onClick={() => { setHorizonYears(3); calcUpdate(amount, 3) }}>
-                    3 years<br /><span style={{ fontSize: '.48rem', opacity: .6 }}>partial exit</span>
-                  </button>
-                  <button className={`h-btn ${horizonYears === 5 ? 'active' : ''}`} onClick={() => { setHorizonYears(5); calcUpdate(amount, 5) }}>
-                    5 years<br /><span style={{ fontSize: '.48rem', opacity: .6 }}>full exit</span>
-                  </button>
-                </div>
-
-                {showResult && (
-                  <div className="inv-result">
-                    <div className="result-grid">
-                      <div className="r-item"><div className="r-val">{fmt(calc.gross)}</div><div className="r-key">Projected return</div></div>
-                      <div className="r-item"><div className="r-val">{calc.mult}×</div><div className="r-key">Multiplier</div></div>
-                      <div className="r-item"><div className="r-val">{calc.irr}%</div><div className="r-key">IRR est. p.a.</div></div>
-                      <div className="r-item"><div className="r-val">{fmt(calc.net)}</div><div className="r-key">Net gain</div></div>
-                    </div>
-                    <div className="r-disc">Forward-looking projection for illustrative purposes only. Does not constitute an offer, solicitation, or guarantee of returns. Actual results may differ materially. Investment involves risk, including potential loss of principal. The EUR/BRL multiplier reflects purchasing power, not guaranteed arbitrage. Consult independent financial and legal advisors before making any investment decision. This document is confidential and intended solely for the named recipient.</div>
-                  </div>
-                )}
-
-                <button className="submit-btn" disabled={!proceedEnabled} style={{ marginTop: '.5rem' }} onClick={() => setFormStep(2)}>
-                  Express interest →
-                </button>
-              </div>
-            )}
-
-            {formStep === 2 && (
-              <div className="form-box" style={{ display: 'block' }}>
-                <div className="form-title">Expression of Interest</div>
-                <div className="form-note">Non-binding · response within 48h</div>
-                <input className="f-input" type="text" placeholder="Full name" value={fname} onChange={e => setFname(e.target.value)} />
-                <input className="f-input" type="email" placeholder="E-mail" value={femail} onChange={e => setFemail(e.target.value)} />
-                <div className="form-summary">
-                  <span>{fmt(getEuros())}</span> · <span>{horizonYears} years</span> · <span>est. {horizonYears === 5 ? 3.8 : 2.2}× return</span>
-                </div>
-                <button className="submit-btn" disabled={!(fname.trim() && femail.includes('@'))} onClick={submitInterest}>
-                  Submit expression of interest
-                </button>
-              </div>
-            )}
-
-            {formStep === 3 && (
-              <div className="sent-box" style={{ display: 'block' }}>
-                <div className="sent-check">✓</div>
-                <div className="sent-t">Expression received</div>
-                <p className="sent-p">Thank you, {fname}. We will contact {femail} within 48 hours to discuss next steps. You may also reach us at contato@judx.com.br</p>
-                <div className="sent-d">{fmt(getEuros())} · {horizonYears} years · est. {horizonYears === 5 ? 3.8 : 2.2}× return</div>
-                <button className="close-btn" onClick={() => { setCalcOpen(false); setFormStep(1); document.body.style.overflow = '' }}>Close</button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </>
