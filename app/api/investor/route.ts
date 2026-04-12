@@ -136,6 +136,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       status: 'granted',
       investor: tk.investor_name,
+      lang: tk.lang || 'en',
+      ticket: tk.ticket_amount || 500000,
       first_access: true,
     })
   }
@@ -174,6 +176,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     status: 'granted',
     investor: tk.investor_name,
+    lang: tk.lang || 'en',
+    ticket: tk.ticket_amount || 500000,
   })
 }
 

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1f35;color:#fff;font-family:'DM Sans',sans-serif;font-weight:300;font-size:9pt;line-height:1.6;padding:40px 50px}
+h1{font-family:'Playfair Display',serif;font-weight:900;font-size:32pt;color:#fff;letter-spacing:-.02em;margin-bottom:2px}
+h1 span{color:#c8922a}
+.sub{font-family:'DM Mono',monospace;font-size:6.5pt;letter-spacing:.25em;color:#6b7280;text-transform:uppercase;margin-bottom:16px}
+.conf{font-family:'DM Mono',monospace;font-size:6pt;letter-spacing:.15em;color:#c8922a;text-transform:uppercase;text-align:right;margin-bottom:20px}
+.tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:11pt;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.5}
+.rule{width:50px;height:1px;background:#c8922a;margin:0 0 20px;opacity:.4}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.15);margin-bottom:20px}
+.stat{background:#0d1f35;padding:10px 8px;text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:16pt;font-weight:700;color:#c8922a;line-height:1}
+.stat-l{font-size:6.5pt;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-top:3px}
+.stat-s{font-family:'DM Mono',monospace;font-size:5.5pt;color:#6b7280}
+.sec{margin-bottom:16px}
+.sec-n{font-family:'DM Mono',monospace;font-size:6pt;letter-spacing:.2em;color:#c8922a;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+.sec-h{font-family:'Playfair Display',serif;font-size:12pt;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.25}
+.sec-h em{color:#c8922a;font-style:italic}
+p{color:#8896a8;margin-bottom:6px;font-size:8.5pt;line-height:1.6}
+p strong{color:#fff;font-weight:500}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.15);margin:8px 0}
+.col{background:#0d1f35;padding:10px 12px}
+.col-gold{background:rgba(200,146,42,.04)}
+.col-title{font-family:'Playfair Display',serif;font-size:10pt;font-weight:700;color:#fff;margin-bottom:2px}
+.col-role{font-family:'DM Mono',monospace;font-size:5.5pt;letter-spacing:.12em;color:#c8922a;text-transform:uppercase;margin-bottom:6px}
+.col li{font-size:8pt;color:#8896a8;list-style:none;padding-left:8px;position:relative;line-height:1.8}
+.col li::before{content:'';position:absolute;left:0;top:6px;width:3px;height:3px;border-radius:50%;background:#c8922a;opacity:.5}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.tag{padding:4px 10px;border:1px solid rgba(200,146,42,.25);background:rgba(200,146,42,.04);font-family:'DM Mono',monospace;font-size:6.5pt;letter-spacing:.1em;color:#c8922a;text-transform:uppercase}
+.terms{border:1px solid rgba(200,146,42,.15);margin:8px 0}
+.term-row{display:grid;grid-template-columns:80px 1fr;border-bottom:1px solid rgba(200,146,42,.07)}
+.term-row:last-child{border-bottom:none}
+.term-k{padding:6px 8px;background:rgba(200,146,42,.06);font-family:'DM Mono',monospace;font-size:6pt;letter-spacing:.1em;color:#c8922a;text-transform:uppercase;display:flex;align-items:center}
+.term-v{padding:6px 10px;font-size:8pt;color:#8896a8;display:flex;align-items:center}
+.fit{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.15);margin:8px 0}
+.fit-item{background:#0d1f35;padding:8px;text-align:center}
+.fit-icon{font-family:'DM Mono',monospace;font-size:8pt;font-weight:500;color:#c8922a}
+.fit-text{font-size:7pt;color:#8896a8;margin-top:2px}
+.quote{border-left:2px solid #c8922a;padding:8px 12px;margin:8px 0;background:rgba(200,146,42,.04)}
+.quote p{font-family:'Playfair Display',serif;font-style:italic;color:#c8922a;font-size:9pt;line-height:1.55}
+.footer{text-align:center;border-top:1px solid rgba(200,146,42,.15);padding-top:10px;margin-top:16px}
+.footer a{font-family:'DM Mono',monospace;font-size:6.5pt;letter-spacing:.2em;color:#c8922a;text-decoration:none;text-transform:uppercase}
+.footer-conf{font-family:'DM Mono',monospace;font-size:5.5pt;letter-spacing:.1em;color:#6b7280;text-transform:uppercase;margin-top:4px}
+.bio-books{display:flex;gap:6px;margin-top:6px}
+.bio-book{padding:4px 8px;border:1px solid rgba(200,146,42,.15);font-family:'DM Mono',monospace;font-size:6pt;color:#8896a8}
+.bio-book em{color:#c8922a;font-style:italic}
+</style>
+</head><body>
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+  <div>
+    <h1>Jud<span>X</span></h1>
+    <div class="sub">Judicial Intelligence Infrastructure</div>
+  </div>
+  <div class="conf">Confidential<br>Investor Brief &mdash; 2026<br>judx.com.br</div>
+</div>
+<div class="tagline">3.14M STF + STJ decisions. One system. Structural visibility.</div>
+<div class="rule"></div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n">3.14M+</div><div class="stat-l">Decisions</div><div class="stat-s">STF + STJ</div></div>
+  <div class="stat"><div class="stat-n">2.21M</div><div class="stat-l">Cases</div><div class="stat-s">full lifecycle</div></div>
+  <div class="stat"><div class="stat-n">1.38M</div><div class="stat-l">Litigants</div><div class="stat-s">parties + counsel</div></div>
+  <div class="stat"><div class="stat-n">Live</div><div class="stat-l">Pipeline</div><div class="stat-s">continuous</div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">01 &mdash; What JudX does</div>
+  <p>JudX is an operational system for navigating institutional behavior at scale. It maps litigation exposure, anticipates decision environments, tracks procedural paths, and identifies patterns of decision and non-decision.</p>
+  <div class="quote"><p>JudX turns judicial systems into actionable infrastructure.</p></div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">02 &mdash; Business Model</div>
+  <div class="two-col">
+    <div class="col">
+      <div class="col-title">Freemium</div>
+      <div class="col-role">Distribution layer</div>
+      <ul><li>Broad access</li><li>Market penetration</li><li>Continuous user growth</li></ul>
+    </div>
+    <div class="col col-gold">
+      <div class="col-title">In-company</div>
+      <div class="col-role">Revenue layer</div>
+      <ul><li>Custom institutional environments</li><li>Integration into workflows</li><li>High-value contracts</li></ul>
+    </div>
+  </div>
+  <p>Freemium distributes. In-company monetizes.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-n">03 &mdash; Commercial Traction</div>
+  <p>A pilot project is currently being structured with one of the largest litigants in Brazil, focused on mapping decision exposure and procedural dynamics at the Supreme Court level.</p>
+  <div class="quote"><p>JudX is already inside the system it maps.</p></div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">04 &mdash; What makes it different</div>
+  <div class="sec-h">Legal databases retrieve documents. <em>JudX maps institutional behavior.</em></div>
+  <div class="tags"><div class="tag">Decisions</div><div class="tag">Procedural environments</div><div class="tag">Actors</div><div class="tag">Outcomes</div></div>
+  <p>This is structural intelligence, not search.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-n">05 &mdash; Data Advantage</div>
+  <p>Replicating JudX requires: large-scale judicial parsing, procedural normalization, relational modeling, and continuous ingestion. <strong>JudX has already done this.</strong></p>
+</div>
+
+<div class="sec">
+  <div class="sec-n">06 &mdash; Why this fits a European investor</div>
+  <div class="fit">
+    <div class="fit-item"><div class="fit-icon">EU</div><div class="fit-text">European incorporation</div></div>
+    <div class="fit-item"><div class="fit-icon">6&times;</div><div class="fit-text">EUR/BRL efficiency</div></div>
+    <div class="fit-item"><div class="fit-icon">SYS</div><div class="fit-text">Process-driven</div></div>
+    <div class="fit-item"><div class="fit-icon">SCL</div><div class="fit-text">Scalable</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">07 &mdash; Risk Profile</div>
+  <div class="two-col">
+    <div class="col"><div class="col-role">Risk</div><ul><li>Institutional adoption cycles</li><li>Ongoing data ingestion</li></ul></div>
+    <div class="col col-gold"><div class="col-role">Mitigation</div><ul><li>Internalized database</li><li>Proprietary pipeline</li><li>Multi-client model</li><li>European legal structure</li></ul></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">08 &mdash; Investment scope (current phase)</div>
+  <div class="sec-h">&euro;500,000 &mdash; <em>allocated to scaling and commercial structuring</em></div>
+  <div class="terms">
+    <div class="term-row"><div class="term-k">Horizon</div><div class="term-v">5 years</div></div>
+    <div class="term-row"><div class="term-k">Profile</div><div class="term-v">Structured return profile</div></div>
+    <div class="term-row"><div class="term-k">Currency</div><div class="term-v">EUR</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">09 &mdash; Who built this</div>
+  <div class="sec-h">Damares <em>Medina</em></div>
+  <p><strong>Constitutional lawyer</strong> &middot; STF researcher (15+ years) &middot; Founder, Instituto Constituicao Aberta (ICONS) &middot; Visiting Scholar, Universita degli Studi di Milano-Bicocca</p>
+  <div class="bio-books">
+    <div class="bio-book"><em>Amicus Curiae</em> (2010)</div>
+    <div class="bio-book"><em>Repercussao Geral no STF</em> (Saraiva, 2015)</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-n">10 &mdash; Access</div>
+  <p>This is not a public offering. Access is limited and discussed directly.</p>
+</div>
+
+<div class="quote" style="margin-top:12px">
+  <p>If the structure aligns with your investment logic, we can go through the numbers in detail.</p>
+</div>
+
+<div class="footer">
+  <a href="https://judx.com.br">judx.com.br</a>
+  <div class="footer-conf">Confidential &middot; Not for distribution</div>
+</div>
+
+</body></html>

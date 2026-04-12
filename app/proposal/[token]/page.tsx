@@ -3,6 +3,144 @@
 import { useEffect, useState, use } from 'react'
 import { useParams } from 'next/navigation'
 
+const EN = {
+  subtitle: 'Judicial Intelligence',
+  verifying: 'Verifying access...',
+  denyContact: 'If you believe this is an error, contact contato@judx.com.br',
+  heroEye: 'Confidential — Investor Brief (EU) — 2026',
+  heroName: 'Judicial Intelligence Infrastructure',
+  heroTag: '3.14M STF + STJ decisions. One system. Structural visibility.',
+  s01title: 'What JudX does',
+  s01heading: 'Not legal research.<br /><em>Operational intelligence.</em>',
+  s01lead: 'JudX is an operational system for navigating institutional behavior at scale.',
+  s01caps: [
+    "Mapping litigation exposure at Brazil's highest courts",
+    'Anticipating decision environments and their effects',
+    'Tracking procedural paths that shape outcomes',
+    'Identifying patterns of decision and non-decision',
+  ],
+  s01quote: 'JudX turns judicial systems into actionable infrastructure.',
+  s02title: 'The Asset',
+  s02heading: 'The core asset is <em>already built</em>',
+  s02d1: 'Decisions structured', s02d2: 'Cases mapped', s02d2s: 'full lifecycle',
+  s02d3: 'Litigants indexed', s02d3s: 'parties + counsel',
+  s02d4: 'Ingestion pipeline', s02d4s: 'continuous update',
+  s02lead: 'Investment accelerates scale — not construction.',
+  s03title: 'Business Model',
+  s03heading: 'Dual structure.<br /><em>Distribution + Revenue.</em>',
+  s03freeRole: 'Distribution layer',
+  s03freeItems: ['Broad access', 'Market penetration', 'Continuous user growth'],
+  s03compRole: 'Revenue layer',
+  s03compItems: ['Custom institutional environments', 'Integration into workflows', 'High-value contracts'],
+  s03lead: 'Freemium distributes. In-company monetizes.',
+  s04title: 'Commercial Traction',
+  s04heading: 'Already operating inside <em>real institutions</em>',
+  s04lead: 'A pilot project is currently being structured with one of the largest litigants in Brazil, focused on mapping decision exposure and procedural dynamics at the Supreme Court level.',
+  s04quote: 'JudX is already inside the system it maps.',
+  s05title: 'What makes it different',
+  s05heading: 'Legal databases retrieve documents.<br /><em>JudX maps institutional behavior.</em>',
+  s05diffs: ['Decisions', 'Procedural environments', 'Actors', 'Outcomes'],
+  s05lead: 'This is structural intelligence, not search.',
+  s06title: 'Data Advantage',
+  s06heading: 'Replicating JudX <em>requires</em>',
+  s06moats: ['Large-scale judicial parsing', 'Procedural normalization', 'Relational modeling', 'Continuous ingestion'],
+  s06quote: 'JudX has already done this.',
+  s07title: 'Why this fits a European investor',
+  s07heading: 'European structure.<br /><em>Brazilian scale.</em>',
+  s07fits: [
+    { icon: 'EU', text: 'European incorporation' },
+    { icon: '6×', text: 'EUR → BRL cost efficiency' },
+    { icon: 'SYS', text: 'Process-driven model' },
+    { icon: 'SCL', text: 'Scalable structure' },
+  ],
+  s08title: 'Risk Profile',
+  s08heading: 'Risks are <em>identified and mitigated</em>',
+  s08riskH: 'Risk', s08risks: ['Institutional adoption cycles', 'Ongoing data ingestion'],
+  s08mitH: 'Mitigation', s08mits: ['Internalized database', 'Proprietary pipeline', 'Multi-client model', 'European legal structure'],
+  s09title: 'Investment scope (current phase)',
+  s09allocated: 'allocated to scaling and commercial structuring',
+  s09horizon: 'Horizon', s09horizonV: '5 years',
+  s09profile: 'Profile', s09profileV: 'Structured return profile',
+  s10title: 'Who built this',
+  s10bio1: 'Constitutional lawyer', s10bio1b: 'STF researcher (15+ years)',
+  s10bio2a: 'Founder', s10bio2b: 'Instituto Constituição Aberta (ICONS)',
+  s11title: 'Access',
+  s11heading: 'This is not <em>a public offering</em>',
+  s11lead: 'Access is limited and discussed directly.',
+  s12title: 'Next step',
+  s12quote: 'If the structure aligns with your investment logic, we can go through the numbers in detail.',
+  footConf: 'Confidential · {name} · Not for distribution',
+}
+
+const PT: typeof EN = {
+  subtitle: 'Inteligência Jurisprudencial',
+  verifying: 'Verificando acesso...',
+  denyContact: 'Se acredita que há um erro, entre em contato: contato@judx.com.br',
+  heroEye: 'Confidencial — Proposta de Investimento — 2026',
+  heroName: 'Infraestrutura de Inteligência Judicial',
+  heroTag: '3,14M decisões STF + STJ. Um sistema. Visibilidade estrutural.',
+  s01title: 'O que o JudX faz',
+  s01heading: 'Não é pesquisa jurídica.<br /><em>Inteligência operacional.</em>',
+  s01lead: 'JudX é um sistema operacional para navegar o comportamento institucional em escala.',
+  s01caps: [
+    'Mapear a exposição litigiosa nos tribunais superiores do Brasil',
+    'Antecipar ambientes decisórios e seus efeitos',
+    'Rastrear caminhos processuais que determinam resultados',
+    'Identificar padrões de decisão e não-decisão',
+  ],
+  s01quote: 'JudX transforma sistemas judiciais em infraestrutura acionável.',
+  s02title: 'O Ativo',
+  s02heading: 'O ativo principal já está <em>construído</em>',
+  s02d1: 'Decisões estruturadas', s02d2: 'Processos mapeados', s02d2s: 'ciclo completo',
+  s02d3: 'Litigantes indexados', s02d3s: 'partes + advogados',
+  s02d4: 'Pipeline de ingestão', s02d4s: 'atualização contínua',
+  s02lead: 'O investimento acelera a escala — não a construção.',
+  s03title: 'Modelo de Negócio',
+  s03heading: 'Estrutura dual.<br /><em>Distribuição + Receita.</em>',
+  s03freeRole: 'Camada de distribuição',
+  s03freeItems: ['Acesso amplo', 'Penetração de mercado', 'Crescimento contínuo de usuários'],
+  s03compRole: 'Camada de receita',
+  s03compItems: ['Ambientes institucionais customizados', 'Integração em fluxos de trabalho', 'Contratos de alto valor'],
+  s03lead: 'Freemium distribui. In-company monetiza.',
+  s04title: 'Tração Comercial',
+  s04heading: 'Já operando dentro de <em>instituições reais</em>',
+  s04lead: 'Um projeto-piloto está sendo estruturado com um dos maiores litigantes do Brasil, focado no mapeamento da exposição decisória e dinâmicas processuais no Supremo Tribunal Federal.',
+  s04quote: 'O JudX já está dentro do sistema que mapeia.',
+  s05title: 'O que o diferencia',
+  s05heading: 'Bancos jurídicos recuperam documentos.<br /><em>JudX mapeia comportamento institucional.</em>',
+  s05diffs: ['Decisões', 'Ambientes processuais', 'Atores', 'Resultados'],
+  s05lead: 'Isto é inteligência estrutural, não busca.',
+  s06title: 'Vantagem de Dados',
+  s06heading: 'Replicar o JudX <em>exige</em>',
+  s06moats: ['Parsing judicial em larga escala', 'Normalização processual', 'Modelagem relacional', 'Ingestão contínua'],
+  s06quote: 'O JudX já fez isso.',
+  s07title: 'Por que se encaixa para um investidor europeu',
+  s07heading: 'Estrutura europeia.<br /><em>Escala brasileira.</em>',
+  s07fits: [
+    { icon: 'EU', text: 'Incorporação europeia' },
+    { icon: '6×', text: 'Eficiência de custo EUR → BRL' },
+    { icon: 'SYS', text: 'Modelo orientado a processos' },
+    { icon: 'SCL', text: 'Estrutura escalável' },
+  ],
+  s08title: 'Perfil de Risco',
+  s08heading: 'Riscos <em>identificados e mitigados</em>',
+  s08riskH: 'Risco', s08risks: ['Ciclos de adoção institucional', 'Ingestão contínua de dados'],
+  s08mitH: 'Mitigação', s08mits: ['Base de dados internalizada', 'Pipeline proprietário', 'Modelo multi-cliente', 'Estrutura jurídica europeia'],
+  s09title: 'Escopo do investimento (fase atual)',
+  s09allocated: 'alocado para escala e estruturação comercial',
+  s09horizon: 'Horizonte', s09horizonV: '5 anos',
+  s09profile: 'Perfil', s09profileV: 'Perfil de retorno estruturado',
+  s10title: 'Quem construiu',
+  s10bio1: 'Advogada constitucionalista', s10bio1b: 'pesquisadora STF (15+ anos)',
+  s10bio2a: 'Fundadora', s10bio2b: 'Instituto Constituição Aberta (ICONS)',
+  s11title: 'Acesso',
+  s11heading: 'Isto não é <em>uma oferta pública</em>',
+  s11lead: 'O acesso é limitado e discutido diretamente.',
+  s12title: 'Próximo passo',
+  s12quote: 'Se a estrutura faz sentido para a sua lógica de investimento, podemos analisar os números em detalhe.',
+  footConf: 'Confidencial · {name} · Não distribuir',
+}
+
 function InvestorContent() {
   const params = useParams()
   const token = params.token as string
@@ -10,8 +148,12 @@ function InvestorContent() {
   const [status, setStatus] = useState<'loading' | 'granted' | 'denied'>('loading')
   const [denyReason, setDenyReason] = useState('')
   const [investorName, setInvestorName] = useState('')
+  const [lang, setLang] = useState<'en' | 'pt'>('en')
+  const [ticket, setTicket] = useState(500000)
   const [fadeIn, setFadeIn] = useState(false)
 
+  const t = lang === 'pt' ? PT : EN
+  const fmtTicket = `€${ticket.toLocaleString('de-DE')}`
 
   // Validate token on load
   useEffect(() => {
@@ -24,15 +166,17 @@ function InvestorContent() {
       .then(d => {
         if (d.status === 'granted') {
           setInvestorName(d.investor || '')
+          setLang(d.lang === 'pt' ? 'pt' : 'en')
+          setTicket(d.ticket || 500000)
           setStatus('granted')
           setTimeout(() => setFadeIn(true), 100)
         } else {
           setStatus('denied')
           const reasons: Record<string, string> = {
-            ip_mismatch: 'This link has already been used from a different device.',
-            expired: 'This link has expired.',
-            revoked: 'This link has been revoked.',
-            invalid_token: 'Invalid access link.',
+            ip_mismatch: lang === 'pt' ? 'Este link já foi utilizado a partir de outro dispositivo.' : 'This link has already been used from a different device.',
+            expired: lang === 'pt' ? 'Este link expirou.' : 'This link has expired.',
+            revoked: lang === 'pt' ? 'Este link foi revogado.' : 'This link has been revoked.',
+            invalid_token: lang === 'pt' ? 'Link de acesso inválido.' : 'Invalid access link.',
           }
           setDenyReason(reasons[d.status] || 'Access denied.')
         }
@@ -97,10 +241,10 @@ function InvestorContent() {
           <div className="inv-lock">
             <div className="lk">
               <div className="lk-logo">Jud<span className="logo-x">X</span></div>
-              <div className="lk-sub">Judicial Intelligence</div>
+              <div className="lk-sub">{t.subtitle}</div>
               <div className="lk-line" />
               <div className="inv-deny">{denyReason}</div>
-              <div className="inv-deny-sub">If you believe this is an error, contact contato@judx.com.br</div>
+              <div className="inv-deny-sub">{t.denyContact}</div>
             </div>
           </div>
         </div>
@@ -117,7 +261,7 @@ function InvestorContent() {
           <div className="inv-lock">
             <div className="lk">
               <div className="lk-logo">Jud<span className="logo-x">X</span></div>
-              <div className="lk-sub">Verifying access...</div>
+              <div className="lk-sub">{t.verifying}</div>
             </div>
           </div>
         </div>
@@ -131,10 +275,8 @@ function InvestorContent() {
       <style dangerouslySetInnerHTML={{ __html: investorStyles }} />
 
       <div className="inv-page">
-        {/* WATERMARK — with investor name for traceability */}
         <div className="inv-wm">{wmText}</div>
 
-        {/* APP */}
         <div className={`inv-app ${fadeIn ? 'on' : ''}`}>
 
           {/* HERO */}
@@ -142,11 +284,11 @@ function InvestorContent() {
             <div className="hero-bg" />
             <div className="hero-grid" />
             <div className="hero-inner">
-              <div className="hero-eye">Confidential — Investor Brief (EU) — 2026</div>
+              <div className="hero-eye">{t.heroEye}</div>
               <div className="hero-logo">Jud<span className="logo-x">X</span></div>
-              <div className="hero-name">Judicial Intelligence Infrastructure</div>
+              <div className="hero-name">{t.heroName}</div>
               <div className="hero-rule" />
-              <div className="hero-tag">3.14M STF + STJ decisions. One system. Structural visibility.</div>
+              <div className="hero-tag">{t.heroTag}</div>
               <div className="hero-meta">judx.com.br &nbsp;·&nbsp; European HQ &nbsp;·&nbsp; Brazilian Operations</div>
             </div>
             <div className="scroll-hint">
@@ -155,161 +297,121 @@ function InvestorContent() {
             </div>
           </section>
 
-          {/* 01 — WHAT JUDX DOES */}
+          {/* 01 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">01 — What JudX does</div>
-            <h2 className="sec-h">Not legal research.<br /><em>Operational intelligence.</em></h2>
-            <p className="inv-lead">JudX is an operational system for navigating institutional behavior at scale.</p>
+            <div className="sec-n">01 — {t.s01title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s01heading }} />
+            <p className="inv-lead">{t.s01lead}</p>
             <div className="cap-grid">
-              <div className="cap-item"><div className="cap-icon">01</div><div className="cap-text">Mapping litigation exposure at Brazil{"'"}s highest courts</div></div>
-              <div className="cap-item"><div className="cap-icon">02</div><div className="cap-text">Anticipating decision environments and their effects</div></div>
-              <div className="cap-item"><div className="cap-icon">03</div><div className="cap-text">Tracking procedural paths that shape outcomes</div></div>
-              <div className="cap-item"><div className="cap-icon">04</div><div className="cap-text">Identifying patterns of decision and non-decision</div></div>
+              {t.s01caps.map((c, i) => <div key={i} className="cap-item"><div className="cap-icon">{String(i+1).padStart(2,'0')}</div><div className="cap-text">{c}</div></div>)}
             </div>
-            <div className="inv-hq"><p>JudX turns judicial systems into actionable infrastructure.</p></div>
+            <div className="inv-hq"><p>{t.s01quote}</p></div>
           </div>
 
-          {/* 02 — THE ASSET */}
+          {/* 02 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">02 — The Asset</div>
-            <h2 className="sec-h">The core asset is <em>already built</em></h2>
+            <div className="sec-n">02 — {t.s02title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s02heading }} />
             <div className="data-panel" style={{ padding: 0 }}>
               <div className="data-grid">
-                <div className="data-cell">
-                  <div className="data-n">3.14M+</div>
-                  <div className="data-l">Decisions structured</div>
-                  <div className="data-s">STF + STJ</div>
-                </div>
-                <div className="data-cell">
-                  <div className="data-n">2.21M</div>
-                  <div className="data-l">Cases mapped</div>
-                  <div className="data-s">full lifecycle</div>
-                </div>
-                <div className="data-cell">
-                  <div className="data-n">1.38M</div>
-                  <div className="data-l">Litigants indexed</div>
-                  <div className="data-s">parties + counsel</div>
-                </div>
-                <div className="data-cell">
-                  <div className="data-n">Live</div>
-                  <div className="data-l">Ingestion pipeline</div>
-                  <div className="data-s">continuous update</div>
-                </div>
+                <div className="data-cell"><div className="data-n">3.14M+</div><div className="data-l">{t.s02d1}</div><div className="data-s">STF + STJ</div></div>
+                <div className="data-cell"><div className="data-n">2.21M</div><div className="data-l">{t.s02d2}</div><div className="data-s">{t.s02d2s}</div></div>
+                <div className="data-cell"><div className="data-n">1.38M</div><div className="data-l">{t.s02d3}</div><div className="data-s">{t.s02d3s}</div></div>
+                <div className="data-cell"><div className="data-n">Live</div><div className="data-l">{t.s02d4}</div><div className="data-s">{t.s02d4s}</div></div>
               </div>
             </div>
-            <p className="inv-lead" style={{ marginTop: '1.5rem' }}>Investment accelerates scale — not construction.</p>
+            <p className="inv-lead" style={{ marginTop: '1.5rem' }}>{t.s02lead}</p>
           </div>
 
-          {/* 03 — BUSINESS MODEL */}
+          {/* 03 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">03 — Business Model</div>
-            <h2 className="sec-h">Dual structure.<br /><em>Distribution + Revenue.</em></h2>
+            <div className="sec-n">03 — {t.s03title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s03heading }} />
             <div className="dual-grid">
               <div className="dual-box">
                 <div className="dual-label">Freemium</div>
-                <div className="dual-role">Distribution layer</div>
-                <ul className="dual-list">
-                  <li>Broad access</li>
-                  <li>Market penetration</li>
-                  <li>Continuous user growth</li>
-                </ul>
+                <div className="dual-role">{t.s03freeRole}</div>
+                <ul className="dual-list">{t.s03freeItems.map((x,i) => <li key={i}>{x}</li>)}</ul>
               </div>
               <div className="dual-box dual-box-gold">
                 <div className="dual-label">In-company</div>
-                <div className="dual-role">Revenue layer</div>
-                <ul className="dual-list">
-                  <li>Custom institutional environments</li>
-                  <li>Integration into workflows</li>
-                  <li>High-value contracts</li>
-                </ul>
+                <div className="dual-role">{t.s03compRole}</div>
+                <ul className="dual-list">{t.s03compItems.map((x,i) => <li key={i}>{x}</li>)}</ul>
               </div>
             </div>
-            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>Freemium distributes. In-company monetizes.</p>
+            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>{t.s03lead}</p>
           </div>
 
-          {/* 04 — COMMERCIAL TRACTION */}
+          {/* 04 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">04 — Commercial Traction</div>
-            <h2 className="sec-h">Already operating inside <em>real institutions</em></h2>
-            <p className="inv-lead">A pilot project is currently being structured with one of the largest litigants in Brazil, focused on mapping decision exposure and procedural dynamics at the Supreme Court level.</p>
-            <div className="inv-hq"><p>JudX is already inside the system it maps.</p></div>
+            <div className="sec-n">04 — {t.s04title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s04heading }} />
+            <p className="inv-lead">{t.s04lead}</p>
+            <div className="inv-hq"><p>{t.s04quote}</p></div>
           </div>
 
-          {/* 05 — WHAT MAKES IT DIFFERENT */}
+          {/* 05 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">05 — What makes it different</div>
-            <h2 className="sec-h">Legal databases retrieve documents.<br /><em>JudX maps institutional behavior.</em></h2>
+            <div className="sec-n">05 — {t.s05title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s05heading }} />
             <div className="diff-grid">
-              <div className="diff-item"><div className="diff-label">Decisions</div></div>
-              <div className="diff-item"><div className="diff-label">Procedural environments</div></div>
-              <div className="diff-item"><div className="diff-label">Actors</div></div>
-              <div className="diff-item"><div className="diff-label">Outcomes</div></div>
+              {t.s05diffs.map((d,i) => <div key={i} className="diff-item"><div className="diff-label">{d}</div></div>)}
             </div>
-            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>This is structural intelligence, not search.</p>
+            <p className="inv-lead" style={{ marginTop: '1.2rem' }}>{t.s05lead}</p>
           </div>
 
-          {/* 06 — DATA ADVANTAGE */}
+          {/* 06 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">06 — Data Advantage</div>
-            <h2 className="sec-h">Replicating JudX <em>requires</em></h2>
+            <div className="sec-n">06 — {t.s06title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s06heading }} />
             <div className="moat-list">
-              <div className="moat-item"><span className="moat-n">01</span>Large-scale judicial parsing</div>
-              <div className="moat-item"><span className="moat-n">02</span>Procedural normalization</div>
-              <div className="moat-item"><span className="moat-n">03</span>Relational modeling</div>
-              <div className="moat-item"><span className="moat-n">04</span>Continuous ingestion</div>
+              {t.s06moats.map((m,i) => <div key={i} className="moat-item"><span className="moat-n">{String(i+1).padStart(2,'0')}</span>{m}</div>)}
             </div>
-            <div className="inv-hq"><p>JudX has already done this.</p></div>
+            <div className="inv-hq"><p>{t.s06quote}</p></div>
           </div>
 
-          {/* 07 — WHY EUROPEAN INVESTOR */}
+          {/* 07 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">07 — Why this fits a European investor</div>
-            <h2 className="sec-h">European structure.<br /><em>Brazilian scale.</em></h2>
+            <div className="sec-n">07 — {t.s07title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s07heading }} />
             <div className="fit-grid">
-              <div className="fit-item"><div className="fit-icon">EU</div><div className="fit-text">European incorporation</div></div>
-              <div className="fit-item"><div className="fit-icon">6×</div><div className="fit-text">EUR → BRL cost efficiency</div></div>
-              <div className="fit-item"><div className="fit-icon">SYS</div><div className="fit-text">Process-driven model</div></div>
-              <div className="fit-item"><div className="fit-icon">SCL</div><div className="fit-text">Scalable structure</div></div>
+              {t.s07fits.map((f,i) => <div key={i} className="fit-item"><div className="fit-icon">{f.icon}</div><div className="fit-text">{f.text}</div></div>)}
             </div>
           </div>
 
-          {/* 08 — RISK + MITIGATION */}
+          {/* 08 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">08 — Risk Profile</div>
-            <h2 className="sec-h">Risks are <em>identified and mitigated</em></h2>
+            <div className="sec-n">08 — {t.s08title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s08heading }} />
             <div className="risk-grid">
               <div className="risk-col">
-                <div className="risk-header">Risk</div>
-                <div className="risk-item">Institutional adoption cycles</div>
-                <div className="risk-item">Ongoing data ingestion</div>
+                <div className="risk-header">{t.s08riskH}</div>
+                {t.s08risks.map((r,i) => <div key={i} className="risk-item">{r}</div>)}
               </div>
               <div className="risk-col risk-col-gold">
-                <div className="risk-header">Mitigation</div>
-                <div className="risk-item">Internalized database</div>
-                <div className="risk-item">Proprietary pipeline</div>
-                <div className="risk-item">Multi-client model</div>
-                <div className="risk-item">European legal structure</div>
+                <div className="risk-header">{t.s08mitH}</div>
+                {t.s08mits.map((m,i) => <div key={i} className="risk-item">{m}</div>)}
               </div>
             </div>
           </div>
 
-          {/* 09 — INVESTMENT SCOPE */}
+          {/* 09 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">09 — Investment scope (current phase)</div>
-            <h2 className="sec-h">€500,000 — <em>allocated to scaling and commercial structuring</em></h2>
+            <div className="sec-n">09 — {t.s09title}</div>
+            <h2 className="sec-h">{fmtTicket} — <em>{t.s09allocated}</em></h2>
             <div className="inv-terms">
-              <div className="term-row"><div className="term-k">Horizon</div><div className="term-v">5 years</div></div>
-              <div className="term-row"><div className="term-k">Profile</div><div className="term-v">Structured return profile</div></div>
+              <div className="term-row"><div className="term-k">{t.s09horizon}</div><div className="term-v">{t.s09horizonV}</div></div>
+              <div className="term-row"><div className="term-k">{t.s09profile}</div><div className="term-v">{t.s09profileV}</div></div>
             </div>
           </div>
 
-          {/* 10 — WHO BUILT THIS */}
+          {/* 10 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">10 — Who built this</div>
+            <div className="sec-n">10 — {t.s10title}</div>
             <h2 className="sec-h">Damares <em>Medina</em></h2>
             <div className="bio-list">
-              <p className="inv-lead"><strong>Constitutional lawyer</strong> · STF researcher (15+ years)</p>
-              <p className="inv-lead">Founder — <strong>Instituto Constituição Aberta (ICONS)</strong></p>
+              <p className="inv-lead"><strong>{t.s10bio1}</strong> · {t.s10bio1b}</p>
+              <p className="inv-lead">{t.s10bio2a} — <strong>{t.s10bio2b}</strong></p>
               <p className="inv-lead">Visiting Scholar — <strong>Università degli Studi di Milano-Bicocca</strong></p>
             </div>
             <div className="bio-books">
@@ -318,25 +420,25 @@ function InvestorContent() {
             </div>
           </div>
 
-          {/* 11 — ACCESS */}
+          {/* 11 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">11 — Access</div>
-            <h2 className="sec-h">This is not <em>a public offering</em></h2>
-            <p className="inv-lead">Access is limited and discussed directly.</p>
+            <div className="sec-n">11 — {t.s11title}</div>
+            <h2 className="sec-h" dangerouslySetInnerHTML={{ __html: t.s11heading }} />
+            <p className="inv-lead">{t.s11lead}</p>
           </div>
 
-          {/* 12 — CLOSING */}
+          {/* 12 */}
           <div className="inv-sec inv-reveal">
-            <div className="sec-n">12 — Next step</div>
+            <div className="sec-n">12 — {t.s12title}</div>
             <div className="final-q">
               <div className="fq-mark">{"\u201C"}</div>
-              <p className="fq-text">If the structure aligns with your investment logic, we can go through the numbers in detail.</p>
+              <p className="fq-text">{t.s12quote}</p>
             </div>
           </div>
 
           <footer className="inv-footer">
             <a href="https://judx.com.br" target="_blank" rel="noopener">judx.com.br</a>
-            <div className="foot-conf">Confidential · {investorName} · Not for distribution</div>
+            <div className="foot-conf">{t.footConf.replace('{name}', investorName)}</div>
           </footer>
         </div>
       </div>
