@@ -162,7 +162,7 @@ function InvestorContent() {
               <div className="lk-sub">Judicial Intelligence</div>
               <div className="lk-line" />
               <div className="inv-deny">{denyReason}</div>
-              <div className="inv-deny-sub">If you believe this is an error, contact the sender directly.</div>
+              <div className="inv-deny-sub">If you believe this is an error, contact contato@judx.com.br</div>
             </div>
           </div>
         </div>
@@ -477,7 +477,7 @@ function InvestorContent() {
               <div className="sent-box" style={{ display: 'block' }}>
                 <div className="sent-check">✓</div>
                 <div className="sent-t">Expression received</div>
-                <p className="sent-p">Thank you, {fname}. We will contact {femail} within 48 hours to discuss next steps.</p>
+                <p className="sent-p">Thank you, {fname}. We will contact {femail} within 48 hours to discuss next steps. You may also reach us at contato@judx.com.br</p>
                 <div className="sent-d">{fmt(getEuros())} · {horizonYears} years · est. {horizonYears === 5 ? 3.8 : 2.2}× return</div>
                 <button className="close-btn" onClick={() => { setCalcOpen(false); setFormStep(1); document.body.style.overflow = '' }}>Close</button>
               </div>
