@@ -23,10 +23,10 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title: "JudX — Inteligência Jurisprudencial",
-  description: "O judiciário brasileiro, inteiro, legível. 3.1M+ decisões STF e STJ.",
+  description: "O judiciário brasileiro, inteiro, legível.",
   openGraph: {
     title: "JudX — Inteligência Jurisprudencial",
-    description: "O judiciário brasileiro, inteiro, legível. 3.1M+ decisões STF e STJ.",
+    description: "O judiciário brasileiro, inteiro, legível.",
     url: "https://judx.com.br",
     siteName: "JudX",
     images: [
