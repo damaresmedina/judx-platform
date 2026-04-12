@@ -412,7 +412,7 @@ function InvestorContent() {
             <div className="bio-list">
               <p className="inv-lead"><strong>{t.s10bio1}</strong> · {t.s10bio1b}</p>
               <p className="inv-lead">{t.s10bio2a} — <strong>{t.s10bio2b}</strong></p>
-              <p className="inv-lead">Visiting Scholar — <strong>Università degli Studi di Milano-Bicocca</strong></p>
+              <p className="inv-lead">Visiting Scholar, CISEPS — <strong>Università degli Studi di Milano-Bicocca</strong></p>
             </div>
             <div className="bio-books">
               <div className="bio-book"><em>Amicus Curiae</em> (2010)</div>
