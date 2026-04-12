@@ -98,8 +98,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ status: 'expired' }, { status: 403 })
   }
 
-  // Primeiro acesso — travar IP + salvar geo
-  if (!tk.locked_ip) {
+  // Token pessoal — nunca trava IP
+  const isOwnerToken = tk.token === 'damares'
+
+  // Primeiro acesso — travar IP + salvar geo (exceto owner)
+  if (!tk.locked_ip && !isOwnerToken) {
     await supabase
       .from('investor_tokens')
       .update({
@@ -139,6 +142,21 @@ export async function GET(req: NextRequest) {
       lang: tk.lang || 'en',
       ticket: tk.ticket_amount || 500000,
       first_access: true,
+    })
+  }
+
+  // Owner token — sempre aceita, sem IP check
+  if (isOwnerToken) {
+    await supabase
+      .from('investor_tokens')
+      .update({ visits: (tk.visits || 0) + 1, last_visit_at: new Date().toISOString() })
+      .eq('id', tk.id)
+
+    return NextResponse.json({
+      status: 'granted',
+      investor: tk.investor_name,
+      lang: tk.lang || 'en',
+      ticket: tk.ticket_amount || 500000,
     })
   }
 
