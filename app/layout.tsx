@@ -23,7 +23,28 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   title: "JudX — Inteligência Jurisprudencial",
-  description: "O que o Supremo realmente decide.",
+  description: "O judiciário brasileiro, inteiro, legível. 3.1M+ decisões STF e STJ.",
+  openGraph: {
+    title: "JudX — Inteligência Jurisprudencial",
+    description: "O judiciário brasileiro, inteiro, legível. 3.1M+ decisões STF e STJ.",
+    url: "https://judx.com.br",
+    siteName: "JudX",
+    images: [
+      {
+        url: "https://judx.com.br/og-investor.jpg",
+        width: 1200,
+        height: 630,
+        alt: "JudX — Judicial Intelligence",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "JudX — Inteligência Jurisprudencial",
+    description: "O judiciário brasileiro, inteiro, legível.",
+    images: ["https://judx.com.br/og-investor.jpg"],
+  },
 };
 
 export default function RootLayout({
