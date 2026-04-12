@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     siteName: "JudX",
     images: [
       {
-        url: "https://ejwyguskoiraredinqmb.supabase.co/storage/v1/object/public/og/judx-og.png",
+        url: "https://judx.com.br/judx-og.png",
         width: 1200,
         height: 630,
         alt: "JudX — Judicial Intelligence",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "JudX — Investor Brief",
     description: "Judicial Intelligence Infrastructure — Confidential",
-    images: ["https://ejwyguskoiraredinqmb.supabase.co/storage/v1/object/public/og/judx-og.png"],
+    images: ["https://judx.com.br/judx-og.png"],
   },
 };
 
