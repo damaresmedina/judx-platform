@@ -694,6 +694,30 @@ const investorStyles = `
 
 @media(max-width:639px){
   .dual-grid,.fit-grid,.risk-grid{grid-template-columns:1fr}
+  .sec-n{font-size:.64rem}
+  .data-s{font-size:.62rem}
+  .data-l{font-size:.72rem}
+  .hero-eye{font-size:.64rem}
+  .hero-meta{font-size:.62rem}
+  .hero-name{font-size:.72rem}
+  .inv-hq p{font-size:clamp(1.05rem,3vw,1.2rem)}
+  .tl-im{font-size:.62rem}
+  .tl-op{font-size:.82rem}
+  .tl-ev{font-size:.88rem}
+  .cap-text{font-size:.92rem}
+  .dual-role{font-size:.6rem}
+  .dual-list li{font-size:.88rem}
+  .diff-label{font-size:.7rem}
+  .moat-item{font-size:.94rem}
+  .moat-n{font-size:.64rem}
+  .fit-text{font-size:.88rem}
+  .fit-icon{font-size:.76rem}
+  .risk-header{font-size:.62rem}
+  .risk-item{font-size:.88rem}
+  .term-k{font-size:.62rem}
+  .term-v{font-size:.88rem}
+  .foot-conf{font-size:.58rem}
+  .bio-book{font-size:.68rem}
 }
 @media(min-width:640px){
   .data-grid{grid-template-columns:repeat(4,1fr)}
