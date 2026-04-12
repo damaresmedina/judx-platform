@@ -388,6 +388,11 @@ function InvestorContent() {
               <div className="fq-mark">{"\u201C"}</div>
               <p className="fq-text">If the structure makes sense, we can look at numbers in detail.</p>
             </div>
+            <div className="inv-cta-final">
+              <button className="invest-btn" onClick={() => { setCalcOpen(true); document.body.style.overflow = 'hidden' }}>
+                I want to invest →
+              </button>
+            </div>
           </div>
 
           <footer className="inv-footer">
@@ -395,15 +400,6 @@ function InvestorContent() {
             <div className="foot-conf">Confidential · {investorName} · Not for distribution</div>
           </footer>
         </div>
-
-        {/* STICKY INVEST BUTTON */}
-        {fadeIn && (
-          <div className="inv-bar">
-            <button className="invest-btn" onClick={() => { setCalcOpen(true); document.body.style.overflow = 'hidden' }}>
-              I want to invest →
-            </button>
-          </div>
-        )}
 
         {/* CALCULATOR OVERLAY */}
         <div
@@ -596,7 +592,7 @@ const investorStyles = `
 .fq-text{font-family:'Playfair Display',serif;font-size:clamp(1rem,2.5vw,1.15rem);font-style:italic;color:var(--gold);line-height:1.7;position:relative;z-index:1}
 
 /* ── INVEST BAR ── */
-.inv-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(to top,var(--navy) 60%,transparent);padding:1.2rem 1.5rem .9rem;display:flex;justify-content:center}
+.inv-cta-final{margin-top:2rem;display:flex;justify-content:center}
 .invest-btn{background:var(--gold);color:var(--navy);border:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;padding:.95rem 2.5rem;cursor:pointer;transition:background .2s,transform .1s;width:100%;max-width:420px}
 .invest-btn:hover{background:var(--gold2)}
 .invest-btn:active{transform:scale(.98)}

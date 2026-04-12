@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "JudX — Investor Brief",
   description: "Judicial Intelligence Infrastructure — Confidential",
-  robots: { index: false, follow: false },
+  robots: { index: false, follow: true },
   openGraph: {
     title: "JudX — Investor Brief",
     description: "Judicial Intelligence Infrastructure — Confidential",
