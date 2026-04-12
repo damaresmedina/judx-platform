@@ -47,8 +47,11 @@ export default function AdminPage() {
       setTokens(d.tokens || [])
       setLogs(d.logs || [])
       setAuthed(true)
+      setError('')
     } else {
-      setError('Senha incorreta')
+      const d = await r.json().catch(() => ({}))
+      if (d.error === 'rate_limited') setError('Muitas tentativas. Aguarde 15 minutos.')
+      else setError('Senha incorreta')
     }
   }
 
@@ -96,9 +99,12 @@ export default function AdminPage() {
           <div className="ap-center">
             <div className="ap-logo">Jud<span>X</span></div>
             <div className="ap-sub">ADMIN</div>
-            <input type="password" className="ap-input" placeholder="Senha" value={pass}
-              onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} autoFocus />
-            <button className="ap-btn" onClick={login}>Entrar</button>
+            <form onSubmit={e => { e.preventDefault(); login() }} autoComplete="on">
+              <input type="text" name="username" autoComplete="username" value="admin" readOnly hidden />
+              <input type="password" name="password" className="ap-input" placeholder="Senha" value={pass}
+                onChange={e => setPass(e.target.value)} autoComplete="current-password" autoFocus />
+              <button type="submit" className="ap-btn">Entrar</button>
+            </form>
             {error && <div className="ap-err">{error}</div>}
           </div>
         </div>

@@ -6,16 +6,49 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const ADMIN_PASS = process.env.ADMIN_PASS || 'judx-admin-2026'
+const ADMIN_PASS = process.env.ADMIN_PASS!
 
-function auth(req: NextRequest): boolean {
-  const p = req.nextUrl.searchParams.get('p') || req.headers.get('x-admin-pass')
-  return p === ADMIN_PASS
+function getIp(req: NextRequest): string {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '0.0.0.0'
+}
+
+async function isRateLimited(ip: string): Promise<boolean> {
+  const since = new Date(Date.now() - 15 * 60 * 1000).toISOString() // 15 min window
+  const { count } = await supabase
+    .from('admin_login_attempts')
+    .select('*', { count: 'exact', head: true })
+    .eq('ip', ip)
+    .eq('success', false)
+    .gte('attempted_at', since)
+  return (count || 0) >= 5
+}
+
+async function logAttempt(ip: string, success: boolean) {
+  await supabase.from('admin_login_attempts').insert({ ip, success })
+}
+
+async function auth(req: NextRequest): Promise<{ ok: boolean; limited?: boolean }> {
+  const ip = getIp(req)
+
+  if (await isRateLimited(ip)) {
+    return { ok: false, limited: true }
+  }
+
+  const pass = req.headers.get('x-admin-pass')
+  if (!pass || pass !== ADMIN_PASS) {
+    if (pass) await logAttempt(ip, false) // só loga se tentou com senha
+    return { ok: false }
+  }
+
+  await logAttempt(ip, true)
+  return { ok: true }
 }
 
 // GET — listar tokens + logs
 export async function GET(req: NextRequest) {
-  if (!auth(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const a = await auth(req)
+  if (a.limited) return NextResponse.json({ error: 'rate_limited', message: 'Too many attempts. Wait 15 minutes.' }, { status: 429 })
+  if (!a.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const { data: tokens } = await supabase
     .from('investor_tokens')
@@ -31,14 +64,15 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ tokens, logs })
 }
 
-// POST — criar, revogar, resetar, deletar
+// POST — criar, revogar, resetar, deletar, atualizar
 export async function POST(req: NextRequest) {
-  if (!auth(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const a = await auth(req)
+  if (a.limited) return NextResponse.json({ error: 'rate_limited' }, { status: 429 })
+  if (!a.ok) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const body = await req.json()
   const { action } = body
 
-  // Criar token
   if (action === 'create') {
     const { name, amount, lang, days } = body
     const token = name.toLowerCase().replace(/[^a-z0-9-]/g, '')
@@ -63,19 +97,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, token, url: `judx.com.br/proposal/${token}` })
   }
 
-  // Revogar
   if (action === 'revoke') {
     await supabase.from('investor_tokens').update({ is_revoked: true }).eq('token', body.token)
     return NextResponse.json({ ok: true })
   }
 
-  // Ativar (desfazer revogação)
   if (action === 'activate') {
     await supabase.from('investor_tokens').update({ is_revoked: false }).eq('token', body.token)
     return NextResponse.json({ ok: true })
   }
 
-  // Resetar IP
   if (action === 'reset') {
     await supabase.from('investor_tokens').update({
       locked_ip: null, locked_at: null, locked_user_agent: null,
@@ -85,14 +116,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
-  // Deletar
   if (action === 'delete') {
     await supabase.from('investor_access_log').delete().eq('token', body.token)
     await supabase.from('investor_tokens').delete().eq('token', body.token)
     return NextResponse.json({ ok: true })
   }
 
-  // Atualizar campos
   if (action === 'update') {
     const updates: Record<string, unknown> = {}
     if (body.lang) updates.lang = body.lang

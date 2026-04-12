@@ -6,10 +6,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const ADMIN_PASS = process.env.ADMIN_PASS || 'judx-admin-2026'
+const ADMIN_PASS = process.env.ADMIN_PASS!
 
 export async function GET(req: NextRequest) {
-  const pass = req.nextUrl.searchParams.get('p')
+  const pass = req.headers.get('x-admin-pass') || req.nextUrl.searchParams.get('p')
   const tokenName = req.nextUrl.searchParams.get('token')
 
   if (pass !== ADMIN_PASS || !tokenName) {
