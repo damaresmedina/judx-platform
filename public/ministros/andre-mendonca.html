@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Ministro · JudX</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1525;--navy2:#0d1f35;--navy3:#112a4a;--gold:#c8922a;--goldL:#e8b84b;--goldD:rgba(200,146,42,0.15);--red:#e05252;--txt:#e8f0f8;--mut:#6a8aa5;--dim:#3a5a74;--glass:rgba(15,30,50,0.7);--gbrd:rgba(200,146,42,0.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:var(--txt);font-family:'DM Sans',sans-serif;line-height:1.6;overflow-x:hidden}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;border-bottom:1px solid var(--gbrd);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;background:rgba(10,21,37,0.95)}
+.hdr a{text-decoration:none}
+.hdr .logo-judx{color:var(--gold);font-size:.75rem;letter-spacing:.18em;font-weight:700;text-transform:uppercase}
+.hdr .logo-sub{color:var(--mut);font-size:.6rem;letter-spacing:.1em;font-weight:400;margin-left:.3rem}
+.hdr .back{color:var(--mut);font-size:.78rem}
+.hdr .back:hover{color:var(--gold)}
+
+.hero{display:grid;grid-template-columns:140px 1fr;gap:2.5rem;padding:3rem 2.5rem;border-bottom:1px solid var(--gbrd);background:linear-gradient(180deg,rgba(15,25,45,1),var(--navy))}
+.photo{width:140px;height:140px;border-radius:50%;overflow:hidden;border:3px solid rgba(200,146,42,.35);box-shadow:0 0 40px rgba(200,146,42,.1)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+.hname{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;margin-bottom:.3rem}
+.hrole{color:var(--mut);font-size:.82rem;margin-bottom:.5rem}
+.hdet{color:var(--dim);font-size:.78rem}
+
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 2rem 4rem}
+
+.camada{margin-bottom:2.5rem;animation:fadeUp .4s ease both}
+.camada-hdr{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:.6rem;border-bottom:1px solid var(--gbrd);margin-bottom:1rem}
+.camada-hdr h2{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold)}
+.camada-hdr .taxa{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:700}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:1.2rem}
+.st{background:var(--glass);border:1px solid var(--gbrd);padding:.8rem;border-radius:6px}
+.st .l{color:var(--mut);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.2rem}
+.st .v{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500}
+
+.bar-row{display:flex;align-items:center;gap:.6rem;margin-bottom:4px}
+.bar-label{width:110px;font-size:.7rem;color:var(--mut);text-align:right;flex-shrink:0;font-family:'DM Mono',monospace}
+.bar-track{flex:1;height:22px;background:rgba(255,255,255,.02);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 8px}
+.bar-fill span{font-family:'DM Mono',monospace;font-size:.62rem;color:#fff;white-space:nowrap}
+.bar-n{width:60px;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--dim);text-align:right;flex-shrink:0}
+
+.nota{background:rgba(200,146,42,.04);border-left:3px solid rgba(200,146,42,.3);padding:1rem 1.2rem;margin-top:2rem;font-size:.78rem;color:var(--mut);line-height:1.7}
+
+.ftr{border-top:1px solid var(--gbrd);padding:1.2rem 2rem;display:flex;justify-content:space-between;color:var(--dim);font-size:.65rem;letter-spacing:.08em}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;text-align:center;justify-items:center;gap:1rem;padding:2rem 1.2rem}
+  .photo{width:100px;height:100px}.hname{font-size:1.5rem}
+  .wrap{padding:1.5rem 1rem 3rem}.stats{grid-template-columns:repeat(2,1fr)}
+  .bar-label{width:80px;font-size:.6rem}
+  .ftr{flex-direction:column;gap:.3rem;text-align:center}
+  .hdr{padding:.8rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <a href="/linha-sucessoria"><span class="logo-judx">JUDX</span><span class="logo-sub">· Inteligência Jurisprudencial</span></a>
+  <a href="/linha-sucessoria" class="back">&#8592; Linha Sucessória</a>
+</header>
+
+<section class="hero">
+  <div class="photo"><img id="foto" src="" alt=""></div>
+  <div>
+    <h1 class="hname" id="nome"></h1>
+    <div class="hrole" id="role"></div>
+    <div class="hdet" id="hdet"></div>
+  </div>
+</section>
+
+<div class="wrap" id="content">
+  <div style="text-align:center;padding:3rem;color:var(--mut)">Carregando dados...</div>
+</div>
+
+<footer class="ftr">
+  <span>&copy; 2026 JudX. Todos os direitos reservados.</span>
+  <span>Fonte: Corte Aberta STF &middot; 2.927.525 decis&otilde;es &middot; 2000&ndash;2026</span>
+</footer>
+
+<script>
+var SUPA='https://ejwyguskoiraredinqmb.supabase.co';
+var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
+
+var META={
+  'andre-mendonca':{nome:'Andr\u00e9 Mendon\u00e7a',turma:'2\u00aa Turma',posse:2021,foto:'/ministros/andre.jpg'},
+  'nunes-marques':{nome:'Nunes Marques',turma:'1\u00aa Turma',posse:2020,foto:'/ministros/nunes.jpg'},
+  'fux':{nome:'Luiz Fux',turma:'1\u00aa Turma',posse:2011,foto:'/ministros/fux.jpg'},
+  'gilmar-mendes':{nome:'Gilmar Mendes',turma:'2\u00aa Turma',posse:2002,foto:'/ministros/gilmar.jpg'},
+  'carmen-lucia':{nome:'C\u00e1rmen L\u00facia',turma:'2\u00aa Turma',posse:2006,foto:'/ministros/carmen.jpg'},
+  'toffoli':{nome:'Dias Toffoli',turma:'1\u00aa Turma',posse:2009,foto:'/ministros/toffoli.jpg'},
+  'moraes':{nome:'Alexandre de Moraes',turma:'1\u00aa Turma',posse:2017,foto:'/ministros/moraes.jpg'},
+  'fachin':{nome:'Edson Fachin',turma:'1\u00aa Turma',posse:2015,foto:'/ministros/fachin.jpg'},
+  'dino':{nome:'Fl\u00e1vio Dino',turma:'1\u00aa Turma',posse:2024,foto:'/ministros/dino.jpg'},
+  'zanin':{nome:'Cristiano Zanin',turma:'2\u00aa Turma',posse:2023,foto:'/ministros/zanin.jpg'}
+};
+
+var CAMADA_NOME={presidencia:'Presid\u00eancia',relator_mono:'Relator \u2014 Monocr\u00e1tica',turma:'Turma',plenario:'Plen\u00e1rio'};
+var CAMADA_ORDEM=['presidencia','relator_mono','turma','plenario'];
+
+var CORES={provido:'var(--gold)',parcial:'#7b9cc4',nao_provido:'var(--dim)',nao_conhecido:'var(--red)',prejudicado:'#6b5b3e',deferido:'#4a8a6a',indeferido:'#8a4a4a',sobrestado:'#555',outro:'#444'};
+var LABELS={provido:'Provido',parcial:'Parcial',nao_provido:'N\u00e3o provido',nao_conhecido:'N\u00e3o conhecido',prejudicado:'Prejudicado',deferido:'Deferido',indeferido:'Indeferido',sobrestado:'Sobrestado',outro:'Outro'};
+
+var slug=location.pathname.split('/').filter(Boolean).pop().replace('.html','');
+var m=META[slug];
+if(!m){document.getElementById('content').innerHTML='<p style="text-align:center;padding:3rem;color:var(--red)">Ministro n\u00e3o encontrado.</p>';throw new Error('slug not found');}
+
+document.getElementById('pageTitle').textContent=m.nome+' \u00b7 Perfil Decis\u00f3rio \u00b7 JudX';
+document.getElementById('nome').textContent=m.nome;
+document.getElementById('role').textContent=m.turma+' \u00b7 STF \u00b7 Posse em '+m.posse;
+document.getElementById('foto').src=m.foto;
+document.getElementById('foto').alt=m.nome;
+
+fetch(SUPA+'/rest/v1/ministro_card?slug=eq.'+slug+'&select=*',{
+  headers:{apikey:KEY,Authorization:'Bearer '+KEY}
+}).then(function(r){return r.json()}).then(function(rows){
+  if(!rows.length){document.getElementById('content').innerHTML='<p style="text-align:center;padding:3rem;color:var(--red)">Sem dados.</p>';return;}
+
+  var totalGeral=0;
+  rows.forEach(function(r){totalGeral+=r.total;});
+  document.getElementById('hdet').textContent=totalGeral.toLocaleString('pt-BR')+' decis\u00f5es no Corte Aberta (2000\u20132026)';
+
+  var html='';
+  CAMADA_ORDEM.forEach(function(cam){
+    var r=rows.find(function(x){return x.camada===cam;});
+    if(!r)return;
+
+    var taxaCor=parseFloat(r.taxa_provimento)>5?'var(--gold)':'var(--red)';
+    html+='<div class="camada" style="animation-delay:'+(CAMADA_ORDEM.indexOf(cam)*0.1)+'s">';
+    html+='<div class="camada-hdr"><h2>'+CAMADA_NOME[cam]+'</h2><div class="taxa" style="color:'+taxaCor+'">'+r.taxa_provimento+'% provimento</div></div>';
+
+    html+='<div class="stats">';
+    html+='<div class="st"><div class="l">Total</div><div class="v">'+r.total.toLocaleString('pt-BR')+'</div></div>';
+    html+='<div class="st"><div class="l">Providos</div><div class="v" style="color:var(--gold)">'+r.providos.toLocaleString('pt-BR')+'</div></div>';
+    html+='<div class="st"><div class="l">N\u00e3o providos</div><div class="v" style="color:var(--dim)">'+r.nao_providos.toLocaleString('pt-BR')+'</div></div>';
+    html+='<div class="st"><div class="l">N\u00e3o conhecidos</div><div class="v" style="color:var(--red)">'+r.nao_conhecidos.toLocaleString('pt-BR')+'</div></div>';
+    html+='<div class="st"><div class="l">Prejudicados</div><div class="v">'+r.prejudicados.toLocaleString('pt-BR')+'</div></div>';
+    html+='<div class="st"><div class="l">Sobrestados</div><div class="v">'+r.sobrestados.toLocaleString('pt-BR')+'</div></div>';
+    html+='</div>';
+
+    // Barras proporcionais
+    var cats=['provido','parcial','nao_provido','nao_conhecido','prejudicado','deferido','indeferido','sobrestado','outro'];
+    var maxN=r.total;
+    cats.forEach(function(cat){
+      var n=r[cat==='provido'?'providos':cat==='parcial'?'parciais':cat==='nao_provido'?'nao_providos':cat==='nao_conhecido'?'nao_conhecidos':cat==='prejudicado'?'prejudicados':cat==='deferido'?'deferidos':cat==='indeferido'?'indeferidos':cat==='sobrestado'?'sobrestados':'outros'];
+      if(n===0)return;
+      var pct=(n/maxN*100).toFixed(1);
+      var w=Math.max(n/maxN*100,2);
+      html+='<div class="bar-row">';
+      html+='<div class="bar-label">'+LABELS[cat]+'</div>';
+      html+='<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+CORES[cat]+'"><span>'+(parseFloat(pct)>3?pct+'%':'')+'</span></div></div>';
+      html+='<div class="bar-n">'+n.toLocaleString('pt-BR')+'</div>';
+      html+='</div>';
+    });
+
+    html+='</div>';
+  });
+
+  html+='<div class="nota">';
+  html+='<strong>Metodologia:</strong> Taxa de provimento = providos / total de decis\u00f5es na camada (universo completo). ';
+  html+='Dados da Corte Aberta STF (2.927.525 decis\u00f5es, 2000\u20132026). ';
+  html+='Cada decis\u00e3o \u00e9 classificada pelo \u00f3rg\u00e3o julgador registrado no Corte Aberta. ';
+  html+='Presidente do STF na data de cada decis\u00e3o identificado via composi\u00e7\u00e3o temporal auditada.';
+  html+='</div>';
+
+  document.getElementById('content').innerHTML=html;
+}).catch(function(e){
+  console.error(e);
+  document.getElementById('content').innerHTML='<p style="text-align:center;padding:3rem;color:var(--red)">Erro ao carregar dados.</p>';
+});
+</script>
+</body>
+</html>

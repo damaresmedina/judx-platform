@@ -152,7 +152,7 @@ function render(){
       var idx=DATA.indexOf(m);
       var shortPres=m.ind?(m.ind.split(' ').pop()):'';
       var isLink=!!m.slug;
-      var openTag=isLink?'<a href="/taxa_provimento/'+m.slug+'.html"':'<div';
+      var openTag=isLink?'<a href="/ministros/'+m.slug+'.html"':'<div';
       var closeTag=isLink?'</a>':'</div>';
       h+=openTag+' class="mr'+(m.atual?' at':'')+'" data-i="'+idx+'" style="animation:fadeUp .3s ease '+(i*0.02)+'s both;border-left:3px solid '+(m.atual?'var(--gold)':m.cor)+'">'
         +'<div class="md" style="background:'+m.cor+'"></div>'

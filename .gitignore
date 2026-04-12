@@ -40,3 +40,4 @@ data/raw/
 
 .vercel
 .claude/settings.local.json
+docs/env.local
