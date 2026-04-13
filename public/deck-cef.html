@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JudX — CEF</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@page{size:A4;margin:0}
+body{background:#fff;color:#1a1a2e;font-family:'DM Sans',sans-serif;font-size:11px;line-height:1.6}
+.page{width:210mm;min-height:297mm;padding:22mm 24mm;page-break-after:always;position:relative}
+.page:last-child{page-break-after:auto}
+
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm}
+.logo{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#1a1a2e}
+.logo span{color:#c8922a}
+.hdr-r{text-align:right;font-size:7.5px;color:#999;letter-spacing:.12em;text-transform:uppercase;line-height:1.8}
+
+h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:#1a1a2e;line-height:1.2;margin-bottom:3mm}
+h1 em{color:#c8922a;font-style:italic}
+h2{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:#c8922a;margin:5mm 0 2mm}
+.secn{font-family:'DM Mono',monospace;font-size:7.5px;color:#c8922a;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1mm}
+.lead{font-size:12px;color:#555;margin-bottom:5mm;line-height:1.5}
+.quote{font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:#1a1a2e;border-left:3px solid #c8922a;padding:3mm 4mm;margin:4mm 0;background:#faf8f5}
+
+table{width:100%;border-collapse:collapse;margin:2mm 0 4mm;font-size:9.5px}
+th{background:#1a1a2e;color:#c8922a;padding:2mm 3mm;text-align:left;font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+td{padding:1.8mm 3mm;border-bottom:1px solid #eee}
+tr:nth-child(even){background:#fafafa}
+td.n{text-align:right;font-family:'DM Mono',monospace;font-size:9px}
+td.b{font-weight:700}
+td.g{color:#c8922a;text-align:right;font-family:'DM Mono',monospace;font-size:9px}
+td.r{color:#d44;text-align:right;font-family:'DM Mono',monospace;font-size:9px}
+
+.hero{display:flex;gap:10mm;margin:6mm 0 8mm;justify-content:center}
+.hn{text-align:center;padding:4mm 6mm;border:1px solid #eee;border-radius:4px;min-width:35mm}
+.hn-v{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:#c8922a}
+.hn-l{font-family:'DM Mono',monospace;font-size:7px;color:#999;letter-spacing:.12em;text-transform:uppercase;margin-top:1mm}
+.hn-s{font-size:7px;color:#bbb}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.highlight{background:#faf8f5;border-left:3px solid #c8922a;padding:3mm 4mm;margin:3mm 0;font-size:9.5px;color:#444}
+.small{font-size:8.5px;color:#888;margin-top:1mm}
+
+.bar-row{display:flex;align-items:center;gap:2mm;margin-bottom:1.5mm}
+.bar-lbl{width:30mm;font-size:8px;color:#888;text-align:right;font-family:'DM Mono',monospace}
+.bar-trk{flex:1;height:5mm;background:#f0f0f0;border-radius:1mm;overflow:hidden}
+.bar-fill{height:100%;border-radius:1mm;background:#c8922a;display:flex;align-items:center;padding:0 2mm}
+.bar-fill span{font-family:'DM Mono',monospace;font-size:7px;color:#fff;white-space:nowrap}
+
+.ftr{position:absolute;bottom:10mm;left:24mm;right:24mm;display:flex;justify-content:space-between;font-size:6.5px;color:#ccc;letter-spacing:.08em;text-transform:uppercase;border-top:1px solid #eee;padding-top:2mm}
+
+ul{padding-left:5mm;font-size:10px;line-height:2}
+ul li::marker{color:#c8922a}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: Cover -->
+<div class="page">
+  <div class="hdr">
+    <div class="logo">Jud<span>X</span></div>
+    <div class="hdr-r">Confidencial<br>Abril 2026<br>judx.com.br</div>
+  </div>
+
+  <div style="margin-top:18mm">
+    <div class="secn">Diagnóstico institucional</div>
+    <h1 style="font-size:28px">Caixa Econômica Federal<br><em>no sistema judiciário brasileiro</em></h1>
+    <p class="lead">954.243 processos pendentes. 625 mil no polo passivo. Mas o problema não é o volume.</p>
+  </div>
+
+  <div class="hero" style="margin-top:12mm">
+    <div class="hn"><div class="hn-v">954K</div><div class="hn-l">Pendentes</div><div class="hn-s">todos os tribunais</div></div>
+    <div class="hn"><div class="hn-v">625K</div><div class="hn-l">Polo passivo</div><div class="hn-s">onde a CEF é ré</div></div>
+    <div class="hn"><div class="hn-v">329K</div><div class="hn-l">Polo ativo</div><div class="hn-s">onde a CEF cobra</div></div>
+    <div class="hn"><div class="hn-v">543K</div><div class="hn-l">Novos/ano</div><div class="hn-s">entrada contínua</div></div>
+  </div>
+
+  <div class="quote" style="margin-top:12mm">
+    O CNJ mostra que a Caixa tem quase 1 milhão de processos.<br>
+    Mas isso não responde a pergunta mais importante:<br>
+    <strong>onde está o risco real.</strong>
+  </div>
+
+  <div style="margin-top:10mm">
+    <div class="secn">O problema</div>
+    <p style="font-size:11px;color:#333;line-height:1.7">
+      Esses 625 mil processos passivos não são iguais. Eles têm resultados completamente distintos dependendo do órgão, da matéria e do padrão decisório. Um único órgão pode concentrar milhares de processos — mas com resultados completamente diferentes.
+    </p>
+    <p style="font-size:11px;color:#333;line-height:1.7;margin-top:3mm">
+      <strong>Por exemplo:</strong> o 2º JEF de Vitória tem mais de 11 mil processos da Caixa. Mas a pergunta relevante não é quantos são. É: <strong>quantos a Caixa perde ali — e por quê?</strong>
+    </p>
+  </div>
+
+  <div class="quote" style="margin-top:8mm">
+    O CNJ mostra o volume. A JudX mostra o comportamento.
+  </div>
+
+  <div class="ftr">
+    <span>&copy; 2026 JudX. Todos os direitos reservados.</span>
+    <span>Fonte: CNJ Grandes Litigantes (fev/2026) &middot; Corte Aberta STF</span>
+  </div>
+</div>
+
+<!-- PAGE 2: Polo ativo -->
+<div class="page">
+  <div class="hdr">
+    <div class="logo">Jud<span>X</span></div>
+    <div class="hdr-r">CEF &middot; Polo ativo<br>Onde a Caixa cobra</div>
+  </div>
+
+  <div class="secn">01 — POLO ATIVO</div>
+  <h1>329.069 pendentes <em>· 99.028 novos/ano</em></h1>
+  <p class="lead">A Caixa litiga ativamente em três frentes: Justiça Federal (94%), Trabalho e Estadual.</p>
+
+  <h2>Justiça Federal — 309K pendentes (94% do polo ativo)</h2>
+  <table>
+    <tr><th>Tribunal</th><th>Região</th><th style="text-align:right">Pendentes</th><th style="text-align:right">Novos</th></tr>
+    <tr><td class="b">TRF3</td><td>SP/MS</td><td class="n b">90.347</td><td class="n">—</td></tr>
+    <tr><td class="b">TRF1</td><td>DF + 13 UFs</td><td class="n b">88.084</td><td class="n">—</td></tr>
+    <tr><td class="b">TRF4</td><td>Sul</td><td class="n b">45.949</td><td class="n">—</td></tr>
+    <tr><td class="b">TRF6</td><td>MG</td><td class="n b">39.066</td><td class="n">—</td></tr>
+    <tr><td>TRF2</td><td>RJ/ES</td><td class="n">27.285</td><td class="n">—</td></tr>
+    <tr><td>TRF5</td><td>Nordeste</td><td class="n">18.634</td><td class="n">—</td></tr>
+  </table>
+
+  <h2>Justiça do Trabalho — 12.357 pendentes</h2>
+  <div class="highlight">
+    6.092 novos só no G2. A Caixa está <strong>aumentando</strong> litigância trabalhista ativa.<br>
+    TST: 7.011 pendentes, 775 novos — acervo estável, não cresce.
+  </div>
+
+  <div class="ftr">
+    <span>&copy; 2026 JudX</span>
+    <span>Fonte: CNJ Grandes Litigantes (fev/2026)</span>
+  </div>
+</div>
+
+<!-- PAGE 3: Polo passivo -->
+<div class="page">
+  <div class="hdr">
+    <div class="logo">Jud<span>X</span></div>
+    <div class="hdr-r">CEF &middot; Polo passivo<br>Onde a Caixa é processada</div>
+  </div>
+
+  <div class="secn">02 — POLO PASSIVO</div>
+  <h1>625.174 pendentes <em>· 444.422 novos/ano</em></h1>
+  <p class="lead">Justiça Federal concentra 513K (82%). Os órgãos de maior risco são identificáveis.</p>
+
+  <h2>Justiça Federal — 513K pendentes</h2>
+  <table>
+    <tr><th>Tribunal</th><th>Região</th><th style="text-align:right">Pendentes</th><th style="text-align:right">Novos/ano</th><th style="text-align:right">Renovação</th></tr>
+    <tr><td class="b">TRF1</td><td>DF + 13 UFs</td><td class="n b">141.067</td><td class="n" style="color:#d44">111.869</td><td class="r">Alta</td></tr>
+    <tr><td class="b">TRF3</td><td>SP/MS</td><td class="n b">118.109</td><td class="n">—</td><td class="n">—</td></tr>
+    <tr><td class="b">TRF4</td><td>Sul</td><td class="n b">74.595</td><td class="n">—</td><td class="n">—</td></tr>
+    <tr><td class="b">TRF6</td><td>MG</td><td class="n b">66.003</td><td class="n">—</td><td class="n">—</td></tr>
+    <tr><td>TRF5</td><td>Nordeste</td><td class="n">58.249</td><td class="n">—</td><td class="n">—</td></tr>
+    <tr><td>TRF2</td><td>RJ/ES</td><td class="n">55.197</td><td class="n">—</td><td class="n">—</td></tr>
+  </table>
+
+  <h2>Órgãos de maior risco concentrado</h2>
+  <table>
+    <tr><th>Órgão</th><th>Tribunal</th><th style="text-align:right">Pendentes</th><th>Observação</th></tr>
+    <tr><td class="b">2º JEF Vitória</td><td>TRF2</td><td class="n b" style="color:#d44">11.405</td><td>Uma única vara com exposição gigante</td></tr>
+    <tr><td class="b">5ª TR Porto Alegre</td><td>TRF4</td><td class="n b" style="color:#d44">9.305</td><td>Seguro Habitacional e FGTS</td></tr>
+    <tr><td class="b">JEF Seg. Habitacional Recife</td><td>TRF5</td><td class="n b">4.695</td><td>Matéria específica</td></tr>
+    <tr><td class="b">Juizados Manaus (2 varas)</td><td>TRF1</td><td class="n b" style="color:#d44">8.253</td><td>10.586 novos combinados — explosivo</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Trabalho:</strong> 33.635 pendentes passivos, mas 28.703 novos. Está <strong>crescendo</strong>.<br>
+    <strong>TST Presidência:</strong> 2.875 pendentes, 4.077 novos — recebe mais do que consegue processar.
+  </div>
+
+  <div class="ftr">
+    <span>&copy; 2026 JudX</span>
+    <span>Fonte: CNJ Grandes Litigantes (fev/2026)</span>
+  </div>
+</div>
+
+<!-- PAGE 4: STF + O que falta -->
+<div class="page">
+  <div class="hdr">
+    <div class="logo">Jud<span>X</span></div>
+    <div class="hdr-r">CEF &middot; STF<br>196.846 processos mapeados</div>
+  </div>
+
+  <div class="secn">03 — CEF NO SUPREMO TRIBUNAL FEDERAL</div>
+  <h1>196.846 processos <em>· 2000–2026</em></h1>
+
+  <div class="cols2">
+    <div>
+      <h2>Perfil</h2>
+      <table>
+        <tr><th>Dado</th><th style="text-align:right">Valor</th></tr>
+        <tr><td>CEF polo ativo (recorre)</td><td class="n b">140.938 (72%)</td></tr>
+        <tr><td>CEF polo passivo</td><td class="n">54.460 (28%)</td></tr>
+        <tr><td>Classe AI + RE</td><td class="n">96% recursal</td></tr>
+        <tr><td>Decisões monocráticas</td><td class="n">92%</td></tr>
+        <tr><td>Taxa de provimento</td><td class="g b">~19%</td></tr>
+        <tr><td>Média STF</td><td class="n">3,7%</td></tr>
+      </table>
+      <div class="small">No STF, a CEF inverte o padrão: é autora em 72%.<br>Taxa de provimento 5× acima da média.</div>
+    </div>
+    <div>
+      <h2>Top relatores</h2>
+      <table>
+        <tr><th>Ministro</th><th style="text-align:right">Decisões</th></tr>
+        <tr><td>Celso de Mello</td><td class="n">25.326</td></tr>
+        <tr><td>Sepúlveda Pertence</td><td class="n">19.562</td></tr>
+        <tr><td>Nelson Jobim</td><td class="n">17.028</td></tr>
+        <tr><td>Ellen Gracie</td><td class="n">15.875</td></tr>
+        <tr><td>Moreira Alves</td><td class="n">15.423</td></tr>
+        <tr><td>Sydney Sanches</td><td class="n">15.352</td></tr>
+      </table>
+      <div class="small">UF líder: MG (50.230) &middot; RS (25.038) &middot; PR (23.723)</div>
+    </div>
+  </div>
+
+  <div style="margin-top:8mm">
+    <div class="secn">04 — O QUE ESSES NÚMEROS NÃO DIZEM</div>
+    <h2>É exatamente o que a Caixa precisa saber — e hoje não sabe</h2>
+    <div class="cols2">
+      <div>
+        <ul>
+          <li>Qual a taxa de procedência <strong>por órgão</strong>?</li>
+          <li>Qual o valor médio de condenação <strong>por tipo de ação</strong>?</li>
+          <li>Onde está o <strong>risco concentrado real</strong>?</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li>Quais temas estão crescendo com <strong>tendência de derrota</strong>?</li>
+          <li>Qual ministro-relator tem qual <strong>padrão decisório</strong> para a CEF?</li>
+          <li>Onde a CEF <strong>ganha</strong> e por quê?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:5mm">
+      Sem isso, todos os processos parecem iguais. E não são.<br>
+      A JudX transforma volume em padrão decisório.<br>
+      <strong>E isso permite à Caixa antecipar risco — e decidir melhor antes da condenação.</strong>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <span>&copy; 2026 JudX</span>
+    <span>Fonte: Corte Aberta STF (2.927.525 decisões) &middot; CNJ (fev/2026)</span>
+  </div>
+</div>
+
+<!-- PAGE 5: Oferta -->
+<div class="page">
+  <div class="hdr">
+    <div class="logo">Jud<span>X</span></div>
+    <div class="hdr-r">Proposta<br>judx.com.br</div>
+  </div>
+
+  <div class="secn">05 — O QUE O JUDX OFERECE</div>
+  <h1>A Caixa deixa de gerir volume.<br><em>Passa a gerir risco.</em></h1>
+
+  <div class="cols2" style="margin-top:6mm">
+    <div style="border:1px solid #eee;padding:4mm;border-radius:4px">
+      <h2 style="margin-top:0">Disponível hoje</h2>
+      <ul>
+        <li>196.846 processos da CEF no STF mapeados</li>
+        <li>Perfil por relator × resultado × classe</li>
+        <li>Mapa regional completo (todos os tribunais)</li>
+        <li>Unanimidade vs maioria em 237.806 decisões</li>
+        <li>Série temporal 2000–2026</li>
+        <li>CNJ Grandes Litigantes integrado</li>
+        <li>2,9M decisões STF estruturadas</li>
+      </ul>
+    </div>
+    <div style="border:1px solid #c8922a;padding:4mm;border-radius:4px;background:#faf8f5">
+      <h2 style="margin-top:0">Piloto CEF</h2>
+      <ul>
+        <li>Dashboard institucional customizado</li>
+        <li>Taxa de procedência por órgão</li>
+        <li>Valor médio de condenação por matéria</li>
+        <li>Cruzamento STF × STJ (2,6M processos)</li>
+        <li>Alertas de julgamento em tempo real</li>
+        <li>Integração com fluxos internos</li>
+        <li>Predição de resultado por combinação</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:12mm;text-align:center">
+    <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#1a1a2e">Damares <span style="color:#c8922a">Medina</span></div>
+    <div style="font-size:9px;color:#888;margin-top:2mm">Advogada constitucionalista · Pesquisadora do STF (25+ anos)</div>
+    <div style="font-size:9px;color:#888">Fundadora, Instituto Constituição Aberta (ICONS) · Visiting Scholar, Milano-Bicocca</div>
+    <div style="font-size:9px;color:#888;margin-top:1mm"><em>Amicus Curiae</em> (2010) · <em>Repercussão Geral no STF</em> (Saraiva, 2015)</div>
+  </div>
+
+  <div style="margin-top:10mm;text-align:center">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:#c8922a;letter-spacing:.18em">JUDX.COM.BR</div>
+    <div style="font-size:7px;color:#ccc;margin-top:2mm;letter-spacing:.1em">CONFIDENCIAL · NÃO DISTRIBUIR</div>
+  </div>
+
+  <div style="margin-top:8mm;text-align:center;font-size:7px;color:#ccc">
+    Dados: Corte Aberta STF (2.927.525 decisões) · CNJ Grandes Litigantes (fev/2026) · DataJud CNJ<br>
+    Fonte oficial: portal.stf.jus.br · datajud.cnj.jus.br · justica-em-numeros.cnj.jus.br
+  </div>
+
+  <div class="ftr">
+    <span>&copy; 2026 JudX. Todos os direitos reservados.</span>
+    <span>Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</span>
+  </div>
+</div>
+
+</body>
+</html>

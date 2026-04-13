@@ -13,10 +13,11 @@ drop policy if exists "stf_partes_service"             on stf_partes;
 drop policy if exists "stf_incidente_raw_service"      on stf_incidente_raw;
 drop policy if exists "stf_repercussao_geral_service"  on stf_repercussao_geral;
 
-drop table if exists stf_decisions         cascade;
-drop table if exists stf_partes            cascade;
-drop table if exists stf_incidente_raw     cascade;
-drop table if exists stf_repercussao_geral cascade;
+-- GUARD: NUNCA dropar tabelas com dados. Migration já aplicada em 27/mar/2026.
+-- drop table if exists stf_decisions         cascade;
+-- drop table if exists stf_partes            cascade;
+-- drop table if exists stf_incidente_raw     cascade;
+-- drop table if exists stf_repercussao_geral cascade;
 
 -- ---------------------------------------------------------
 -- 2. stf_decisoes — decisões brutas (fonte: 372e + e7a4)

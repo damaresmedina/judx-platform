@@ -6,9 +6,11 @@
 -- stf_partes_completo: 1.153.635 processos (portal 9col + Corte Aberta)
 -- stf_master_premium: observação do andamento (campo pesado, consulta pontual)
 
-DROP TABLE IF EXISTS public.stf_master_premium CASCADE;
-DROP TABLE IF EXISTS public.stf_partes_completo CASCADE;
-DROP TABLE IF EXISTS public.stf_master CASCADE;
+-- GUARD: NUNCA dropar tabelas com dados. Migration já aplicada em 05/abr/2026.
+-- Se reaplicada, as 3 linhas abaixo estão comentadas para proteger os dados.
+-- DROP TABLE IF EXISTS public.stf_master_premium CASCADE;
+-- DROP TABLE IF EXISTS public.stf_partes_completo CASCADE;
+-- DROP TABLE IF EXISTS public.stf_master CASCADE;
 
 CREATE TABLE public.stf_master (
     id_fato_decisao bigint PRIMARY KEY,
