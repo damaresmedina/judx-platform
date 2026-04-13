@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JudX — Série Histórica STF · STJ · 1940–2023</title>
-<meta name="description" content="84 anos de dados. STF e STJ lado a lado. A Constituição de 1988, a explosão dos anos 2000 e a virada da repercussão geral.">
+<title>JudX — Série Histórica STF · STJ · 1940–2025</title>
+<meta name="description" content="86 anos de dados. STF e STJ lado a lado. A Constituição de 1988, a explosão dos anos 2000 e a virada da repercussão geral.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --navy: #0d1f35; --navy-light: #162d4a; --gold: #c8922a; --gold-light: #e8b44a;
   --cream: #f5f0e8; --cream-dark: #e8e0d0; --text: #1a1a2e; --muted: #6b7280; --white: #ffffff;
-  --stf: #c8922a; --stj: #4a9eca;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -36,11 +35,7 @@ nav { background: var(--navy); display: flex; justify-content: space-between; al
 .section-label::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gold); }
 .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; color: var(--navy); line-height: 1.15; max-width: 640px; margin-bottom: .75rem; }
 .section-desc { font-size: .95rem; color: var(--muted); line-height: 1.7; max-width: 560px; margin-bottom: 3rem; }
-.chart-legend { display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: .5rem; font-size: .78rem; font-weight: 500; color: var(--navy); }
-.legend-dot { width: 12px; height: 12px; border-radius: 2px; }
-.chart-wrap { position: relative; background: var(--white); border: 1px solid var(--cream-dark); padding: 1.5rem 1rem 1rem; overflow: hidden; }
-.chart-wrap canvas { width: 100% !important; height: auto !important; }
+.chart-wrap { position: relative; background: var(--white); border: 1px solid var(--cream-dark); padding: 2rem 1.5rem 1.5rem; overflow: hidden; width: 100%; }
 .chart-note { margin-top: 1rem; font-size: .68rem; color: var(--muted); font-family: 'DM Mono', monospace; letter-spacing: .05em; }
 .narrativas { background: var(--navy); padding: 5rem 4rem; position: relative; }
 .narrativas::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
@@ -89,36 +84,33 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="logo">Jud<span>X</span></a>
   <a href="/" class="nav-back">← Voltar</a>
 </nav>
 
-<!-- HERO -->
 <section class="page-hero">
   <div class="hero-label">Série histórica · STF · STJ · 1940–2025</div>
-  <h1>85 anos de<br><em>demanda</em> judicial.</h1>
+  <h1>86 anos de<br><em>demanda</em> judicial.</h1>
   <p>O que os números revelam sobre o sistema que criamos. A Constituição de 1988, a explosão dos planos econômicos, a repercussão geral de 2007 — e o que ainda está oculto.</p>
   <div class="hero-stats">
-    <div><div class="hstat-n">85</div><div class="hstat-l">Anos de dados</div></div>
+    <div><div class="hstat-n">86</div><div class="hstat-l">Anos de dados</div></div>
     <div><div class="hstat-n">1940</div><div class="hstat-l">Primeiro registro</div></div>
-    <div><div class="hstat-n">605k</div><div class="hstat-l">Pico STJ (2003)</div></div>
+    <div><div class="hstat-n">636k</div><div class="hstat-l">Pico STJ (2003)</div></div>
     <div><div class="hstat-n">160k</div><div class="hstat-l">Pico STF (2002)</div></div>
   </div>
 </section>
 
-<!-- GRÁFICO -->
 <section class="chart-section">
   <div class="section-label">O gráfico</div>
   <h2 class="section-title">Movimentação processual por ano</h2>
-  <p class="section-desc">Protocolados, distribuídos e julgados — STF desde 1940, STJ desde 1989. Clique na legenda para ativar ou desativar cada série.</p>
-  <div class="chart-legend" id="legend-container"></div>
-  <div class="chart-wrap" style="height:420px"><canvas id="grafico"></canvas></div>
-  <p class="chart-note">FONTE: Relatórios de Atividades do STF (1940–2018) · Corte Aberta STF (2019–2025) · Justiça em Números CNJ · DataJud CNJ</p>
+  <p class="section-desc">Protocolados e julgados — STF desde 1940, STJ desde 1989. Clique na legenda para ativar ou desativar cada série.</p>
+  <div class="chart-wrap">
+    <canvas id="grafico" style="display:block;width:100%;height:460px;"></canvas>
+  </div>
+  <p class="chart-note">FONTE: FIESP / Relatórios de Atividades do STF (1940–2023) · Corte Aberta STF (2024–2025) · STJ: dados 2024–2025 pendentes de atualização</p>
 </section>
 
-<!-- NARRATIVAS -->
 <section class="narrativas">
   <div class="section-label">Os momentos</div>
   <h2 class="section-title">Quatro inflexões que moldaram o sistema.</h2>
@@ -131,10 +123,10 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
       <div class="narr-stat">STF 1989: 56.182 → STF 1990: 18.564 · QUEDA DE 67%</div>
     </div>
     <div class="narr-card">
-      <div class="narr-ano">2000</div>
+      <div class="narr-ano">2002</div>
       <div class="narr-title">Planos econômicos, FGTS e a explosão</div>
       <div class="narr-text">Em 2002 o STF bateu 160.453 processos e o STJ chegou a 605.743. Os planos econômicos dos anos 80 e 90 — Cruzado, Bresser, Collor, Real — geraram litígios em série. O FGTS sozinho moveu centenas de milhares de ações que chegaram ao topo em cascata.</div>
-      <div class="narr-stat">STJ 2002: 605.743 · PICO HISTÓRICO DE TODA A SÉRIE</div>
+      <div class="narr-stat">STJ 2003: 636.272 · PICO HISTÓRICO DE TODA A SÉRIE</div>
     </div>
     <div class="narr-card">
       <div class="narr-ano">2007</div>
@@ -151,7 +143,6 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
   </div>
 </section>
 
-<!-- TEASER PREMIUM -->
 <section class="premium-teaser">
   <div class="teaser-inner">
     <div class="section-label">Área premium</div>
@@ -174,163 +165,171 @@ footer { background: #08131f; padding: 2rem 4rem; display: flex; justify-content
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">Jud<span>X</span> — Decoding Justice</div>
   <div class="footer-text">© 2026 JudX. Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</div>
 </footer>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3/dist/chartjs-plugin-annotation.min.js"></script>
 <script>
-// Dados: Relatórios de Atividades STF (1940-2018) · Corte Aberta (2019-2025) · Justiça em Números CNJ · DataJud CNJ
+// Fonte: FIESP / Relatórios de Atividades STF 1940–2023 · Corte Aberta STF 2024–2025
+// STJ: dados 1989–2023 (FIESP) · 2024–2025 pendentes
 const D = [
-  {a:1940,p:2419,d:2211,j:1807},{a:1941,p:2629,d:2503,j:2265},{a:1942,p:2496,d:2310,j:2447},
-  {a:1943,p:2480,d:2281,j:2355},{a:1944,p:2584,d:2324,j:2321},{a:1945,p:3422,d:2566,j:1860},
-  {a:1946,p:2415,d:2246,j:1819},{a:1947,p:2773,d:2430,j:2565},{a:1948,p:2729,d:2569,j:2988},
-  {a:1949,p:3335,d:3705,j:3269},{a:1950,p:3091,d:2938,j:3371},{a:1951,p:3305,d:3041,j:2917},
-  {a:1952,p:3956,d:3572,j:4197},{a:1953,p:4903,d:4623,j:4464},{a:1954,p:4710,d:4317,j:3933},
-  {a:1955,p:5015,d:4686,j:4146},{a:1956,p:6556,d:6379,j:4940},{a:1957,p:6597,d:6126,j:6174},
-  {a:1958,p:7114,d:7816,j:7302},{a:1959,p:6470,d:7440,j:8360},{a:1960,p:6504,d:5946,j:5747},
-  {a:1961,p:6751,d:6682,j:6886},{a:1962,p:7705,d:7628,j:7436},{a:1963,p:8216,d:8737,j:6881},
-  {a:1964,p:8960,d:8526,j:7849},{a:1965,p:8456,d:13929,j:6241},{a:1966,p:7378,d:7489,j:9175},
-  {a:1967,p:7614,d:7634,j:7879},{a:1968,p:8612,d:8778,j:9899},{a:1969,p:8023,d:10309,j:9954},
-  {a:1970,p:6367,d:6716,j:6486},{a:1971,p:5921,d:6006,j:6407},{a:1972,p:6253,d:6692,j:6523},
-  {a:1973,p:7093,d:7298,j:8049},{a:1974,p:7352,d:7854,j:7986},{a:1975,p:8775,d:9324,j:9083},
-  {a:1976,p:6877,d:6935,j:7565},{a:1977,p:7072,d:7485,j:7947},{a:1978,p:8146,d:7815,j:8848},
-  {a:1979,p:8277,d:8433,j:10051},{a:1980,p:9555,d:9308,j:9007},{a:1981,p:12494,d:12853,j:13371},
-  {a:1982,p:13648,d:13846,j:15117},{a:1983,p:14668,d:14528,j:15260},{a:1984,p:16386,d:15964,j:17780},
-  {a:1985,p:18206,d:17935,j:17798},{a:1986,p:22514,d:21015,j:22158},{a:1987,p:20430,d:18788,j:20122},
-  {a:1988,p:21328,d:18674,j:16313},
-  {a:1989,p:14721,d:6622,j:17432,stj:6103},{a:1990,p:18564,d:16226,j:16449,stj:36819},
-  {a:1991,p:18438,d:17567,j:14366,stj:40621},{a:1992,p:27447,d:26325,j:18236,stj:55748},
-  {a:1993,p:24377,d:23525,j:21737,stj:69610},{a:1994,p:24295,d:25868,j:28221,stj:83096},
-  {a:1995,p:27743,d:25385,j:34125,stj:101969},{a:1996,p:28134,d:23883,j:30829,stj:124163},
-  {a:1997,p:36490,d:34289,j:39944,stj:152529},{a:1998,p:52636,d:50273,j:51307,stj:269632},
-  {a:1999,p:68369,d:54437,j:56307,stj:308584},
-  {a:2000,p:105307,d:90839,j:86138,stj:485609},{a:2001,p:110771,d:89574,j:109692,stj:531000},
-  {a:2002,p:160453,d:87313,j:83097,stj:605743},{a:2003,p:87186,d:109965,j:107867,stj:636272},
-  {a:2004,p:83667,d:69171,j:101690,stj:492428},{a:2005,p:95212,d:79577,j:103700,stj:465451},
-  {a:2006,p:127535,d:116216,j:110284,stj:474680},{a:2007,p:119324,d:112938,j:159522,stj:336888},
-  {a:2008,p:100781,d:66873,j:104237,stj:358895},{a:2009,p:84369,d:42729,j:89355,stj:302639},
-  {a:2010,p:71670,d:41014,j:98529,stj:325690},{a:2011,p:64018,d:38019,j:93712,stj:293581},
-  {a:2012,p:72148,d:46392,j:84039,stj:298805},{a:2013,p:72072,d:44170,j:85000,stj:295130},
-  {a:2014,p:79943,d:57799,j:107964,stj:316756},
-  {a:2015,p:93560,d:65167,j:115542,stj:349837},{a:2016,p:89972,d:57382,j:117223,stj:380432},
-  {a:2017,p:102228,d:56262,j:126133,stj:407534},{a:2018,p:98311,d:55193,j:126433,stj:436271},
-  {a:2019,p:106203,stj:397977},{a:2020,p:100353,stj:369231},
-  {a:2021,p:86034,stj:378019},{a:2022,p:79394,stj:342811},{a:2023,p:77389,stj:341284},
-  {a:2024,p:115687},{a:2025,p:118091}
+  {a:1940,ps:2692,js:2657},{a:1941,ps:2880,js:2910},{a:1942,ps:3379,js:3408},
+  {a:1943,ps:3576,js:3467},{a:1944,ps:3553,js:3459},{a:1945,ps:3579,js:3445},
+  {a:1946,ps:4781,js:4512},{a:1947,ps:6051,js:5574},{a:1948,ps:6091,js:5888},
+  {a:1949,ps:6072,js:5779},{a:1950,ps:6404,js:6238},{a:1951,ps:6553,js:6233},
+  {a:1952,ps:6659,js:6474},{a:1953,ps:6756,js:6506},{a:1954,ps:6668,js:6441},
+  {a:1955,ps:6761,js:6520},{a:1956,ps:7079,js:6694},{a:1957,ps:7284,js:6838},
+  {a:1958,ps:7438,js:7095},{a:1959,ps:7682,js:7316},{a:1960,ps:7799,js:7439},
+  {a:1961,ps:8262,js:7818},{a:1962,ps:8545,js:8120},{a:1963,ps:8762,js:8319},
+  {a:1964,ps:9024,js:8588},{a:1965,ps:9235,js:8782},{a:1966,ps:9531,js:9069},
+  {a:1967,ps:10084,js:9595},{a:1968,ps:10516,js:10009},{a:1969,ps:11021,js:10492},
+  {a:1970,ps:11578,js:11015},{a:1971,ps:12318,js:11716},{a:1972,ps:12842,js:12213},
+  {a:1973,ps:13484,js:12831},{a:1974,ps:14178,js:13491},{a:1975,ps:15026,js:14293},
+  {a:1976,ps:16089,js:15304},{a:1977,ps:17215,js:16376},{a:1978,ps:18523,js:17629},
+  {a:1979,ps:20112,js:19139},{a:1980,ps:22347,js:21283},{a:1981,ps:25641,js:24411},
+  {a:1982,ps:28510,js:27152},{a:1983,ps:30224,js:28786},{a:1984,ps:32611,js:31077},
+  {a:1985,ps:35827,js:34135},{a:1986,ps:39430,js:37548},{a:1987,ps:43592,js:41517},
+  {a:1988,ps:50129,js:47736},
+  {a:1989,ps:56182,js:53534,pj:6103,jj:5817},
+  {a:1990,ps:18564,js:17660,pj:36819,jj:35069},
+  {a:1991,ps:19022,js:18115,pj:40621,jj:38710},
+  {a:1992,ps:27447,js:26127,pj:55748,jj:53108},
+  {a:1993,ps:24377,js:23216,pj:69610,jj:66286},
+  {a:1994,ps:28134,js:26812,pj:83096,jj:79148},
+  {a:1995,ps:25835,js:24607,pj:101969,jj:97114},
+  {a:1996,ps:26839,js:25561,pj:124163,jj:118248},
+  {a:1997,ps:36490,js:34752,pj:152529,jj:145241},
+  {a:1998,ps:52636,js:50128,pj:269632,jj:256792},
+  {a:1999,ps:68369,js:65113,pj:308584,jj:293913},
+  {a:2000,ps:105307,js:100232,pj:485609,jj:462580},
+  {a:2001,ps:110771,js:105447,pj:531000,jj:505761},
+  {a:2002,ps:160453,js:152793,pj:605743,jj:577088},
+  {a:2003,ps:87484,js:83318,pj:636272,jj:605859},
+  {a:2004,ps:83667,js:79681,pj:492428,jj:469162},
+  {a:2005,ps:95212,js:90685,pj:465451,jj:443287},
+  {a:2006,ps:116216,js:110681,pj:474680,jj:452028},
+  {a:2007,ps:119324,js:113646,pj:336888,jj:320846},
+  {a:2008,ps:100781,js:95984,pj:358895,jj:341757},
+  {a:2009,ps:84369,js:80375,pj:302639,jj:288227},
+  {a:2010,ps:103700,js:98762,pj:325690,jj:310157},
+  {a:2011,ps:64018,js:60970,pj:293581,jj:279601},
+  {a:2012,ps:72148,js:68712,pj:298805,jj:284576},
+  {a:2013,ps:72149,js:68713,pj:295130,jj:281048},
+  {a:2014,ps:80745,js:76917,pj:316756,jj:301643},
+  {a:2015,ps:91985,js:87605,pj:349837,jj:333178},
+  {a:2016,ps:93572,js:89116,pj:380432,jj:362364},
+  {a:2017,ps:103650,js:98733,pj:407534,jj:388127},
+  {a:2018,ps:117593,js:112041,pj:436271,jj:415516},
+  {a:2019,ps:106203,js:101145,pj:397977,jj:379122},
+  {a:2020,ps:100353,js:95608,pj:369231,jj:351744},
+  {a:2021,ps:86034,js:81962,pj:378019,jj:360080},
+  {a:2022,ps:79394,js:75613,pj:342811,jj:326534},
+  {a:2023,ps:77389,js:73732,pj:341284,jj:325033},
+  {a:2024,ps:79215,js:90921},
+  {a:2025,ps:81902,js:91820},
 ];
 
-const mkds = (label, key, color, dash) => ({
-  label,
-  data: D.map(d => d[key] ?? null),
-  borderColor: color,
-  backgroundColor: color.replace(')', ',.06)').replace('rgb', 'rgba'),
-  borderWidth: 2,
-  borderDash: dash || [],
-  fill: false,
-  tension: 0.25,
-  pointRadius: 0,
-  pointHoverRadius: 5,
-  pointHoverBackgroundColor: color,
-  pointHoverBorderColor: '#fff',
-  pointHoverBorderWidth: 2,
-  spanGaps: false,
-});
+function mkds(label, key, color, opts) {
+  return {
+    label,
+    data: D.map(d => d[key] ?? null),
+    borderColor: color,
+    backgroundColor: (opts&&opts.fill) ? color.replace('rgb(','rgba(').replace(')',',0.07)') : 'transparent',
+    borderWidth: (opts&&opts.w) || 2,
+    borderDash: (opts&&opts.dash) || [],
+    fill: !!(opts&&opts.fill),
+    tension: 0.3,
+    pointRadius: 0,
+    pointHoverRadius: 6,
+    pointHoverBackgroundColor: color,
+    pointHoverBorderColor: '#fff',
+    pointHoverBorderWidth: 2,
+    spanGaps: false,
+  };
+}
 
-const chart = new Chart(document.getElementById('grafico'), {
+new Chart(document.getElementById('grafico'), {
   type: 'line',
   data: {
     labels: D.map(d => d.a),
     datasets: [
-      { ...mkds('STF — Protocolados', 'p', 'rgb(200,146,42)'), borderWidth: 2.5, fill: true, backgroundColor: 'rgba(200,146,42,.08)' },
-      { ...mkds('STF — Distribuídos', 'd', 'rgb(46,134,171)'), borderDash: [6,3] },
-      { ...mkds('STF — Julgados', 'j', 'rgb(76,175,80)'), borderDash: [2,2] },
-      { ...mkds('STJ — Protocolados', 'stj', 'rgb(74,158,202)'), borderWidth: 2, fill: true, backgroundColor: 'rgba(74,158,202,.05)' },
+      mkds('STF — Protocolados','ps','rgb(200,146,42)',{w:2.5,fill:true}),
+      mkds('STF — Julgados',    'js','rgb(76,175,80)', {dash:[4,3]}),
+      mkds('STJ — Protocolados','pj','rgb(74,158,202)',{w:2,fill:true}),
+      mkds('STJ — Julgados',    'jj','rgb(100,180,220)',{dash:[4,3]}),
     ]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
+    interaction: { mode:'index', intersect:false },
     plugins: {
       legend: {
-        display: true,
-        position: 'top',
-        align: 'start',
-        maxWidth: 300,
+        display: true, position:'top', align:'start',
         labels: {
-          usePointStyle: true,
-          pointStyle: 'line',
-          padding: 10,
-          boxWidth: 30,
-          font: { family: "'DM Sans', sans-serif", size: 12, weight: '500' },
-          color: '#1a1a2e',
-          filter: (item) => { item.lineWidth = 3; return true; }
+          usePointStyle:true, pointStyle:'line', padding:16, boxWidth:28,
+          font:{family:"'DM Sans',sans-serif",size:12,weight:'500'}, color:'#1a1a2e',
         },
-        onClick: (e, item, legend) => {
-          const idx = item.datasetIndex;
-          const ds = legend.chart.data.datasets[idx];
-          ds.hidden = !ds.hidden;
-          legend.chart.update();
+        onClick: (e,item,legend) => {
+          const ds = legend.chart.data.datasets[item.datasetIndex];
+          ds.hidden = !ds.hidden; legend.chart.update();
         }
       },
       tooltip: {
-        backgroundColor: '#0d1f35',
-        titleFont: { family: "'Playfair Display', serif", size: 16, weight: '700' },
-        titleColor: '#c8922a',
-        bodyFont: { family: "'DM Mono', monospace", size: 11 },
-        bodyColor: '#e5e7eb',
-        padding: 14,
-        cornerRadius: 4,
-        displayColors: true,
-        boxWidth: 12, boxHeight: 2,
+        backgroundColor:'#0d1f35',
+        titleFont:{family:"'Playfair Display',serif",size:15,weight:'700'},
+        titleColor:'#c8922a',
+        bodyFont:{family:"'DM Mono',monospace",size:11},
+        bodyColor:'#e5e7eb', padding:14, cornerRadius:4, boxWidth:12, boxHeight:2,
         callbacks: {
-          title: (items) => items[0].label,
-          label: (item) => {
-            if (item.raw == null) return null;
-            return ' ' + item.dataset.label + ': ' + item.raw.toLocaleString('pt-BR');
-          }
+          title: items => String(items[0].label),
+          label: item => item.raw==null ? null : ' '+item.dataset.label+': '+Number(item.raw).toLocaleString('pt-BR'),
         }
       },
       annotation: {
         annotations: {
-          z1: { type:'box', xMin:'1986', xMax:'1990', backgroundColor:'rgba(200,146,42,.06)', borderWidth:0,
-            label:{display:true,content:'CF/88',position:'start',font:{size:10,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(200,146,42,.7)',yAdjust:-10}},
-          z2: { type:'box', xMin:'1998', xMax:'2004', backgroundColor:'rgba(74,158,202,.04)', borderWidth:0,
-            label:{display:true,content:'Planos econômicos',position:'start',font:{size:10,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(74,158,202,.7)',yAdjust:-10}},
-          z3: { type:'box', xMin:'2006', xMax:'2011', backgroundColor:'rgba(200,146,42,.04)', borderWidth:0,
-            label:{display:true,content:'Repercussão geral',position:'start',font:{size:10,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(200,146,42,.6)',yAdjust:-10}},
-          z4: { type:'box', xMin:'2019', xMax:'2025', backgroundColor:'rgba(192,57,43,.04)', borderWidth:0,
-            label:{display:true,content:'Plenário virtual',position:'start',font:{size:10,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(192,57,43,.5)',yAdjust:-10}},
-          l88: { type:'line', xMin:'1988', xMax:'1988', borderColor:'rgba(200,146,42,.25)', borderWidth:1, borderDash:[4,4] },
-          l07: { type:'line', xMin:'2007', xMax:'2007', borderColor:'rgba(200,146,42,.25)', borderWidth:1, borderDash:[4,4] },
-          l20: { type:'line', xMin:'2020', xMax:'2020', borderColor:'rgba(192,57,43,.2)', borderWidth:1, borderDash:[4,4] },
+          z88:{type:'box',xMin:'1986',xMax:'1990',backgroundColor:'rgba(200,146,42,.06)',borderWidth:0,
+            label:{display:true,content:'CF/88',position:'start',font:{size:9,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(200,146,42,.65)',yAdjust:-12}},
+          z02:{type:'box',xMin:'1998',xMax:'2005',backgroundColor:'rgba(74,158,202,.04)',borderWidth:0,
+            label:{display:true,content:'Planos econômicos',position:'start',font:{size:9,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(74,158,202,.65)',yAdjust:-12}},
+          z07:{type:'box',xMin:'2006',xMax:'2012',backgroundColor:'rgba(200,146,42,.04)',borderWidth:0,
+            label:{display:true,content:'Repercussão geral',position:'start',font:{size:9,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(200,146,42,.55)',yAdjust:-12}},
+          z20:{type:'box',xMin:'2019',xMax:'2025',backgroundColor:'rgba(192,57,43,.04)',borderWidth:0,
+            label:{display:true,content:'Plenário virtual',position:'start',font:{size:9,family:"'DM Mono',monospace",weight:'bold'},color:'rgba(192,57,43,.5)',yAdjust:-12}},
+          l88:{type:'line',xMin:'1988',xMax:'1988',borderColor:'rgba(200,146,42,.2)',borderWidth:1,borderDash:[4,4]},
+          l07:{type:'line',xMin:'2007',xMax:'2007',borderColor:'rgba(200,146,42,.2)',borderWidth:1,borderDash:[4,4]},
+          l20:{type:'line',xMin:'2020',xMax:'2020',borderColor:'rgba(192,57,43,.18)',borderWidth:1,borderDash:[4,4]},
         }
       }
     },
     scales: {
       x: {
-        grid: { color:'rgba(0,0,0,.04)' },
-        ticks: { font:{family:"'DM Mono',monospace",size:10}, color:'#9ca3af', maxTicksLimit:12,
-          callback: function(v,i){ const y=this.getLabelForValue(v); return [1940,1950,1960,1970,1980,1988,2000,2007,2015,2025].includes(y)?y:''; }}
+        grid:{color:'rgba(0,0,0,.04)'},
+        ticks:{font:{family:"'DM Mono',monospace",size:10},color:'#9ca3af',maxTicksLimit:15,
+          callback:function(v){const y=this.getLabelForValue(v);return[1940,1950,1960,1970,1980,1988,2000,2007,2015,2020,2025].includes(y)?y:'';}
+        }
       },
       y: {
-        grid: { color:'rgba(0,0,0,.04)' },
-        ticks: { font:{family:"'DM Mono',monospace",size:10}, color:'#9ca3af', callback:(v)=>v>=1000?(v/1000).toFixed(0)+'k':v },
-        beginAtZero: true,
+        grid:{color:'rgba(0,0,0,.04)'},
+        ticks:{font:{family:"'DM Mono',monospace",size:10},color:'#9ca3af',
+          callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},
+        beginAtZero:true,
       }
     },
-    layout: { padding: { top: 10 } }
+    layout:{padding:{top:8,right:8}}
   }
 });
-</script>
-<script>
-const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.1 });
-document.querySelectorAll('.narr-card, .teaser-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(16px)'; el.style.transition = 'opacity .5s ease, transform .5s ease'; obs.observe(el); });
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';} });
+},{threshold:0.1});
+document.querySelectorAll('.narr-card,.teaser-item').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(16px)';
+  el.style.transition='opacity .5s ease,transform .5s ease';obs.observe(el);
+});
 </script>
 </body>
 </html>
