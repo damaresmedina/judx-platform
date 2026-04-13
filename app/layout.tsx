@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     siteName: "JudX",
     images: [
       {
-        url: "https://judx.com.br/judx-og.png",
+        url: "https://judx.com.br/og-judx-2026.png",
         width: 1200,
         height: 630,
         alt: "JudX — Judicial Intelligence",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "JudX — Inteligência Jurisprudencial",
     description: "O judiciário brasileiro, inteiro, legível.",
-    images: ["https://judx.com.br/judx-og.png"],
+    images: ["https://judx.com.br/og-judx-2026.png"],
   },
 };
 

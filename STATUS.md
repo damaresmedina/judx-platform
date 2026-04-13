@@ -233,19 +233,15 @@
 
 ## RETOMAR AQUI APÓS REINÍCIO
 
-### EM ANDAMENTO — Scraper partes portal STF
-- **Script**: `Desktop\backup_judx\resultados\run_scraper.py`
-- **Modo**: rajadas de 300 requests + cooldown 5min
-- **Range**: 5.074.440 → 7.600.000 (~2.5M incidentes)
-- **Checkpoint**: ~5.674.000 (74,6% — estimativa término ~13-14 abril)
-- **Saída**: `Desktop\backup_judx\resultados\partes_portal_FINAL.csv`
-- **HTML bruto**: `Desktop\backup_judx\resultados\html_raw_partes/`
-- **Quando terminar**: rodar `reparser_7col.py` sobre todos os HTMLs, substituir 912K Corte Aberta
+### CANCELADO — Scraper partes portal STF
+- **Status**: Cancelado em 12/abr/2026 — Claude Code não conseguiu achar caminho scrapável viável
+- **Checkpoint final**: 6.177.641 | 411.288 processos recuperados
+- **Dados salvos**: `Desktop\backup_judx\resultados\partes_portal_FINAL.csv` + `html_raw_partes/`
+- **Nota**: dados já coletados (411K) permanecem disponíveis para uso
 
-### EM ANDAMENTO — UPDATE judx_case.decided_at
-- Query rodando no Supabase (PID 110633)
-- Atualiza 2.212.761 rows com data da última decisão
-- Verificar ao reiniciar: `SELECT count(*) FROM judx_case WHERE decided_at IS NOT NULL`
+### CONCLUÍDO — UPDATE judx_case.decided_at
+- 2.212.761/2.212.761 rows atualizadas (100%)
+- Confirmado em 12/abr/2026
 
 ### Prioridade 1 — Completar judx_case
 1. Verificar decided_at (pode ter terminado)
