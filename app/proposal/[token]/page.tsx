@@ -171,19 +171,12 @@ function InvestorContent() {
           setStatus('granted')
           setTimeout(() => setFadeIn(true), 100)
         } else {
-          setStatus('denied')
-          const reasons: Record<string, string> = {
-            ip_mismatch: lang === 'pt' ? 'Este link já foi utilizado a partir de outro dispositivo.' : 'This link has already been used from a different device.',
-            expired: lang === 'pt' ? 'Este link expirou.' : 'This link has expired.',
-            revoked: lang === 'pt' ? 'Este link foi revogado.' : 'This link has been revoked.',
-            invalid_token: lang === 'pt' ? 'Link de acesso inválido.' : 'Invalid access link.',
-          }
-          setDenyReason(reasons[d.status] || 'Access denied.')
+          window.location.href = '/'
+          return
         }
       })
       .catch(() => {
-        setStatus('denied')
-        setDenyReason('Connection error.')
+        window.location.href = '/'
       })
   }, [token])
 

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     req.headers.get("origin") ??
     req.headers.get("referer")?.split("/").slice(0, 3).join("/") ??
     process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+    "https://judx.com.br";
 
   // Não fixamos apiVersion para evitar incompatibilidade com as versões tipadas
   // do `stripe` instaladas no projeto.
