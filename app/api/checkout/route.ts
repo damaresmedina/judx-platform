@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const stripePriceId = process.env.STRIPE_PRICE_ID;
+const priceIdMensal = process.env.STRIPE_PRICE_ID_MENSAL;
+const priceIdAnual = process.env.STRIPE_PRICE_ID_ANUAL;
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 export async function POST(req: NextRequest) {
@@ -14,18 +15,22 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-
-    if (!stripePriceId) {
-      console.error("[/api/checkout] Missing STRIPE_PRICE_ID");
-      return NextResponse.json(
-        { error: "Missing environment variable: STRIPE_PRICE_ID" },
-        { status: 500 }
-      );
-    }
     if (!appUrl) {
       console.error("[/api/checkout] Missing NEXT_PUBLIC_APP_URL");
       return NextResponse.json(
         { error: "Missing environment variable: NEXT_PUBLIC_APP_URL" },
+        { status: 500 }
+      );
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const billing = body?.billing === "anual" ? "anual" : "mensal";
+    const priceId = billing === "anual" ? priceIdAnual : priceIdMensal;
+
+    if (!priceId) {
+      console.error(`[/api/checkout] Missing STRIPE_PRICE_ID_${billing.toUpperCase()}`);
+      return NextResponse.json(
+        { error: `Price ID não configurado para plano ${billing}.` },
         { status: 500 }
       );
     }
@@ -35,9 +40,13 @@ export async function POST(req: NextRequest) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [{ price: stripePriceId, quantity: 1 }],
-      success_url: `${baseAppUrl}/dashboard?plano=plus`,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${baseAppUrl}/dashboard?plano=plus&billing=${billing}`,
       cancel_url: `${baseAppUrl}/planos`,
+      metadata: {
+        plan: "plus",
+        billing,
+      },
     });
 
     if (!session.url) {
