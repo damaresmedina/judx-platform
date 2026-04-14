@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Documento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1f35;
+    --navy-deep: #081427;
+    --navy-soft: #152b48;
+    --gold: #c8922a;
+    --gold-soft: #e0b558;
+    --paper: #f4efe6;
+    --ink: #e8ddc8;
+    --ink-dim: #a89a82;
+    --line: rgba(232, 221, 200, 0.12);
+    --line-strong: rgba(232, 221, 200, 0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    background: var(--navy-deep);
+    color: var(--ink);
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Grain texture ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ─── Typography ─── */
+  .display {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  .mono {
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .italic { font-style: italic; }
+
+  /* ─── Layout sections ─── */
+  section {
+    min-height: 100vh;
+    padding: 8vh 6vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+
+  @media (min-width: 900px) {
+    section { padding: 10vh 10vw; }
+  }
+
+  .slide-meta {
+    position: absolute;
+    top: 3vh;
+    left: 6vw;
+    right: 6vw;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 900px) {
+    .slide-meta { left: 10vw; right: 10vw; }
+  }
+
+  .slide-meta .num { color: var(--gold); }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  /* ─── Cover ─── */
+  .cover {
+    background: var(--navy-deep);
+    justify-content: space-between;
+    padding-top: 12vh;
+    padding-bottom: 8vh;
+  }
+
+  .cover-mark {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+  }
+
+  .cover-title {
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    color: var(--ink);
+    max-width: 18ch;
+    margin: 2rem 0;
+  }
+
+  .cover-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    color: var(--ink-dim);
+    max-width: 30ch;
+    line-height: 1.4;
+  }
+
+  .cover-footer {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .cover-footer .author {
+    color: var(--ink);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ─── Big statements ─── */
+  h1.statement {
+    font-size: clamp(2rem, 5.5vw, 4.5rem);
+    color: var(--ink);
+    max-width: 22ch;
+  }
+
+  h1.statement .accent {
+    font-style: italic;
+    color: var(--gold-soft);
+  }
+
+  .lede {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+    color: var(--ink-dim);
+    max-width: 40ch;
+    margin-top: 2.5rem;
+    line-height: 1.5;
+  }
+
+  /* ─── Data blocks ─── */
+  .datagrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 720px) {
+    .datagrid.two { grid-template-columns: 1fr 1fr; gap: 5rem; }
+    .datagrid.three { grid-template-columns: repeat(3, 1fr); gap: 3rem; }
+  }
+
+  .datum {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 1.5rem;
+  }
+
+  .datum .n {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .datum .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-top: 1rem;
+    max-width: 25ch;
+    line-height: 1.5;
+  }
+
+  /* ─── Conclusion tag ─── */
+  .verdict {
+    margin-top: 4rem;
+    padding: 2rem 0 0;
+    border-top: 2px solid var(--gold);
+    max-width: 40ch;
+  }
+
+  .verdict .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .verdict p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 2.4vw, 2rem);
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  /* ─── Table of concentration ─── */
+  .conc-table {
+    margin-top: 3rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .conc-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--line);
+    gap: 2rem;
+  }
+
+  .conc-row .place {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+    color: var(--ink);
+  }
+
+  .conc-row .val {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .conc-row.highlight .place { color: var(--gold-soft); font-style: italic; }
+
+  /* ─── Contrast block (before/after) ─── */
+  .contrast {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid var(--line-strong);
+  }
+
+  @media (min-width: 720px) {
+    .contrast { grid-template-columns: 1fr 1fr; }
+    .contrast > div:first-child { border-right: 1px solid var(--line-strong); }
+  }
+
+  .contrast > div {
+    padding: 2.5rem;
+  }
+
+  @media (max-width: 719px) {
+    .contrast > div:first-child { border-bottom: 1px solid var(--line-strong); }
+  }
+
+  .contrast .head {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 1.2rem;
+  }
+
+  .contrast .body {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .contrast .after .head { color: var(--gold); }
+  .contrast .after .body { color: var(--gold-soft); font-style: italic; }
+
+  /* ─── List for phases ─── */
+  .phase {
+    border-top: 1px solid var(--line-strong);
+    padding: 2rem 0;
+  }
+
+  .phase .ph-head {
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .phase .ph-num {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--gold);
+  }
+
+  .phase .ph-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 2vw, 1.8rem);
+    color: var(--ink);
+  }
+
+  .phase .ph-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    color: var(--ink-dim);
+    max-width: 55ch;
+    line-height: 1.6;
+    padding-left: calc(2rem + 2ch);
+  }
+
+  /* ─── Closing ─── */
+  .closing {
+    background: var(--navy-deep);
+    text-align: left;
+  }
+
+  .closing h1 {
+    font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+    color: var(--ink);
+    max-width: 22ch;
+    margin-bottom: 3rem;
+  }
+
+  .closing .signoff {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 2rem;
+    max-width: 50ch;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+  }
+
+  .closing .signoff .name {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--ink);
+    letter-spacing: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ─── Credentials ─── */
+  .cred-list {
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--line-strong);
+  }
+  .cred-list .cred {
+    padding: 1.3rem 0;
+    border-bottom: 1px solid var(--line);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .cred-list .year {
+    font-family: 'DM Mono', monospace;
+    color: var(--gold);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    margin-right: 1.5rem;
+  }
+
+  /* ─── Presentation mode ─── */
+  body.presentation {
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  body.presentation section {
+    display: none;
+  }
+
+  body.presentation section.active {
+    display: flex;
+    height: 100vh;
+    min-height: 100vh;
+    border-bottom: none;
+  }
+
+  body.presentation .nav-hint {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    z-index: 50;
+    opacity: 0.5;
+  }
+
+  .nav-hint { display: none; }
+  body.presentation .nav-hint { display: block; }
+
+  /* ─── Mode toggle ─── */
+  .mode-toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    z-index: 200;
+    transition: all 0.2s;
+  }
+  .mode-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ─── Fade in on scroll ─── */
+  .fade {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  .fade.in { opacity: 1; transform: translateY(0); }
+  .fade.d2 { transition-delay: 0.15s; }
+  .fade.d3 { transition-delay: 0.3s; }
+  .fade.d4 { transition-delay: 0.45s; }
+
+  /* ─── Print ─── */
+  @media print {
+    .mode-toggle, .nav-hint { display: none; }
+    section { page-break-after: always; min-height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<button class="mode-toggle" onclick="togglePresentation()">Modo apresentação · P</button>
+<div class="nav-hint">← → navegar · esc sair · 01 / 15</div>
+
+<!-- ─────────── 01 · CAPA ─────────── -->
+<section class="cover active" data-slide="1">
+  <div>
+    <div class="cover-mark fade in">JudX</div>
+  </div>
+
+  <div>
+    <div class="eyebrow fade in">Documento de posição · Abril 2026</div>
+    <h1 class="cover-title display fade in d2">
+      Diagnóstico estrutural do contencioso
+    </h1>
+    <p class="cover-sub fade in d3">
+      Caixa Econômica Federal — a exposição judicial já é legível
+    </p>
+  </div>
+
+  <div class="cover-footer fade in d4">
+    <div>
+      <div class="author">Damares Medina</div>
+      <div style="margin-top: 0.3rem;">Confidencial · uso restrito</div>
+    </div>
+    <div style="text-align: right;">
+      JudX · judx.com.br
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── 02 · ABERTURA ─────────── -->
+<section data-slide="2">
+  <div class="slide-meta"><span>Abertura</span><span class="num">02 / 15</span></div>
+  <div class="eyebrow fade">Tese</div>
+  <h1 class="statement display fade d2">
+    A exposição judicial da Caixa<br>
+    já é <span class="accent">previsível</span>.<br>
+    Ainda não é <span class="accent">controlada</span>.
+  </h1>
+  <p class="lede fade d3">
+    Um mapa estrutural do passivo em escala — não um relatório de volume.
+  </p>
+</section>
+
+<!-- ─────────── 03 · TAMANHO REAL ─────────── -->
+<section data-slide="3">
+  <div class="slide-meta"><span>Tamanho real</span><span class="num">03 / 15</span></div>
+  <div class="eyebrow fade">A carteira em números</div>
+
+  <div class="datagrid two">
+    <div class="datum fade">
+      <div class="n mono">954.243</div>
+      <div class="label">Processos pendentes — a Caixa como ré</div>
+    </div>
+    <div class="datum fade d2">
+      <div class="n mono">543.450</div>
+      <div class="label">Novos processos por ano</div>
+    </div>
+  </div>
+
+  <div class="verdict fade d3">
+    <div class="label">O que os números dizem</div>
+    <p>O problema não é volume.<br><span class="italic" style="color: var(--gold-soft);">É distribuição e dinâmica.</span></p>
+  </div>
+</section>
+
+<!-- ─────────── 04 · ONDE O RISCO ESTÁ ─────────── -->
+<section data-slide="4">
+  <div class="slide-meta"><span>Distribuição</span><span class="num">04 / 15</span></div>
+  <div class="eyebrow fade">Onde o risco está</div>
+
+  <div class="datagrid two">
+    <div class="fade">
+      <div class="datum">
+        <div class="n mono">82<span style="font-size: 0.5em; color: var(--gold-soft);">%</span></div>
+        <div class="label">do passivo concentrado na Justiça Federal</div>
+      </div>
+    </div>
+    <div class="fade d2" style="align-self: center;">
+      <p class="display" style="font-size: clamp(1.1rem, 1.7vw, 1.4rem); color: var(--ink); line-height: 1.5;">
+        TRF1, TRF3 e TRF4 concentram<br>a maior parte do risco.
+      </p>
+    </div>
+  </div>
+
+  <div class="verdict fade d3">
+    <div class="label">Leitura</div>
+    <p>O passivo não é difuso.<br><span class="italic" style="color: var(--gold-soft);">Ele está concentrado.</span></p>
+  </div>
+</section>
+
+<!-- ─────────── 05 · CONCENTRAÇÃO CRÍTICA ─────────── -->
+<section data-slide="5">
+  <div class="slide-meta"><span>Concentração crítica</span><span class="num">05 / 15</span></div>
+  <div class="eyebrow fade">Unidades que concentram o passivo</div>
+
+  <div class="conc-table fade d2">
+    <div class="conc-row highlight">
+      <span class="place">2º JEF · Vitória</span>
+      <span class="val">11.405</span>
+    </div>
+    <div class="conc-row">
+      <span class="place">Porto Alegre</span>
+      <span class="val">9.305</span>
+    </div>
+    <div class="conc-row highlight">
+      <span class="place">Manaus <em style="opacity: 0.7; font-size: 0.85em;">· crescimento explosivo</em></span>
+      <span class="val">↗</span>
+    </div>
+  </div>
+
+  <div class="verdict fade d3">
+    <div class="label">O que isso implica</div>
+    <p>Uma única unidade pode concentrar <span class="italic" style="color: var(--gold-soft);">mais risco que regiões inteiras</span>.</p>
+  </div>
+</section>
+
+<!-- ─────────── 06 · DINÂMICA ─────────── -->
+<section data-slide="6">
+  <div class="slide-meta"><span>Dinâmica</span><span class="num">06 / 15</span></div>
+  <div class="eyebrow fade">O que importa: a aceleração</div>
+
+  <div class="datagrid three" style="margin-top: 4rem;">
+    <div class="datum fade">
+      <div class="n mono" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem);">Trabalho</div>
+      <div class="label" style="margin-top: 1.5rem;">Em crescimento sustentado</div>
+    </div>
+    <div class="datum fade d2">
+      <div class="n mono" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem);">TST</div>
+      <div class="label" style="margin-top: 1.5rem;">Acumulação estrutural</div>
+    </div>
+    <div class="datum fade d3">
+      <div class="n mono" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem);">TRFs</div>
+      <div class="label" style="margin-top: 1.5rem;">Alta renovação, ciclo curto</div>
+    </div>
+  </div>
+
+  <div class="verdict fade d4">
+    <div class="label">Diagnóstico</div>
+    <p>O sistema não está estático.<br><span class="italic" style="color: var(--gold-soft);">Ele está acelerando.</span></p>
+  </div>
+</section>
+
+<!-- ─────────── 07 · PROBLEMA INVISÍVEL ─────────── -->
+<section data-slide="7">
+  <div class="slide-meta"><span>O problema invisível</span><span class="num">07 / 15</span></div>
+  <h1 class="statement display fade">
+    Hoje, o contencioso é gerido<br>
+    por <span class="accent">volume</span> e<br>
+    distribuição administrativa.
+  </h1>
+  <p class="lede fade d2" style="max-width: 45ch; font-size: clamp(1.2rem, 2vw, 1.7rem); color: var(--gold-soft);">
+    Mas o risco real está na dinâmica estrutural do sistema.
+  </p>
+</section>
+
+<!-- ─────────── 08 · O QUE ISSO CAUSA ─────────── -->
+<section data-slide="8">
+  <div class="slide-meta"><span>Consequências</span><span class="num">08 / 15</span></div>
+  <div class="eyebrow fade">O custo de não ler a estrutura</div>
+
+  <div style="margin-top: 3rem;">
+    <div class="phase fade">
+      <div class="ph-head">
+        <span class="ph-num mono">→</span>
+        <span class="ph-title">Custo crescente</span>
+      </div>
+    </div>
+    <div class="phase fade d2">
+      <div class="ph-head">
+        <span class="ph-num mono">→</span>
+        <span class="ph-title">Baixa previsibilidade orçamentária</span>
+      </div>
+    </div>
+    <div class="phase fade d3">
+      <div class="ph-head">
+        <span class="ph-num mono">→</span>
+        <span class="ph-title">Alocação ineficiente de esforço</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict fade d4">
+    <div class="label">Padrão observado</div>
+    <p>O passivo cresce onde <span class="italic" style="color: var(--gold-soft);">não está sendo visto corretamente</span>.</p>
+  </div>
+</section>
+
+<!-- ─────────── 09 · O QUE FALTA ─────────── -->
+<section data-slide="9">
+  <div class="slide-meta"><span>O ponto de virada</span><span class="num">09 / 15</span></div>
+  <h1 class="statement display fade" style="font-size: clamp(2.5rem, 7vw, 6rem);">
+    Não falta <span class="accent">dado</span>.<br>
+    Falta <span class="accent">leitura estrutural</span>.
+  </h1>
+</section>
+
+<!-- ─────────── 10 · ENTRA O JUDX ─────────── -->
+<section data-slide="10">
+  <div class="slide-meta"><span>A infraestrutura</span><span class="num">10 / 15</span></div>
+  <div class="eyebrow fade">JudX</div>
+
+  <h1 class="statement display fade d2">
+    JudX lê a estrutura do<br>
+    passivo que a Caixa <span class="accent">já possui</span>.
+  </h1>
+
+  <p class="lede fade d3">
+    Metodologia desenvolvida ao longo de 12 anos de pesquisa aplicada
+    sobre a dinâmica decisória dos tribunais brasileiros.
+  </p>
+</section>
+
+<!-- ─────────── 11 · O QUE MUDA ─────────── -->
+<section data-slide="11">
+  <div class="slide-meta"><span>O que muda na prática</span><span class="num">11 / 15</span></div>
+  <div class="eyebrow fade">Capacidades operacionais</div>
+
+  <div style="margin-top: 2rem;">
+    <div class="phase fade">
+      <div class="ph-head">
+        <span class="ph-num mono">01</span>
+        <span class="ph-title">Priorização de polos críticos</span>
+      </div>
+      <div class="ph-desc">Identificação contínua das unidades que concentram exposição desproporcional.</div>
+    </div>
+    <div class="phase fade d2">
+      <div class="ph-head">
+        <span class="ph-num mono">02</span>
+        <span class="ph-title">Antecipação de crescimento</span>
+      </div>
+      <div class="ph-desc">Leitura de tendência antes da materialização do passivo em balanço.</div>
+    </div>
+    <div class="phase fade d3">
+      <div class="ph-head">
+        <span class="ph-num mono">03</span>
+        <span class="ph-title">Ajuste estratégico por tribunal</span>
+      </div>
+      <div class="ph-desc">Calibração de resposta operacional conforme o comportamento específico de cada corte.</div>
+    </div>
+  </div>
+
+  <div class="verdict fade d4">
+    <div class="label">O salto</div>
+    <p>De reação <span style="color: var(--gold);">→</span> <span class="italic" style="color: var(--gold-soft);">para controle</span>.</p>
+  </div>
+</section>
+
+<!-- ─────────── 12 · EXEMPLO DIRETO ─────────── -->
+<section data-slide="12">
+  <div class="slide-meta"><span>Caso ilustrativo · Manaus</span><span class="num">12 / 15</span></div>
+  <div class="eyebrow fade">Antes e depois da leitura estrutural</div>
+
+  <div class="contrast fade d2">
+    <div>
+      <div class="head">Leitura atual</div>
+      <div class="body">Volume bruto: um número entre outros. Gestão por reação ao pedido já protocolado.</div>
+    </div>
+    <div class="after">
+      <div class="head">Leitura estrutural</div>
+      <div class="body">Unidade em crescimento explosivo — vetor de passivo que será visível no balanço em 18 meses. Decisão hoje, não depois.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── 13 · QUEM ASSINA ─────────── -->
+<section data-slide="13">
+  <div class="slide-meta"><span>Autoria</span><span class="num">13 / 15</span></div>
+  <div class="eyebrow fade">Quem assina este diagnóstico</div>
+
+  <h1 class="display fade d2" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-top: 1rem;">
+    Damares Medina
+  </h1>
+  <p class="lede fade d3" style="margin-top: 1rem; font-style: normal; font-family: 'DM Sans', sans-serif;">
+    Pesquisadora e consultora em estrutura decisória de tribunais superiores.
+  </p>
+
+  <div class="cred-list fade d4">
+    <div class="cred"><span class="year mono">2016</span>Autora de <em>A repercussão geral no Supremo Tribunal Federal</em></div>
+    <div class="cred"><span class="year mono">2017</span>Bolsista CNPq · pesquisa sobre dinâmica do STF</div>
+    <div class="cred"><span class="year mono">2014–26</span>Fundadora do projeto ICONS/PROJUS · cartografia jurisprudencial</div>
+    <div class="cred"><span class="year mono">STF</span>Consultada na primeira consulta pública sobre precedentes</div>
+  </div>
+</section>
+
+<!-- ─────────── 14 · PROPOSTA ─────────── -->
+<section data-slide="14">
+  <div class="slide-meta"><span>Proposta operacional</span><span class="num">14 / 15</span></div>
+  <div class="eyebrow fade">Como avançamos</div>
+
+  <div style="margin-top: 2rem;">
+    <div class="phase fade">
+      <div class="ph-head">
+        <span class="ph-num mono">Fase 1</span>
+        <span class="ph-title">Diagnóstico estrutural · 90 dias</span>
+      </div>
+      <div class="ph-desc">Mapeamento completo do passivo. Identificação dos polos críticos. Entrega de relatório executivo e mapa operacional.</div>
+    </div>
+    <div class="phase fade d2">
+      <div class="ph-head">
+        <span class="ph-num mono">Fase 2</span>
+        <span class="ph-title">Inteligência operacional contínua</span>
+      </div>
+      <div class="ph-desc">Construção da camada de leitura permanente. Integração com a rotina da área de riscos. Revisão trimestral de cenários.</div>
+    </div>
+  </div>
+
+  <div class="verdict fade d3">
+    <div class="label">O que está em jogo</div>
+    <p>Não é tecnologia.<br><span class="italic" style="color: var(--gold-soft);">É capacidade de controlar o crescimento do passivo.</span></p>
+  </div>
+</section>
+
+<!-- ─────────── 15 · FECHAMENTO ─────────── -->
+<section class="closing" data-slide="15">
+  <div class="slide-meta"><span>Fechamento</span><span class="num">15 / 15</span></div>
+
+  <h1 class="display fade">
+    O sistema já é <span style="font-style: italic; color: var(--gold-soft);">previsível</span>.<br>
+    A questão é quem passa<br>a <span style="font-style: italic; color: var(--gold-soft);">controlá-lo</span>.
+  </h1>
+
+  <div class="signoff fade d3">
+    <span class="name">Damares Medina</span>
+    JudX · judx.com.br<br>
+    Documento de posição · Confidencial<br>
+    Abril de 2026
+  </div>
+</section>
+
+<script>
+  // ─── Fade in on scroll ───
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('in');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+  // ─── Presentation mode ───
+  let isPresentation = false;
+  let currentSlide = 1;
+  const slides = document.querySelectorAll('section');
+  const total = slides.length;
+
+  function setSlide(n) {
+    currentSlide = Math.max(1, Math.min(total, n));
+    slides.forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.slide) === currentSlide);
+    });
+    document.querySelector('.nav-hint').textContent =
+      `← → navegar · esc sair · ${String(currentSlide).padStart(2,'0')} / ${total}`;
+    // Re-trigger fades
+    const active = document.querySelector('section.active');
+    if (active) {
+      active.querySelectorAll('.fade').forEach(el => {
+        el.classList.remove('in');
+        setTimeout(() => el.classList.add('in'), 50);
+      });
+    }
+  }
+
+  function togglePresentation() {
+    isPresentation = !isPresentation;
+    document.body.classList.toggle('presentation', isPresentation);
+    const btn = document.querySelector('.mode-toggle');
+    btn.textContent = isPresentation ? 'Modo scroll · P' : 'Modo apresentação · P';
+    if (isPresentation) setSlide(1);
+    else {
+      slides.forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.fade').forEach(el => el.classList.add('in'));
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'p' || e.key === 'P') togglePresentation();
+    if (!isPresentation) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); setSlide(currentSlide + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); setSlide(currentSlide - 1);
+    }
+    if (e.key === 'Escape') togglePresentation();
+  });
+
+  // Touch navigation in presentation mode
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    if (!isPresentation) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) setSlide(currentSlide + (dx < 0 ? 1 : -1));
+  });
+</script>
+</body>
+</html>
