@@ -20,11 +20,7 @@ export default function PlanosPage() {
       .getSession()
       .then(({ data }) => {
         if (!mounted) return;
-        if (!data.session) {
-          router.replace("/login");
-          return;
-        }
-        setUserEmail(data.session.user.email ?? null);
+        setUserEmail(data.session?.user.email ?? null);
       })
       .finally(() => {
         if (mounted) setCheckingAuth(false);
@@ -34,7 +30,6 @@ export default function PlanosPage() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
-      if (!session) router.replace("/login");
       setUserEmail(session?.user.email ?? null);
     });
 
@@ -119,12 +114,18 @@ export default function PlanosPage() {
             Jud<span style={{ color: "#c8922a" }}>X</span>
           </a>
           <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-            {userEmail && (
-              <span style={{ fontSize: ".75rem", color: "rgba(255,255,255,.35)" }}>{userEmail}</span>
+            {userEmail ? (
+              <>
+                <span style={{ fontSize: ".75rem", color: "rgba(255,255,255,.35)" }}>{userEmail}</span>
+                <button onClick={handleSignOut} style={{ fontSize: ".7rem", color: "rgba(255,255,255,.4)", letterSpacing: ".1em", textTransform: "uppercase", background: "none", border: "1px solid rgba(255,255,255,.12)", padding: ".45rem 1rem", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", borderRadius: 8 }}>
+                  Sair
+                </button>
+              </>
+            ) : (
+              <a href="/login" style={{ fontSize: ".7rem", color: "rgba(255,255,255,.4)", letterSpacing: ".1em", textTransform: "uppercase", background: "none", border: "1px solid rgba(255,255,255,.12)", padding: ".45rem 1rem", fontFamily: "'DM Sans', sans-serif", borderRadius: 8, textDecoration: "none" }}>
+                Entrar
+              </a>
             )}
-            <button onClick={handleSignOut} style={{ fontSize: ".7rem", color: "rgba(255,255,255,.4)", letterSpacing: ".1em", textTransform: "uppercase", background: "none", border: "1px solid rgba(255,255,255,.12)", padding: ".45rem 1rem", cursor: "pointer", fontFamily: "'DM Sans', sans-serif", borderRadius: 8 }}>
-              Sair
-            </button>
           </div>
         </nav>
 
@@ -194,7 +195,7 @@ export default function PlanosPage() {
 
               <button
                 className="cta-btn cta-btn-secondary"
-                onClick={() => router.push("/dashboard")}
+                onClick={() => router.push(userEmail ? "/dashboard" : "/cadastro")}
               >
                 Continuar gratis
               </button>
