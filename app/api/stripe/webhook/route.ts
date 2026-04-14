@@ -56,7 +56,7 @@ export async function POST(req: Request) {
                 ...user.user_metadata,
                 stripe_subscription_id: subscriptionId,
                 stripe_customer_id: session.customer,
-                plan: session.metadata?.plan ?? "plus",
+                plan: session.metadata?.plan ?? "pro",
                 plan_active: true,
               },
             });

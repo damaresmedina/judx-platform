@@ -26,9 +26,9 @@ export async function POST(req: Request) {
         (body as any).plan
       : undefined;
 
-  if (plan !== "plus") {
+  if (plan !== "pro") {
     return NextResponse.json(
-      { error: "Plano inválido. Envie { plan: 'plus' }." },
+      { error: "Plano inválido. Envie { plan: 'pro' }." },
       { status: 400 }
     );
   }
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: "brl",
             product_data: {
-              name: "JUDX Platform Plus",
+              name: "JUDX Pro",
               description: "Assinatura mensal (R$97/mês).",
             },
             unit_amount: 9700, // R$ 97,00 em centavos
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
       ],
       allow_promotion_codes: false,
       metadata: {
-        plan: "plus",
+        plan: "pro",
       },
     });
 

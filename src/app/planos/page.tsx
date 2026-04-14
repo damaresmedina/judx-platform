@@ -51,7 +51,7 @@ export default function PlanosPage() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: "plus", billing }),
+        body: JSON.stringify({ plan: "pro", billing }),
       });
       const payload = await res.json().catch(() => null);
       if (!res.ok)
@@ -206,7 +206,7 @@ export default function PlanosPage() {
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
                 <div style={{ fontSize: ".7rem", letterSpacing: ".15em", textTransform: "uppercase", color: "#e8b44a", fontWeight: 600 }}>
-                  Plus
+                  Pro
                 </div>
                 <span className="badge" style={{ background: "rgba(74,222,128,.1)", color: "#4ade80" }}>
                   Mais popular
@@ -298,7 +298,7 @@ export default function PlanosPage() {
               },
               {
                 q: "Qual a diferenca do plano gratuito?",
-                a: "O Plus desbloqueia taxa de provimento, risco processual, alertas, filtros avancados e exportacao de dados."
+                a: "O Pro desbloqueia taxa de provimento, risco processual, alertas, filtros avancados e exportacao de dados."
               },
             ].map((faq, i) => (
               <div key={i} style={{ borderTop: "1px solid rgba(255,255,255,.06)", padding: "1.2rem 0" }}>
