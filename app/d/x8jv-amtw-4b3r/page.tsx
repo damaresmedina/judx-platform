@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'JudX — Apresentação Caixa',
-  description: 'Proposta de parceria institucional',
+  title: 'JudX — Inteligência Jurisprudencial',
+  description: 'Proposta Caixa · judx.com.br',
   robots: {
     index: false,
     follow: false,
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   },
   referrer: 'no-referrer',
   openGraph: {
-    title: 'JudX — Apresentação Caixa',
-    description: 'Proposta de parceria institucional',
-    url: 'https://judx.com.br/caixa',
+    title: 'JudX — Inteligência Jurisprudencial',
+    description: 'Proposta Caixa · judx.com.br',
+    url: 'https://judx.com.br/d/x8jv-amtw-4b3r',
     siteName: 'JudX',
     images: [
       {
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'JudX — Apresentação Caixa',
-    description: 'Proposta de parceria institucional',
+    title: 'JudX — Inteligência Jurisprudencial',
+    description: 'Proposta Caixa · judx.com.br',
     images: ['https://judx.com.br/og-judx-2026.png'],
   },
 };
