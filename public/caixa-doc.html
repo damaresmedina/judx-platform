@@ -487,6 +487,39 @@
   .fade.d3 { transition-delay: 0.3s; }
   .fade.d4 { transition-delay: 0.45s; }
 
+  /* ─── Dramatic entrance for pivotal slides ─── */
+  .fade.slow {
+    transform: translateY(30px);
+    transition: opacity 2.2s cubic-bezier(0.23, 1, 0.32, 1), transform 2.2s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* ─── Progress bar ─── */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+    width: 0%;
+    z-index: 300;
+    transition: width 0.4s ease;
+  }
+
+  /* ─── Concentration table hover ─── */
+  .conc-row {
+    transition: background 0.3s ease, padding-left 0.3s ease;
+  }
+  .conc-row:hover {
+    background: rgba(200, 146, 42, 0.06);
+    padding-left: 1rem;
+  }
+
+  /* ─── Breathe on pivotal slide (09) ─── */
+  section[data-slide="9"] {
+    padding-top: 15vh;
+    padding-bottom: 15vh;
+  }
+
   /* ─── Print ─── */
   @media print {
     .mode-toggle, .nav-hint { display: none; }
@@ -496,6 +529,7 @@
 </head>
 <body>
 
+<div class="progress-bar" id="progressBar"></div>
 <button class="mode-toggle" onclick="togglePresentation()">Modo apresentação · P</button>
 <div class="nav-hint">← → navegar · esc sair · 01 / 15</div>
 
@@ -687,7 +721,7 @@
 <!-- ─────────── 09 · O QUE FALTA ─────────── -->
 <section data-slide="9">
   <div class="slide-meta"><span>O ponto de virada</span><span class="num">09 / 15</span></div>
-  <h1 class="statement display fade" style="font-size: clamp(2.5rem, 7vw, 6rem);">
+  <h1 class="statement display fade slow" style="font-size: clamp(2.5rem, 7vw, 6rem);">
     Não falta <span class="accent">dado</span>.<br>
     Falta <span class="accent">leitura estrutural</span>.
   </h1>
@@ -813,7 +847,7 @@
 <section class="closing" data-slide="15">
   <div class="slide-meta"><span>Fechamento</span><span class="num">15 / 15</span></div>
 
-  <h1 class="display fade">
+  <h1 class="display fade slow">
     O sistema já é <span style="font-style: italic; color: var(--gold-soft);">previsível</span>.<br>
     A questão é quem passa<br>a <span style="font-style: italic; color: var(--gold-soft);">controlá-lo</span>.
   </h1>
@@ -835,6 +869,38 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.fade').forEach(el => observer.observe(el));
 
+  // ─── Progress bar on scroll ───
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if (h > 0) progressBar.style.width = (window.scrollY / h * 100) + '%';
+  });
+
+  // ─── Count-up animation for big numbers ───
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting || e.target.dataset.counted) return;
+      e.target.dataset.counted = '1';
+      const raw = e.target.textContent.trim();
+      const match = raw.match(/^([\d.]+)/);
+      if (!match) return;
+      const target = parseInt(match[1].replace(/\./g, ''));
+      if (isNaN(target) || target < 100) return;
+      const suffix = raw.replace(match[1], '');
+      const fmt = (n) => n.toLocaleString('pt-BR');
+      const duration = 1800;
+      const start = performance.now();
+      const step = (now) => {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        e.target.textContent = fmt(Math.round(target * ease)) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.datum .n').forEach(el => countObserver.observe(el));
+
   // ─── Presentation mode ───
   let isPresentation = false;
   let currentSlide = 1;
@@ -848,6 +914,7 @@
     });
     document.querySelector('.nav-hint').textContent =
       `← → navegar · esc sair · ${String(currentSlide).padStart(2,'0')} / ${total}`;
+    progressBar.style.width = (currentSlide / total * 100) + '%';
     // Re-trigger fades
     const active = document.querySelector('section.active');
     if (active) {
