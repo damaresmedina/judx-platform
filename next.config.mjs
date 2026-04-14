@@ -31,7 +31,6 @@ const nextConfig = {
         { source: '/', destination: '/landing-content.html' },
       ],
       afterFiles: [
-        { source: '/caixa', destination: '/d/x8jv-amtw-4b3r' },
         { source: '/en', destination: '/landing-en.html' },
         { source: '/serie-historica', destination: '/serie-historica.html' },
         { source: '/rede-de-acesso', destination: '/rede-de-acesso.html' },
