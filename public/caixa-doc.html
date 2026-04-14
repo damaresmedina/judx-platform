@@ -14,6 +14,7 @@
   :root {
     --navy: #0d1f35;
     --navy-deep: #081427;
+    --warm-dark: #151110;
     --navy-soft: #152b48;
     --gold: #c8922a;
     --gold-soft: #e0b558;
@@ -74,6 +75,7 @@
     justify-content: center;
     position: relative;
     border-bottom: 1px solid var(--line);
+    background: var(--warm-dark);
   }
 
   @media (min-width: 900px) {
@@ -515,10 +517,142 @@
   }
 
   /* ─── Breathe on pivotal slide (09) ─── */
-  section[data-slide="9"] {
+  section[data-slide="9"],
+  section.pivotal {
     padding-top: 15vh;
     padding-bottom: 15vh;
   }
+
+  /* ─── Heat map ─── */
+  .map-wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  @media (min-width: 900px) {
+    .map-wrap { grid-template-columns: 3fr 2fr; gap: 3rem; }
+  }
+  .map-svg {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+  }
+  .map-svg .region {
+    fill: var(--navy-soft);
+    stroke: rgba(232,221,200,0.08);
+    stroke-width: 0.8;
+    transition: fill 0.3s, opacity 0.3s;
+    cursor: pointer;
+  }
+  .map-svg .region:hover {
+    fill: var(--navy);
+    stroke: var(--gold);
+    stroke-width: 1.2;
+  }
+  .map-svg .region.trf-hot { fill: rgba(200,146,42,0.25); }
+  .map-svg .region.trf-med { fill: rgba(200,146,42,0.12); }
+  .map-svg .region.trf-low { fill: rgba(200,146,42,0.06); }
+
+  .hotspot {
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .hotspot:hover { transform: scale(1.3); }
+
+  @keyframes pulse-ring {
+    0% { r: 6; opacity: 0.6; }
+    100% { r: 18; opacity: 0; }
+  }
+  .pulse {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+  .pulse-amber {
+    stroke: #e8a030;
+    animation: pulse-ring 1.4s ease-out infinite;
+  }
+
+  .map-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .map-card {
+    border: 1px solid var(--line-strong);
+    padding: 1.8rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .map-card.active {
+    border-color: var(--gold);
+    background: rgba(200,146,42,0.04);
+  }
+  .map-card .mc-city {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .map-card .mc-trf {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .map-card .mc-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .map-card .mc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+  .map-card .mc-status {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 2px;
+    margin-top: 0.8rem;
+  }
+  .mc-status.critico { background: rgba(224,82,82,0.15); color: #e05252; }
+  .mc-status.acelerando { background: rgba(232,160,48,0.15); color: #e8a030; }
+  .mc-status.alto { background: rgba(200,146,42,0.15); color: var(--gold-soft); }
+
+  .map-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.1em;
+  }
+  .map-legend span {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .ml-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .ml-dot.red { background: #e05252; }
+  .ml-dot.amber { background: #e8a030; }
+  .ml-dot.gold { background: var(--gold); }
 
   /* ─── Print ─── */
   @media print {
@@ -621,29 +755,98 @@
   </div>
 </section>
 
-<!-- ─────────── 05 · CONCENTRAÇÃO CRÍTICA ─────────── -->
+<!-- ─────────── 05 · MAPA DE CALOR ─────────── -->
 <section data-slide="5">
-  <div class="slide-meta"><span>Concentração crítica</span><span class="num">05 / 15</span></div>
-  <div class="eyebrow fade">Unidades que concentram o passivo</div>
+  <div class="slide-meta"><span>Mapa de risco</span><span class="num">05 / 15</span></div>
+  <div class="eyebrow fade">Geografia do passivo</div>
 
-  <div class="conc-table fade d2">
-    <div class="conc-row highlight">
-      <span class="place">2º JEF · Vitória</span>
-      <span class="val">11.405</span>
+  <div class="map-wrap">
+    <div class="fade">
+      <svg class="map-svg" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+        <!-- TRF1 — Norte/Centro (maior jurisdição) -->
+        <path class="region trf-hot" data-trf="TRF1" d="M160,60 L210,35 L280,25 L330,40 L370,65 L385,100 L400,130 L365,145 L320,135 L280,125 L240,120 L200,130 L160,145 L120,170 L85,210 L70,260 L80,310 L100,350 L130,380 L165,400 L200,410 L240,400 L280,380 L320,370 L360,355 L400,340 L430,320 L450,350 L440,380 L420,405 L390,420 L360,410 L330,400 L290,410 L250,430 L220,450 L200,420 L170,415 L140,395 L110,365 L90,325 L75,280 L68,235 L78,190 L100,155 L130,125 L155,95 Z"/>
+        <!-- TRF5 — Nordeste -->
+        <path class="region trf-med" data-trf="TRF5" d="M370,65 L410,55 L450,65 L490,90 L520,130 L535,170 L540,210 L530,245 L515,275 L500,300 L480,320 L455,335 L430,320 L400,340 L370,355 L400,300 L415,250 L410,200 L400,160 L385,120 L385,100 Z"/>
+        <!-- TRF2 — RJ/ES -->
+        <path class="region trf-hot" data-trf="TRF2" d="M450,350 L480,320 L500,350 L510,390 L500,420 L480,445 L455,455 L435,440 L420,420 L420,405 L440,380 Z"/>
+        <!-- TRF3 — SP/MS -->
+        <path class="region trf-med" data-trf="TRF3" d="M220,450 L250,430 L290,410 L330,400 L360,410 L390,420 L420,420 L435,440 L430,470 L410,500 L380,510 L345,505 L310,495 L275,490 L240,485 L215,475 Z"/>
+        <!-- TRF4 — Sul -->
+        <path class="region trf-hot" data-trf="TRF4" d="M240,485 L275,490 L310,495 L345,505 L380,510 L395,530 L385,560 L365,590 L340,615 L310,640 L285,655 L265,650 L250,630 L240,600 L235,565 L230,530 L235,505 Z"/>
+
+        <!-- Hotspot: Vitória -->
+        <circle class="pulse" cx="490" cy="410" r="6"/>
+        <circle class="hotspot" cx="490" cy="410" r="5" fill="#e05252" data-city="vitoria"/>
+
+        <!-- Hotspot: Porto Alegre -->
+        <circle class="pulse" cx="310" cy="620" r="6"/>
+        <circle class="hotspot" cx="310" cy="620" r="5" fill="#e05252" data-city="poa"/>
+
+        <!-- Hotspot: Manaus -->
+        <circle class="pulse pulse-amber" cx="165" cy="165" r="6"/>
+        <circle class="pulse pulse-amber" cx="165" cy="165" r="6" style="animation-delay: 0.7s;"/>
+        <circle class="hotspot" cx="165" cy="165" r="5" fill="#e8a030" data-city="manaus"/>
+
+        <!-- Hotspot: São Paulo -->
+        <circle class="hotspot" cx="365" cy="490" r="4" fill="var(--gold)" data-city="sp"/>
+
+        <!-- Hotspot: Brasília -->
+        <circle class="hotspot" cx="340" cy="380" r="4" fill="var(--gold)" data-city="brasilia"/>
+
+        <!-- Hotspot: Rio de Janeiro -->
+        <circle class="hotspot" cx="445" cy="445" r="3.5" fill="var(--gold)" data-city="rj"/>
+
+        <!-- Hotspot: Salvador -->
+        <circle class="hotspot" cx="475" cy="310" r="3" fill="var(--gold-soft)" data-city="salvador"/>
+
+        <!-- Hotspot: Recife -->
+        <circle class="hotspot" cx="520" cy="240" r="3" fill="var(--gold-soft)" data-city="recife"/>
+
+        <!-- Hotspot: Fortaleza -->
+        <circle class="hotspot" cx="495" cy="155" r="3" fill="var(--gold-soft)" data-city="fortaleza"/>
+
+        <!-- Hotspot: Curitiba -->
+        <circle class="hotspot" cx="340" cy="520" r="3.5" fill="var(--gold)" data-city="curitiba"/>
+
+        <!-- Hotspot: Belo Horizonte -->
+        <circle class="hotspot" cx="420" cy="400" r="3.5" fill="var(--gold)" data-city="bh"/>
+      </svg>
+
+      <div class="map-legend">
+        <span><span class="ml-dot red"></span>Concentração crítica</span>
+        <span><span class="ml-dot amber"></span>Aceleração detectada</span>
+        <span><span class="ml-dot gold"></span>Volume significativo</span>
+      </div>
     </div>
-    <div class="conc-row">
-      <span class="place">Porto Alegre</span>
-      <span class="val">9.305</span>
-    </div>
-    <div class="conc-row highlight">
-      <span class="place">Manaus <em style="opacity: 0.7; font-size: 0.85em;">· crescimento explosivo</em></span>
-      <span class="val">↗</span>
+
+    <div class="map-panel fade d2" id="mapPanel">
+      <div class="map-card active" id="card-vitoria">
+        <div class="mc-trf">TRF2 · Justiça Federal</div>
+        <div class="mc-city">2º JEF · Vitória</div>
+        <div class="mc-val">11.405</div>
+        <div class="mc-label">Processos concentrados em uma única unidade</div>
+        <div class="mc-status critico">Concentração crítica</div>
+      </div>
+      <div class="map-card" id="card-poa">
+        <div class="mc-trf">TRF4 · Justiça Federal</div>
+        <div class="mc-city">Porto Alegre</div>
+        <div class="mc-val">9.305</div>
+        <div class="mc-label">Segunda maior concentração do país</div>
+        <div class="mc-status critico">Concentração crítica</div>
+      </div>
+      <div class="map-card" id="card-manaus">
+        <div class="mc-trf">TRF1 · Justiça Federal</div>
+        <div class="mc-city">Manaus</div>
+        <div class="mc-val">↗</div>
+        <div class="mc-label">Crescimento explosivo — vetor de passivo emergente</div>
+        <div class="mc-status acelerando">Aceleração detectada</div>
+      </div>
     </div>
   </div>
 
   <div class="verdict fade d3">
-    <div class="label">O que isso implica</div>
-    <p>Uma única unidade pode concentrar <span class="italic" style="color: var(--gold-soft);">mais risco que regiões inteiras</span>.</p>
+    <div class="label">Leitura estratégica</div>
+    <p>Onde o padrão aparece, <span class="italic" style="color: var(--gold-soft);">o resultado deixa de ser destino</span>.</p>
   </div>
 </section>
 
