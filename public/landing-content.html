@@ -261,28 +261,18 @@ h1 { animation: fadeUp .6s ease .1s both; }
 </section>
 <section class="section-cta" id="contato">
   <h2 class="cta-title">O que o Supremo<br><em>realmente</em> decide.</h2>
-  <p class="cta-sub">Solicite uma demonstração. Sem compromisso, sem cadastro longo — apenas uma conversa sobre os dados.</p>
-  <form class="cta-form" onsubmit="handleSubmit(event)">
-    <input class="cta-input" type="email" placeholder="seu@email.com.br" required id="emailInput"/>
-    <button class="cta-submit" type="submit">Solicitar acesso</button>
-  </form>
-  <div class="cta-note">Respondemos em até 24 horas · Dados protegidos · Sem spam</div>
+  <p class="cta-sub">Acesse agora. Plano gratuito para começar, Plus para quem precisa de mais.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;">
+    <a href="/cadastro" class="cta-submit" style="text-decoration:none;display:inline-block;padding:1rem 2.5rem;font-size:1rem;">Criar conta gratis</a>
+    <a href="/planos" style="text-decoration:none;display:inline-block;padding:1rem 2.5rem;font-size:1rem;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);border-radius:8px;font-family:'DM Sans',sans-serif;transition:all .2s;">Ver planos</a>
+  </div>
+  <div class="cta-note">Sem compromisso · Cancele quando quiser · Dados protegidos</div>
 </section>
 <footer>
   <div class="footer-logo">Jud<span>X</span> — Decoding Justice</div>
   <div class="footer-text">© 2026 JudX. Todos os direitos reservados. Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</div>
 </footer>
 <script>
-function handleSubmit(e) {
-  e.preventDefault();
-  const email = document.getElementById('emailInput').value;
-  const btn = e.target.querySelector('.cta-submit');
-  btn.textContent = 'Enviado ✓';
-  btn.style.background = '#2d7a4f';
-  btn.style.color = '#fff';
-  setTimeout(() => { btn.textContent = 'Solicitar acesso'; btn.style.background = ''; btn.style.color = ''; document.getElementById('emailInput').value = ''; }, 3000);
-  console.log('Lead:', email);
-}
 const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.1 });
 document.querySelectorAll('.number-card, .product-item').forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(16px)'; el.style.transition = 'opacity .5s ease, transform .5s ease'; observer.observe(el); });
 </script>
