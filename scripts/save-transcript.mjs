@@ -12,7 +12,7 @@
  * Saída: markdown em Desktop/backup_judx/resultados/transcripts/YYYY-MM-DD_HHMM_<sid>.md
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, existsSync, renameSync, unlinkSync } from 'fs';
 import { join, basename } from 'path';
 import os from 'os';
 
@@ -130,10 +130,38 @@ function main() {
   const sid = basename(transcriptPath).replace('.jsonl', '').slice(0, 8);
   const stamp = fmtDateStamp(startTime);
   const outPath = join(OUT_DIR, `${stamp}_session_${sid}.md`);
+  const tmpPath = outPath + '.tmp';
 
-  writeFileSync(outPath, md, 'utf-8');
-  const sizeKB = (md.length / 1024).toFixed(1);
-  console.error(`[save-transcript] ${outPath} (${sizeKB} KB, ${turns} turnos)`);
+  // Escreve primeiro em .tmp para não concorrer com readers do .md
+  writeFileSync(tmpPath, md, 'utf-8');
+
+  // Rename com retry: no Windows rename falha se arquivo destino tiver handle aberto
+  // Tenta 3x com 2s de intervalo; se falhar, deixa o .tmp (não perde o trabalho).
+  let renamed = false;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      // Se existe arquivo destino, remover antes (Windows)
+      if (existsSync(outPath)) { try { unlinkSync(outPath); } catch {} }
+      renameSync(tmpPath, outPath);
+      renamed = true;
+      break;
+    } catch (e) {
+      if (attempt === 3) {
+        console.error(`[save-transcript] FALHA no rename apos 3 tentativas: ${e.message}`);
+        console.error(`[save-transcript] transcript preservado em ${tmpPath} para recuperacao manual`);
+        return;
+      }
+      const waitMs = 2000;
+      // espera bloqueante simples (sem depender de setTimeout/async)
+      const end = Date.now() + waitMs;
+      while (Date.now() < end) { /* wait */ }
+    }
+  }
+
+  if (renamed) {
+    const sizeKB = (md.length / 1024).toFixed(1);
+    console.error(`[save-transcript] ${outPath} (${sizeKB} KB, ${turns} turnos)`);
+  }
 }
 
 main();

@@ -451,9 +451,13 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 - [x] Agregação numérica: 84 endpoints (182M processos, 8,6 bi movimentos)
 - [x] Cardinalidade: 25.515 nós institucionais únicos nacionais
 - [x] TJSP por sharding temporal: 37M docs consolidados (2000-2026)
-- [ ] Execução bruta Fase 1 em andamento (piloto: superiores + militares + TREs pequenos)
-  - 17 concluídos; STJ e TST ainda rodando (~50%)
-  - Previsão de fechamento: ~23:20
+- [x] Execução bruta Fase 1 CONCLUÍDA às 22:30 (piloto: superiores + militares + TREs pequenos)
+  - 19 endpoints concluídos (STJ, TST, TSE, STM + 3 TJMs + 13 TREs pequenos)
+  - 9.031.005 docs baixados em 2,91 GB (NDJSON gzipado em G:\datajud_raw\)
+  - Tempo real: ~2h15
+- [x] Comando 'all' disparado às 22:40 (task `b8tr0o81i`)
+  - Fases 2, 3, 4 em sequência automática (3-4 dias estimados)
+  - Auto-resume (15 min) + Monitor Claude (30 min) protegendo a operação
 
 **Infraestrutura**
 - [x] DuckDB CLI (v1.5.2) + Node binding instalados

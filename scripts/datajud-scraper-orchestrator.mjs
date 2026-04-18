@@ -266,7 +266,24 @@ else if (cmd === 'fase1') { setup(); await runPhase('fase1_piloto', 8); }
 else if (cmd === 'fase2') { await runPhase('fase2_meio', 8); }
 else if (cmd === 'fase3') { await runPhase('fase3_gigantes', 4); }
 else if (cmd === 'fase4') { await runPhase('fase4_tjsp', 1); }
-else if (cmd && !['setup','status','fase1','fase2','fase3','fase4'].includes(cmd)) {
+else if (cmd === 'all') {
+  // Roda as 4 fases em sequência. Cada worker respeita seu checkpoint
+  // individual: endpoints já concluídos apenas saem imediatamente sem refazer.
+  setup();
+  console.log('\n========== ALL PHASES INICIADAS ==========\n');
+  const t0 = Date.now();
+  console.log('\n[ALL] -> Fase 1 (piloto)');
+  await runPhase('fase1_piloto', 8);
+  console.log('\n[ALL] -> Fase 2 (meio)');
+  await runPhase('fase2_meio', 8);
+  console.log('\n[ALL] -> Fase 3 (gigantes sem TJSP)');
+  await runPhase('fase3_gigantes', 4);
+  console.log('\n[ALL] -> Fase 4 (TJSP dedicado)');
+  await runPhase('fase4_tjsp', 1);
+  const elapsed = ((Date.now()-t0)/3600000).toFixed(2);
+  console.log(`\n========== ALL PHASES CONCLUIDAS em ${elapsed}h ==========`);
+}
+else if (cmd && !['setup','status','fase1','fase2','fase3','fase4','all'].includes(cmd)) {
   // lista de aliases específicos
   const aliases = process.argv.slice(2);
   const found = [];
