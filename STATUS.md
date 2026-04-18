@@ -233,34 +233,84 @@
 
 ## RETOMAR AQUI APÓS REINÍCIO
 
-### CANCELADO — Scraper partes portal STF
-- **Status**: Cancelado em 12/abr/2026 — Claude Code não conseguiu achar caminho scrapável viável
+### DESISTIDO — Scraper partes portal STF
+- **Status**: Desistido definitivamente em 16/abr/2026 — WAF do STF bloqueia, scraper não funciona
 - **Checkpoint final**: 6.177.641 | 411.288 processos recuperados
 - **Dados salvos**: `Desktop\backup_judx\resultados\partes_portal_FINAL.csv` + `html_raw_partes/`
-- **Nota**: dados já coletados (411K) permanecem disponíveis para uso
+- **Nota**: dados já coletados (411K) permanecem disponíveis para uso. Não haverá novas tentativas.
 
 ### CONCLUÍDO — UPDATE judx_case.decided_at
 - 2.212.761/2.212.761 rows atualizadas (100%)
 - Confirmado em 12/abr/2026
 
-### Prioridade 1 — Completar judx_case
-1. Verificar decided_at (pode ter terminado)
-2. Mapear 48K organ_id faltantes
-3. Classificar phase (outra → recursal/originaria/etc.)
-4. Popular judx_subject (vazia)
+### 16/abr/2026 — Auditoria + Correções + INCIDENTES
 
-### Prioridade 2 — Inteiro teor
-5. Investigar API jurisprudencia.stf.jus.br para textos completos
-6. Padrões decisórios a partir dos 421K textos de ementa (premium)
+#### Correções aplicadas (3x — refeitas após cada restore)
+- [x] organ_id: 48K nulos → **100%** (INSERT PRESIDÊNCIA + UPDATE por hierarquia stf_master)
+- [x] procedural_class_id: 4.924 nulos → **100%** (INSERT CR/SE/SEC/Cm/EL/ES + UPDATE)
+- [x] main_subject_id: 0% → **98.4%** (árvore 14.022 nós em judx_subject + UPDATE 2.177K cases)
+- [x] judx_subject: 3.621 STJ → **14.022** (3.621 preservados + 10.401 STF hierárquicos)
 
-### Prioridade 3 — Quando scraper terminar
-7. Reparser 9col sobre todos os HTMLs
-8. Substituir partes Corte Aberta por portal (nomes completos)
-9. Atualizar stf_partes_completo no Supabase
+#### INCIDENTE 1 — Claude Code (TRUNCATE CASCADE em judx_subject)
+- TRUNCATE judx_subject CASCADE propagou e apagou judx_case (2.2M), judx_decision (2.9M), judx_case_litigant (440K)
+- Resolvido: restore backup Supabase 16/abr 04:03 + reaplicação de correções
 
-### Prioridade 4 — Limpeza do banco
-10. Remover 82 tabelas vazias (com confirmação)
-11. Documentar fronteiras atualizadas
+#### INCIDENTE 2 — claude.ai (TRUNCATE/DROP em stf_master + referências)
+- Apagou stf_master (2.9M), stf_master_premium (2.9M), quase todo judx_organ e judx_procedural_class
+- Resolvido: restore backup Supabase 16/abr 15:15 + reaplicação de correções
+
+#### Backup local
+- [x] pg_dump completo (estrutura + dados) em `backup_judx/relatorios/2026-04-16_backup_completo/`
+- [x] Schema DDL separado
+- [x] Auditoria documentada: `2026-04-16_AUDITORIA_INCIDENTES_BANCO.md`
+
+#### Outros
+- [x] Scraper STF marcado como desistido definitivamente
+- [x] PostgreSQL 17 instalado localmente (pg_dump disponível)
+- [x] Mapa estratégico FIESP/CNI gerado: `Desktop/mapa_estrategico_fiesp_cni.docx`
+
+#### Análise — Ambientes decisórios STF (presencial vs virtual)
+- [x] Cronologia normativa: 2007→ER 31/2009→ER 42/2010→Res 587/2016→ER 52/2019→ER 53/2020
+- [x] Volume colegiado: virtual absorveu 99% a partir de 2021
+- [x] ADI: presencial sistematicamente MENOS unânime (12-33%) que virtual (74-84%). Presencial = fórum da controvérsia
+- [x] ADPF: inversão 2023+ — presencial MAIS unânime (85-87%). Hipótese: 8 de janeiro + presidência Barroso
+- [x] RE/ARE Pleno: segue padrão ADI
+- [x] 2ª Turma virtual: erosão de 100% (2021) para 42% (2025) em REs — composição Nunes Marques + André Mendonça
+- [x] Campo `relator` da Corte Aberta não é confiável: 5.133 decisões com relator substituído pelo Redator para acórdão
+- [x] Destaque: só 30 menções em 90K extratos virtuais — quase sempre indeferido ou cancelado
+- [x] Colunas desprezadas no stf_master: tipo_decisao (7 valores), meio_processo (FÍSICO/ELETRÔNICO), indicador_tramitacao
+- [x] Relatório Word: `backup_judx/relatorios/2026-04-16_RELATORIO_ambientes_decisorios_STF.docx`
+- [x] CSV 5 períodos: `backup_judx/relatorios/2026-04-16_coalizoes_5periodos_completo.csv`
+- [x] Achados por classe: `2026-04-16_ACHADO_ADI_ambiente_presencial_vs_virtual.md` + `ACHADO_ADPF_...md`
+
+#### Achado — Função pivotal
+- [x] Alexandre de Moraes: 2.114 vezes Redator para acórdão (líder de divergência vitoriosa). Mas 70.5% unanimidade como relator (menor do STF)
+- [x] Gilmar Mendes: pivot da 2ª Turma (680 vezes venceu relator, especialmente Fachin 289x virtual)
+- [x] Pares pivotais mapeados por órgão e ambiente (top 40)
+- [x] Anomalia corrigida: auto-pares (relator=pivotal) são artefato da Corte Aberta substituir relator por Redator
+
+#### Backups locais
+- [x] pg_dump JudX: 892 MB (`backup_judx/relatorios/2026-04-16_backup_completo/judx_full_dump.backup`)
+- [x] pg_dump ICONS: 64 MB (`backup_judx/relatorios/2026-04-16_backup_completo/icons/icons_full_dump.backup`)
+- [x] Schema DDL: 361 KB
+- [x] CSVs todas as tabelas: 5.3 GB (27 arquivos)
+- [x] Mapeamento subjects: `2026-04-16_mapeamento_subject_stf.csv` (11.851 assuntos)
+
+### Prioridade 1 — Próxima sessão
+1. Decompor coalizões por relator × classe × ambiente × período (5 cortes normativos)
+2. Extrair nomes dos vencidos do extrato — redes de coalizão reais
+3. Cruzar com composição temporal (quem estava na turma na data)
+4. Controlar por tema/assunto (main_subject) — isolar efeito do ambiente
+5. Mapear função pivotal por ambiente: quem forma blocos no virtual vs presencial
+6. Corrigir campo relator usando extrato (relator real vs Redator para acórdão)
+7. Popular unanimity_signal no judx_decision (161K unânime + 48K vencidos)
+8. Popular distributed_at (se disponível)
+
+### ~~Prioridade 3 — Quando scraper terminar~~ CANCELADA (scraper desistido 16/abr)
+
+### Prioridade 3 — Limpeza do banco
+7. Remover 82 tabelas vazias (com confirmação)
+8. Documentar fronteiras atualizadas
 
 ### Pendências anteriores
 - [ ] www.judx.com.br (CNAME no Registro.br)
@@ -371,6 +421,61 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 | `pipeline_local_stf.py` | Pipeline ontológico local (2.9M decisões) |
 | `montar_master.py` | Consolida decisões + basicos + partes |
 | `bom-dia.mjs` | Diagnóstico matinal + mapa de dados STF |
+
+### 13/abr/2026 (noite) — Stripe Produção + Checkout
+
+#### Stripe
+- [x] Conta Stripe nova configurada em modo live (acct_1TLv1pCeIpKIq1G4)
+- [x] Chaves live em .env.local + Vercel production
+- [x] Webhook criado via API: checkout.session.completed, subscription.updated, subscription.deleted
+- [x] Handler webhook atualiza user_metadata no Supabase (plan, plan_active, stripe_customer_id)
+- [x] Checkout aceita billing mensal (R$97) e anual (R$970)
+- [x] Price IDs corrigidos (typo na cópia original)
+
+#### Produto
+- [x] Rename Plus → **JudX Pro** em todo o fluxo
+- [x] Página /planos refeita: toggle mensal/anual, social proof, FAQ, pegada de produto
+- [x] /planos agora é pública (sem exigir login)
+- [x] Landing CTA final: "Assine agora" → /planos (removido formulário solicitar acesso)
+
+#### Pendente para amanhã
+- [ ] Virada de comunicação do site inteiro: linguagem de produto/solução, não acadêmica
+- [ ] Página /cadastro com visual JudX (atualmente destoante)
+- [ ] Testar fluxo completo de pagamento real
+
+### 17/abr/2026 — Radiografia do Sistema (sessão longa, em andamento)
+
+**Datajud**
+- [x] 91 endpoints diagnosticados — dimensão bruta 329.761.662 docs nacional
+- [x] Schema probe: 10 docs/endpoint, campos comuns mapeados
+- [x] Agregação numérica: 84 endpoints (182M processos, 8,6 bi movimentos)
+- [x] Cardinalidade: 25.515 nós institucionais únicos nacionais
+- [x] TJSP por sharding temporal: 37M docs consolidados (2000-2026)
+- [ ] Execução bruta Fase 1 em andamento (piloto: superiores + militares + TREs pequenos)
+  - 17 concluídos; STJ e TST ainda rodando (~50%)
+  - Previsão de fechamento: ~23:20
+
+**Infraestrutura**
+- [x] DuckDB CLI (v1.5.2) + Node binding instalados
+- [x] Arquitetura fundadora de 3 camadas formalizada (HD / DuckDB / Supabase)
+- [x] 4 scripts SQL DuckDB para análise universo → tronco → raiz
+- [x] Backup completo do Supabase via DuckDB (G:\supabase_backup\, 2,2 GB)
+- [x] Proteções do scraper: power settings + auto-resume Windows + Monitor Claude
+
+**Documentos autoriais**
+- [x] Dossiê DNA do projeto (2026-04-17_DOSSIE_DNA_PROJETO_COMPLETO.md)
+- [x] Dossiê Extractive Litigating State (R$ 5,7 tri contencioso / R$ 3 tri DAU / R$ 454 bi SP)
+- [x] 2 notas técnicas (cartografia Datajud + ontologias/heurísticas)
+- [x] Resgate arquitetura trilha v2 (matriz 5×5 em troncos anteparos)
+- [x] Pacotes de restauração (ZIP essencial limpo + ZIP dados STF + manifest)
+
+**Ontologia**
+- [x] Derivação III: ontologias plurais (cada âncora sua ontologia)
+- [x] Ordem de observação: universo → tronco → raiz → vai-e-vem → render
+- [x] Estrutura hierárquica: STF (cúpula) → 4 troncos anteparos → sub-troncos → raízes (varas)
+- [x] Axioma: Poder Judiciário é estrutura institucional ancorada (norma × atores × tempo)
+- [x] Nó = processo (string); tribunal/vara = ancoragem
+- [x] Zero dedupe: processos com _ids distintos e mesmo número preservados
 
 ---
 
