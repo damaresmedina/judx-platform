@@ -12,7 +12,7 @@
  * Saída: markdown em Desktop/backup_judx/resultados/transcripts/YYYY-MM-DD_HHMM_<sid>.md
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, existsSync, renameSync, unlinkSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, existsSync, renameSync, unlinkSync, fstatSync } from 'fs';
 import { join, basename } from 'path';
 import os from 'os';
 
@@ -21,8 +21,15 @@ const PROJECTS_DIR = join(HOME, '.claude', 'projects', 'C--Users-medin');
 const OUT_DIR = join(HOME, 'Desktop', 'backup_judx', 'resultados', 'transcripts');
 
 function readStdinJSON() {
+  // TTY interativo: sem stdin a ler
+  if (process.stdin.isTTY) return null;
   try {
+    // Windows Scheduled Task envia stdin inválido (não-FIFO/não-Socket) e
+    // sem EOF — readFileSync(0) bloqueia indefinidamente. Pula se não for pipe real.
+    const st = fstatSync(0);
+    if (!st.isFIFO() && !st.isSocket()) return null;
     const data = readFileSync(0, 'utf-8');
+    if (!data.trim()) return null;
     return JSON.parse(data);
   } catch { return null; }
 }
