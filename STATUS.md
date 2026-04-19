@@ -481,6 +481,55 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 - [x] Nó = processo (string); tribunal/vara = ancoragem
 - [x] Zero dedupe: processos com _ids distintos e mesmo número preservados
 
+### 18/abr/2026 — Fase 2 Datajud + classificação TPU + tese empírica STJ
+
+**Extração Datajud nacional (240M+ docs baixados em G:/datajud_raw/)**
+- [x] 83 endpoints Fase 1+2 (superiores, TRFs, TRTs, TREs, TJMs, TJs médios) — done
+- [x] Gigantes TJBA/TJPR/TJRJ/TJRS/TJSC — done
+- [x] TJSP 27 shards anuais 2000-2026 — done
+- [x] TJSP-pre_2000 (1900-1999) — done 1,773,136 docs
+- [x] TJSP-nodata — done com anomalia (1.000 docs vs 6,26M esperados — investigar)
+- [ ] **TJMG em 54%** (rodando PID 11444, continua sem Claude Code)
+- [ ] **TJSP-pre_1900 em 9%** (rodando PID 13168, caminho crítico, cauda 26,8M docs)
+
+**Staging local G:/ (política 3 camadas — trabalho só em G:, Supabase só produto final)**
+- [x] `G:/staging_local/stj_consolidado.duckdb` ~28GB: stj_datajud_core (3,39M), stj_partes_raw, stj_partes_norm_v2 (polo_atraido), stj_processos_pivot, stj_processos_consolidado, stj_resultado_por_processo
+- [x] `G:/staging_local/datajud_nacional.duckdb`: inventario_endpoints 123 rows
+- [x] `G:/supabase_backup/backup_20260418_antes.sql` 7,1GB pg_dump
+
+**Achados empíricos (documentados)**
+- [x] Gap partes STJ = 3.378.108 (99,97%) — Datajud não expõe (LGPD)
+- [x] Cauda pré-2000 multi-tribunal: STJ 79% / TJPE 71% / TJRJ 58% / TJSP 40% / TST 0%
+- [x] TJSP 26,8M docs com dataAjuizamento < 1900 (cauda histórica ou sintética)
+- [x] Top 10 réus STJ: 9/10 são entidades estatais (tese "litigiosidade é do Estado")
+- [x] Regra canônica "polo atrai" (tabelas de partes — memória durável)
+- [x] API Power BI CNJ acessível sem Cloudflare (wabi-brazil-south-api)
+- [x] **Tese "STJ não aprecia mérito" com lastro: 52,64% estrito / 80,68% não-favorecimento (3,39M processos classificados via TPU)**
+
+**Documentação (Desktop/backup_judx/resultados/)**
+- [x] 2026-04-18_NOTA_ETNOGRAFICA_arqueologia_judicial_datajud.md (10 seções)
+- [x] 2026-04-18_CARTOGRAFIA_api_powerbi_cnj.md
+- [x] 2026-04-18_INVENTARIO_ARQUEOLOGICO_raw.json + CSV
+- [x] 9 DOCX em Desktop/docs_datajud_abr2026/
+
+**Scripts versionados (commits locais pendentes push)**
+- [x] datajud-scraper-worker.mjs v4 (3 passes + sharding)
+- [x] datajud-turbo.mjs (orquestrador lockfile)
+- [x] stj-classificar-resultados.py (TPU → 9 categorias)
+- [x] inventario-nacional.py
+- [x] etnografia-raw-inventario.py
+- [x] md-to-docx.py
+- [x] fix save-transcript.mjs
+
+**Pendências para próxima sessão**
+- [ ] Validar TJMG e TJSP-pre_1900 como `done=true` (workers rodando em background sem Claude)
+- [ ] Re-executar stj-classificar-resultados.py se tabela stj_resultado_por_processo tiver < 3,39M rows
+- [ ] Refinar categoria "indefinido" (6,63% → 0%)
+- [ ] Aplicar taxonomia TPU em todos os outros tribunais já baixados
+- [ ] Investigar anomalia TJSP-nodata (1.000 docs ≠ 6,26M)
+- [ ] Scraping portal STJ para partes (cookie Firefox)
+- [ ] Explorar painel CNJ Grandes Litigantes via Power BI API
+
 ---
 
 *Este arquivo é atualizado ao final de cada sessão de trabalho.*

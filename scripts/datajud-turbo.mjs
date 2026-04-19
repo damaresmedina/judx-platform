@@ -110,7 +110,7 @@ function isDone(outDir) {
 }
 
 // -- Worker runner ---------------------------------------------------------
-async function runWorker(alias, sigla, outDir, fromISO, toISO, label) {
+async function runWorker(alias, sigla, outDir, fromISO, toISO, label, dateField) {
   mkdirSync(outDir, { recursive: true });
   if (isDone(outDir)) {
     console.log(`[done] ${label || sigla} — já concluído`);
@@ -125,7 +125,11 @@ async function runWorker(alias, sigla, outDir, fromISO, toISO, label) {
   try {
     return await new Promise(resolve => {
       const args = [WORKER, alias, outDir];
-      if (fromISO && toISO) args.push(fromISO, toISO);
+      // Preservar posição: FROM_ISO (arg4), TO_ISO (arg5), DATE_FIELD (arg6)
+      if (fromISO || toISO || dateField) {
+        args.push(fromISO || '', toISO || '');
+        if (dateField) args.push(dateField);
+      }
       const child = spawn('node', args, { stdio: 'inherit' });
       child.on('exit', code => resolve({ sigla, code }));
     });
@@ -156,15 +160,29 @@ function buildTasks(filter, opts) {
       if (!filter.length && !opts.includeDone && isDone(outDir)) continue;
 
       if (sigla === 'TJSP') {
-        // sharding anual 2000-2026 (dataAjuizamento)
+        // Sharding por dataAjuizamento (formato CNJ YYYYMMDDHHmmss).
+        // Cobertura total dos 71,9M TJSP:
+        //   pre_2000:        28,6M docs (cauda histórica digitalizada retroativamente)
+        //   2000-2026:       37,0M docs (27 shards anuais)
+        //   sem dataAjuiz.:  6,26M docs (ghosts classe=-1)
+        //   TOTAL:           71,9M (bate com o count da API)
+        const pre2kDir = join(outDir, 'shards', 'pre_2000');
+        tasks.push({ sigla: 'TJSP-pre2000', factory: () => runWorker(
+          alias, 'TJSP-pre2000', pre2kDir, '19000101000000', '20000101000000', 'TJSP-pre2000', 'dataAjuizamento'
+        )});
         for (let y = 2000; y <= 2026; y++) {
           const shardDir = join(outDir, 'shards', String(y));
           const label = `TJSP-${y}`;
+          const from = `${y}0101000000`;
+          const to = `${y+1}0101000000`;
           tasks.push({ sigla: label, factory: () => runWorker(
-            alias, label, shardDir,
-            `${y}-01-01T00:00:00Z`, `${y+1}-01-01T00:00:00Z`, label
+            alias, label, shardDir, from, to, label, 'dataAjuizamento'
           )});
         }
+        const nodataDir = join(outDir, 'shards', 'sem_dataAjuizamento');
+        tasks.push({ sigla: 'TJSP-nodata', factory: () => runWorker(
+          alias, 'TJSP-nodata', nodataDir, 'NULL', '', 'TJSP-nodata', 'dataAjuizamento'
+        )});
       } else {
         tasks.push({ sigla, factory: () => runWorker(alias, sigla, outDir) });
       }

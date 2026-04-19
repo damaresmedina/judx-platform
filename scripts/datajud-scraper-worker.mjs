@@ -39,6 +39,9 @@ const alias = process.argv[2];
 const OUT = process.argv[3];
 const FROM_ISO = process.argv[4] || null;
 const TO_ISO = process.argv[5] || null;
+// 6º arg opcional: campo para o range (default @timestamp; usar 'dataAjuizamento' para
+// sharding por época processual — valores esperados no formato CNJ YYYYMMDDHHmmss)
+const DATE_FIELD = process.argv[6] || '@timestamp';
 
 if (!alias || !OUT) { console.error('Uso: node worker.mjs <alias> <outDir> [fromISO] [toISO]'); process.exit(1); }
 
@@ -102,8 +105,13 @@ function buildQuery(pass) {
   if (pass === 'secondary') {
     return { bool: { must_not: [{ exists: { field: '@timestamp' } }] } };
   }
+  // Sentinela 'NULL' em FROM_ISO ativa modo "must_not exists DATE_FIELD"
+  // usado para shard dedicado aos docs sem dataAjuizamento (ex.: ~34,8M no TJSP).
+  if (FROM_ISO === 'NULL') {
+    return { bool: { must_not: [{ exists: { field: DATE_FIELD } }] } };
+  }
   if (FROM_ISO && TO_ISO) {
-    return { range: { '@timestamp': { gte: FROM_ISO, lt: TO_ISO } } };
+    return { range: { [DATE_FIELD]: { gte: FROM_ISO, lt: TO_ISO } } };
   }
   return { match_all: {} };
 }
@@ -248,6 +256,11 @@ async function main() {
   }
 
   const t0 = Date.now();
+  // Modo SHARDING: quando FROM_ISO está definido (range ou 'NULL'), o worker só faz
+  // o primary pass — o filtro pertence ao shard. Secondary/tertiary no modo completo
+  // pegam dados globais (@timestamp null / dataAjuizamento null), que repetidos por
+  // N shards duplicariam massivamente. Em modo sharding, primary only.
+  const SHARDING_MODE = !!FROM_ISO;
 
   // Primary
   if (!chk.primary_done) {
@@ -255,10 +268,23 @@ async function main() {
     if (!ok) return;
     if (chk.pass === 'primary') {
       chk.primary_done = true;
-      chk.pass = 'secondary';
+      chk.pass = SHARDING_MODE ? 'done' : 'secondary';
       chk.search_after = null;
       saveCheckpoint(chk);
     }
+  }
+
+  if (SHARDING_MODE) {
+    chk.done = true;
+    saveCheckpoint(chk);
+    writeFileSync(MAN_PATH, JSON.stringify({
+      alias, sigla, shard: shardTag, mode: 'sharding', from_iso: FROM_ISO, to_iso: TO_ISO, date_field: DATE_FIELD,
+      total_fetched: chk.total_fetched, done: chk.done, file_index: chk.file_index,
+      completed_at: new Date().toISOString(),
+      duration_seconds: Math.round((Date.now()-t0)/1000),
+    }, null, 2));
+    console.log(`[${sigla}${shardTag}] FIM (sharding): primary=${chk.total_fetched.toLocaleString('pt-BR')} em ${Math.round((Date.now()-t0)/1000)}s`);
+    return;
   }
 
   // Secondary
