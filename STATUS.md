@@ -569,5 +569,41 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 
 ---
 
+### 20/abr/2026 — Fillgap STJ (fechamento do universo em 3.390.010)
+
+**Diagnóstico**
+- Raw de 17/abr tinha 3.379.100 docs; endpoint declarava 3.390.010 (`hits.total.value`, `relation=eq`). Gap = 10.910 (0,32%)
+- Persistência em 20/abr descartou drift. Passes secondary+tertiary retornaram zero (não eram órfãos nem fantasmas)
+- Causa: race em `search_after` sem tiebreak estável — Elasticsearch reordena docs com mesmo `@timestamp` entre páginas
+
+**Rotas executadas em paralelo**
+- **A** (`scripts/stj-fillgap-A-tiebreak.mjs`): primary com sort composto `[@timestamp asc, id.keyword asc]`. Output: `G:\datajud_raw\nivel_1_anteparos\STJ_repass_A\` (3.391 arquivos). Fechou em 3.390.010 exatos. Duração 2h19min. **A ⊇ RAW, A − RAW = 10.910.**
+- **B** (`scripts/stj-fillgap-B-shard-mensal.mjs`): sharding mensal 2000-2026, 317 janelas, 4 workers paralelos. Recuperou só +75 docs (confirma que sharding isolado não resolve race). Bônus ontológico: `@timestamp` é timestamp de (re)indexação no ES, não data do processo (100% dos docs com `@timestamp` não-nulo em mar/2025 a abr/2026 = reindex global do STJ)
+
+**Staging DuckDB recarregado** (`G:\staging_local\stj_consolidado.duckdb`)
+- Nova tabela canônica: `stj_datajud_core_v2_20abr` — 3.390.010 linhas, 3.390.010 IDs únicos, 3.390.010 CNJs distintos
+- Carga via `json_extract_string` em 17 batches de 200 arquivos, 15,4 min
+- `stj_datajud_core` original (3.379.100, 17/abr) **preservada intacta** como artefato histórico
+- `stj_datajud_core_v2_tentativa1_parcial` (2,4M do primeiro attempt com bug de inferência) também preservada
+- Achado: no STJ cada `_id` Datajud = um `numero_cnj` único (zero trilha acoplada na base)
+
+**Decisões canônicas firmadas hoje** (→ `Desktop\backup_judx\resultados\DECISOES_CANONICAS.md` #30, #31)
+- Toda paginação `search_after` no Datajud exige sort composto com tiebreak em `id.keyword` — aplicar quando espraiar para TST, TSE, STM, TJs, TRFs, TRTs, TREs
+- `@timestamp` ≠ data do processo. Para datação, usar `dataAjuizamento` e datas internas dos movimentos
+
+**Artefatos desta sessão**
+- Nota técnica: `Desktop\backup_judx\resultados\2026-04-20_NOTA_TECNICA_fillgap_STJ_tiebreak.md`
+- Memória permanente: `feedback_search_after_tiebreak_obrigatorio.md`
+- IDs recuperados: `Desktop\backup_judx\resultados\2026-04-20_stj_ids_recuperados_pelo_tiebreak.csv` (10.910 linhas)
+- Docs Presidentes STF: `2026-04-20_presidentes_stf_consolidado.txt` + `.docx` (35 presidentes, datas originais preservadas)
+
+**Pendente para próxima sessão**
+- [ ] Atualizar `datajud-scraper-worker.mjs v4` para sort composto no primary e secondary (hoje só o tertiary usa `id.keyword`)
+- [ ] Revalidar universo de TST, TSE, STM com o mesmo método (bater `unique_ids` do raw contra `track_total_hits`)
+- [ ] Reprocessar `stj_partes_norm_v2`, `stj_processos_consolidado`, `stj_resultado_por_processo` a partir da v2 canônica
+- [ ] Retomar pipeline prediction market (pausado desde 19/abr)
+
+---
+
 *Este arquivo é atualizado ao final de cada sessão de trabalho.*
 *O Claude Code deve ler este arquivo no início de cada sessão para saber o estado atual.*
