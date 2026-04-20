@@ -532,5 +532,42 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 
 ---
 
+### 19-20/abr/2026 — Tabela dos 172 ministros + composição STF + Prediction Market
+
+**Composição ministerial — correções no seed**
+- [x] Seed PRESIDENCIA corrigido com 35 datas reais do biográfico (antes eram biênios nominais com desvio de 7-42 dias)
+- [x] Aldir Passarinho adicionado (lacuna: presidiu 14/03/1991 a 22/04/1991, 39 dias)
+- [x] Encadeamento sem gap entre presidentes
+- [x] Vice-Presidência: 11 linhas cobrindo 2008→atual (Alexandre de Moraes desde 23/10/2025)
+
+**Tabela final dos 172 ministros**
+- [x] `Desktop/backup_judx/resultados/stf_172_ministros_FINAL.xlsx`
+- [x] Fonte: `C:/Users/medin/Downloads/STF ministros 2026.xlsx` (172 linhas, ordem decrescente de antiguidade)
+- [x] #1 = FLÁVIO DINO, #172 = Visconde de Sabará
+- [x] Normalização: UPPERCASE com acentos preservados (formato do corpus), datas ISO, HTML/aspas limpos
+- [x] Campos suplementados por `excel_parsed_174.json` e `stf_todos_ministros_consolidado.json`
+- [x] ADOLPHO AUGUSTO OLYNTHO (linha 135): DATE OF BIRTH = 1832-07-25, LOCAL OF BIRTH = ALFENAS/MG
+- [x] 133 gaps da coluna D (LOCAL OF BIRTH PRESIDENTE) preenchidos
+- [x] **REGRA FIXA: nunca regerar o xlsx do zero sem ok explícito da Damares. Edições pontuais via openpyxl (célula específica).**
+
+**Cards por ministro + dashboard**
+- [x] `cards_ministros_stf/DASHBOARD_MINISTROS_STF.html` (172 cards, auto-refresh 5s, filtro por texto)
+- [x] 83 ministros com foto (copiadas de `C:/Users/medin/Desktop/stf no diva/fotos/`)
+- [x] Dashboard ordenado decrescente (#1 Flávio Dino no topo)
+- [x] Portal atualizado com link
+
+**Prediction Market (preparado, execução pausada)**
+- [x] Script `scripts/corpus_prediction_market.py` com 11 ações cirúrgicas + resolução Presid/Vice via seed
+- [x] 542.736 pulsos genéricos resolvidos (PRESIDENTE → nome real na data)
+- [ ] **Pendente: rodar pipeline completo em próxima sessão** (foi pausado)
+- [ ] Saídas esperadas: `processos.csv` (2,22M) + T1/T2/T3 tabelas de taxa
+
+**Decisões canônicas firmadas hoje**
+- NUNCA sobrescrever xlsx que a Damares está conferindo. Edições pontuais via openpyxl.
+- Formato do corpus = UPPERCASE com acentos preservados (não strip_accents).
+- A ordem canônica STF é decrescente de antiguidade (#1 = mais recente).
+
+---
+
 *Este arquivo é atualizado ao final de cada sessão de trabalho.*
 *O Claude Code deve ler este arquivo no início de cada sessão para saber o estado atual.*
