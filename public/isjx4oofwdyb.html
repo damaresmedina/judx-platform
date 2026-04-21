@@ -133,48 +133,91 @@ button{cursor:pointer;border:none;background:none;font:inherit;}
 .fu{animation:fu .65s ease both;}
 .d1{animation-delay:.08s}.d2{animation-delay:.2s}.d3{animation-delay:.33s}.d4{animation-delay:.46s}.d5{animation-delay:.6s}
 @supports(padding:max(0px)){.slide{padding-left:max(var(--px),env(safe-area-inset-left));padding-right:max(var(--px),env(safe-area-inset-right));}#gate{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));}}
+
+/* ─────────── MOBILE polish (celular) ─────────── */
+@media(max-width:640px){
+  :root{--px:22px;--py:56px;}
+  body{font-size:16px;line-height:1.7;}
+  /* Slides com respiro */
+  .slide{padding-top:90px;padding-bottom:72px;}
+  .slide+.slide{border-top-width:0;}
+  /* Tipografia — ampliar o que era micro */
+  .nb{font-size:10px;letter-spacing:.22em;}
+  .np{font-size:10px;}
+  .ey{font-size:11px;letter-spacing:.22em;margin-bottom:16px;gap:8px;}
+  .sh{font-size:30px;line-height:1.12;margin-bottom:18px;}
+  .ld{font-size:16.5px;line-height:1.7;margin-bottom:26px;}
+  .lb{font-size:11px;letter-spacing:.18em;margin-bottom:10px;}
+  .ss{font-size:13px;line-height:1.55;}
+  .sl{font-size:10.5px;letter-spacing:.14em;}
+  .sn{font-size:28px;margin-bottom:6px;}
+  .bn{font-size:14px;}
+  .bn small{font-size:11px;}
+  .bp{font-size:12.5px;}
+  .ct{font-size:10.5px;letter-spacing:.18em;}
+  .cd{font-size:26px;}
+  .cn{font-size:15px;line-height:1.45;}
+  .cm{font-size:12px;line-height:1.75;}
+  .tt{font-size:12px;min-width:0;}
+  .hb p{font-size:14px;line-height:1.75;}
+  /* Footer/Nav mais legíveis */
+  .sf{margin-top:30px;padding-top:18px;flex-direction:column;align-items:flex-start;gap:6px;}
+  .sf span{font-size:10.5px;letter-spacing:.08em;line-height:1.5;}
+  #nav{padding:14px 22px 0;}
+  /* Gate (tela de senha) mais confortável */
+  .g-h{font-size:24px;}
+  .g-sub{font-size:12px;}
+  .g-inp{padding:16px 18px;font-size:16px;}
+  .g-btn{padding:17px;font-size:12px;letter-spacing:.22em;}
+  /* Cards/grid com gap maior */
+  .sg{gap:12px!important;}
+  .sc{padding:16px 14px;}
+  /* Tabelas com scroll horizontal suave */
+  .tt-wrap,table.tt{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+}
+
+/* Mobile muito pequeno (< 400px, iPhone SE / Android antigo) */
+@media(max-width:400px){
+  :root{--px:18px;--py:48px;}
+  .sh{font-size:26px;}
+  .ld{font-size:15.5px;}
+  .sc{padding:14px 12px;}
+}
 </style>
 <script>
 (function(){
-  if (sessionStorage.getItem('_cotip_auth')==='ok') return;
-  var ok=false;
-  for(var i=0;i<3 && !ok;i++){
-    var p=prompt('JudX · Área Reservada\n\nInforme a senha:');
-    if(p===null){window.location='https://judx.com.br/';return;}
-    if(p==='cotiplas2026'){sessionStorage.setItem('_cotip_auth','ok');ok=true;break;}
+  var authed = sessionStorage.getItem('_cotip_auth')==='ok';
+  if(!authed){
+    for(var i=0;i<3;i++){
+      var p = prompt('JudX · Área Reservada\n\nInforme a senha:');
+      if(p===null){ window.location='https://judx.com.br/'; return; }
+      if(p==='cotiplas2026'){
+        sessionStorage.setItem('_cotip_auth','ok');
+        authed = true;
+        break;
+      }
+    }
+    if(!authed){
+      document.documentElement.innerHTML='<head><meta charset="UTF-8"><title>Acesso não autorizado</title></head><body style="background:#0a1525;color:#6a8aa5;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center"><div><h1 style="color:#c8922a;font-weight:300;letter-spacing:.3em;font-size:14px">ACESSO NÃO AUTORIZADO</h1><p style="margin-top:1rem;font-size:12px;letter-spacing:.1em">Redirecionando...</p></div></body>';
+      setTimeout(function(){ window.location='https://judx.com.br/'; },2500);
+      return;
+    }
   }
-  if(!ok){document.documentElement.innerHTML='<head><meta charset="UTF-8"><title>Acesso não autorizado</title></head><body style="background:#0a1525;color:#6a8aa5;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center"><div><h1 style="color:#c8922a;font-weight:300;letter-spacing:.3em;font-size:14px">ACESSO NÃO AUTORIZADO</h1><p style="margin-top:1rem;font-size:12px;letter-spacing:.1em">Redirecionando...</p></div></body>';setTimeout(function(){window.location='https://judx.com.br/';},2500);}
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('chrome').classList.add('on');
+    document.getElementById('deck').classList.add('on');
+    if(typeof updateChrome==='function') updateChrome();
+    if(typeof animBars==='function') animBars('#ml');
+    if(typeof observeS4==='function') observeS4();
+  });
 })();
 </script>
-
 </head>
 <body>
 
-<div id="gate" role="dialog" aria-modal="true" aria-label="Área Reservada JudX">
-  <div class="gbox">
-    <div class="g-logo">JudX — Inteligência Jurisprudencial</div>
-    <div class="g-h">Área Reservada</div>
-    <div class="g-sub">Briefing Estratégico · Cotiplás · Abril 2026</div>
-    <label class="g-lbl" for="pw">Senha de acesso</label>
-    <input class="g-inp" type="password" id="pw" placeholder="••••••••••"
-           autocomplete="current-password"
-           oninput="syncBtn()" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="g-terms" id="trow" onclick="toggleT()"
-         role="checkbox" aria-checked="false" tabindex="0">
-      <div class="g-cb" id="tcb"></div>
-      <span class="g-txt">Confirmo que sou destinatário autorizado e aceito os
-        <a href="#" onclick="return false">Termos de Confidencialidade JudX</a>.
-        Material protegido por NDA e direito autoral.
-        Proibida reprodução ou circulação sem autorização expressa.</span>
-    </div>
-    <div class="g-err" id="gerr" aria-live="polite"></div>
-    <button class="g-btn" id="gbtn" onclick="doLogin()" disabled>ACESSAR →</button>
-  </div>
-</div>
-
 <div id="chrome">
   <div id="prog"><div id="pf"></div></div>
-  <div id="nav"><span class="nb">JudX · Área Reservada</span><span class="np" id="pager"></span></div>
+  <div id="nav"><span class="nb">JudX</span><span class="np" id="pager"></span></div>
 </div>
 
 <div id="deck">
@@ -372,7 +415,7 @@ button{cursor:pointer;border:none;background:none;font:inherit;}
       <div class="ec"><div class="en">⟳ CONTÍNUO</div><div class="ed">Monitoramento da 4ª Turma</div><div class="es" style="color:var(--green)">Ativo</div></div>
     </div>
   </div>
-  <div class="sf"><span>JudX — Inteligência Jurisprudencial · Área Reservada · Cotiplás · 2026</span><span>AREsp 2971391/SP · 9 / 9</span></div>
+  <div class="sf"><span>JudX — Inteligência Jurisprudencial · Cotiplás · 2026</span><span>AREsp 2971391/SP · 9 / 9</span></div>
 </section>
 
 </div>
