@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>JudX · Área Reservada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D1B2A;--navy2:#122032;--gold:#C9A84C;--cream:#F5F0E8;--cream2:#EDE7D9;--red:#c0392b;--green:#27ae60;--white:#FFFFFF;--serif:'Playfair Display',Georgia,serif;--mono:'DM Mono','Courier New',monospace;--body:'Crimson Pro',Georgia,serif;--px:clamp(20px,6vw,80px);--py:clamp(48px,8vh,96px);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{background:var(--navy);color:var(--cream);font-family:var(--body);font-size:clamp(16px,1.8vw,19px);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+button{cursor:pointer;border:none;background:none;font:inherit;}
+/* LOGIN */
+#gate{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:20px;}
+.gbox{width:100%;max-width:420px;background:var(--navy2);border:1px solid rgba(201,168,76,.4);padding:clamp(32px,6vw,52px) clamp(22px,5vw,44px);position:relative;}
+.gbox::after{content:'';position:absolute;top:-1px;left:32px;right:32px;height:3px;background:var(--gold);}
+.g-logo{font-family:var(--mono);font-size:10px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:clamp(22px,4vw,34px);}
+.g-h{font-family:var(--serif);font-size:clamp(20px,4vw,28px);font-weight:900;color:var(--white);line-height:1.15;margin-bottom:5px;}
+.g-sub{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:rgba(201,168,76,.55);margin-bottom:clamp(22px,4vw,34px);}
+.g-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(201,168,76,.5);display:block;margin-bottom:7px;}
+.g-inp{width:100%;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.22);color:var(--cream);font-family:var(--mono);font-size:15px;letter-spacing:.1em;outline:none;transition:border-color .2s;-webkit-tap-highlight-color:transparent;margin-bottom:clamp(18px,3vw,26px);-webkit-appearance:none;border-radius:0;}
+.g-inp:focus{border-color:var(--gold);}
+.g-inp::placeholder{color:rgba(245,240,232,.18);}
+.g-terms{display:flex;align-items:flex-start;gap:13px;padding:13px 0;border-top:1px solid rgba(201,168,76,.12);margin-bottom:clamp(18px,3vw,26px);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.g-cb{flex-shrink:0;margin-top:3px;width:20px;height:20px;border:1.5px solid rgba(201,168,76,.45);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.g-cb.on{background:var(--gold);border-color:var(--gold);}
+.g-cb.on::after{content:'✓';color:var(--navy);font-size:12px;font-weight:700;}
+.g-txt{font-size:clamp(12px,1.3vw,13px);color:var(--cream2);line-height:1.55;user-select:none;}
+.g-txt a{color:var(--gold);text-underline-offset:2px;}
+.g-err{font-family:var(--mono);font-size:11px;color:var(--red);min-height:16px;margin-bottom:12px;letter-spacing:.06em;}
+.g-btn{width:100%;padding:15px;border:1.5px solid rgba(201,168,76,.28);color:rgba(201,168,76,.28);font-family:var(--mono);font-size:11px;letter-spacing:.25em;text-transform:uppercase;transition:all .25s;-webkit-tap-highlight-color:transparent;}
+.g-btn.on{border-color:var(--gold);color:var(--gold);}
+.g-btn.on:active{background:var(--gold);color:var(--navy);}
+@keyframes sk{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.sk{animation:sk .35s ease;}
+/* CHROME */
+#chrome{display:none;}
+#chrome.on{display:block;}
+#prog{position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:rgba(201,168,76,.1);}
+#pf{height:100%;background:var(--gold);width:0;transition:width .3s;}
+#nav{position:fixed;top:0;left:0;right:0;z-index:199;padding:13px var(--px) 0;display:flex;justify-content:space-between;pointer-events:none;}
+.nb{font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:rgba(201,168,76,.4);text-transform:uppercase;}
+.np{font-family:var(--mono);font-size:9px;color:rgba(201,168,76,.28);}
+/* DECK */
+#deck{display:none;}
+#deck.on{display:block;}
+.slide{min-height:100svh;padding:calc(var(--py)+32px) var(--px) var(--py);display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.slide+.slide{border-top:1px solid rgba(201,168,76,.1);}
+.ey{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:clamp(12px,2vw,20px);display:flex;align-items:center;gap:10px;}
+.ey::before{content:'';width:28px;height:1.5px;background:var(--gold);flex-shrink:0;}
+.sh{font-family:var(--serif);font-size:clamp(28px,5.5vw,58px);font-weight:900;line-height:1.05;color:var(--white);margin-bottom:clamp(14px,2vw,24px);}
+.sh em{color:var(--gold);font-style:normal;}
+.ld{font-size:clamp(15px,1.7vw,18px);color:var(--cream2);line-height:1.8;max-width:600px;margin-bottom:clamp(22px,3.5vw,42px);}
+.lb{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,168,76,.48);margin-bottom:9px;}
+.dv{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:clamp(18px,3vw,32px) 0;opacity:.2;}
+.sf{margin-top:clamp(22px,4vw,44px);padding-top:15px;border-top:1px solid rgba(201,168,76,.1);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.sf span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:rgba(201,168,76,.26);}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-bottom:clamp(18px,3vw,30px);}
+@media(min-width:560px){.sg.f{grid-template-columns:repeat(4,1fr)}.sg.t{grid-template-columns:repeat(3,1fr)}}
+.sc{background:var(--navy2);border:1px solid rgba(201,168,76,.14);padding:clamp(13px,2.5vw,24px) clamp(11px,2vw,20px);transition:border-color .2s;}
+.sc:active{border-color:var(--gold);}
+.sn{font-family:var(--serif);font-size:clamp(24px,4.5vw,40px);font-weight:900;color:var(--gold);line-height:1;margin-bottom:5px;}
+.sl{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream2);margin-bottom:3px;}
+.ss{font-size:12px;color:rgba(245,240,232,.36);line-height:1.4;}
+.bl{display:flex;flex-direction:column;}
+.br{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 5px;column-gap:10px;row-gap:5px;padding:clamp(11px,2vw,15px) 0;border-bottom:1px solid rgba(201,168,76,.07);}
+.br:last-child{border-bottom:none;}
+.bn{font-size:clamp(13px,1.4vw,15px);color:var(--cream);font-weight:600;grid-column:1;grid-row:1;}
+.bn small{display:block;font-size:10px;font-family:var(--mono);letter-spacing:.07em;color:rgba(201,168,76,.42);font-weight:400;margin-top:2px;}
+.bp{font-family:var(--mono);font-size:12px;color:var(--gold);grid-column:2;grid-row:1;align-self:center;white-space:nowrap;}
+.bt{grid-column:1/-1;grid-row:2;height:5px;background:rgba(255,255,255,.05);overflow:hidden;}
+.bf{height:100%;width:0;transition:width 1.3s cubic-bezier(.16,1,.3,1);}
+.bf.g{background:var(--gold)}.bf.v{background:var(--green)}.bf.r{background:var(--red)}.bf.m{background:rgba(201,168,76,.25);}
+.cl{display:flex;flex-direction:column;gap:2px;margin:clamp(13px,2.5vw,24px) 0;}
+@media(min-width:600px){.cl{flex-direction:row}.cc{flex:1}}
+.cc{padding:clamp(17px,3vw,27px) clamp(13px,2.5vw,23px);border:1px solid rgba(201,168,76,.14);position:relative;}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.cc.a{background:rgba(13,27,42,.9)}.cc.a::before{background:var(--gold);}
+.cc.b{background:rgba(20,42,20,.7)}.cc.b::before{background:var(--green);}
+.cc.o{background:rgba(80,20,20,.3)}.cc.o::before{background:var(--red);}
+.ct{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
+.ct.g{color:var(--gold)}.ct.v{color:var(--green)}.ct.r{color:var(--red)}
+.cd{font-family:var(--serif);font-size:clamp(28px,4.5vw,40px);font-weight:900;line-height:1;margin-bottom:7px;}
+.cd.g{color:var(--gold)}.cd.v{color:var(--green)}.cd.r{color:var(--red)}
+.cn{font-family:var(--serif);font-size:clamp(14px,2vw,17px);font-weight:700;color:var(--white);line-height:1.4;margin-bottom:10px;}
+.cm{font-size:11px;color:rgba(245,240,232,.4);line-height:1.7;font-family:var(--mono);}
+.hb{border-left:3px solid var(--gold);padding:clamp(12px,2vw,17px);background:rgba(201,168,76,.06);margin:clamp(13px,2.5vw,20px) 0;}
+.hb.v{border-color:var(--green);background:rgba(39,174,96,.06);}
+.hb p{font-size:clamp(13px,1.4vw,15px);color:var(--cream);line-height:1.7;}
+.hb strong{color:var(--gold);}
+.hb.v strong{color:var(--green);}
+.tt-w{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:clamp(10px,2vw,16px) 0;}
+.tt{width:100%;border-collapse:collapse;font-size:clamp(11px,1.3vw,13px);min-width:400px;}
+.tt th{background:var(--navy2);color:var(--gold);font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px;border-bottom:1px solid rgba(201,168,76,.18);text-align:left;}
+.tt td{padding:8px 11px;color:var(--cream2);border-bottom:1px solid rgba(201,168,76,.06);}
+.tt tr:hover td{background:rgba(201,168,76,.04);}
+.tt .hi{color:var(--green);font-family:var(--mono);font-size:11px;}
+.tt .lo{color:var(--red);font-family:var(--mono);font-size:11px;}
+.tt .mn{font-family:var(--mono);font-size:11px;color:var(--gold);}
+.mr{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:10px;row-gap:5px;padding:clamp(11px,2vw,15px) 0;border-bottom:1px solid rgba(201,168,76,.07);}
+.mr:last-child{border-bottom:none;}
+.mn2{grid-column:1;grid-row:1;font-size:clamp(13px,1.4vw,15px);color:var(--cream);font-weight:600;}
+.mn2 small{display:block;font-size:10px;font-family:var(--mono);letter-spacing:.07em;color:rgba(201,168,76,.42);font-weight:400;margin-top:2px;}
+.mb{grid-column:2;grid-row:1;font-family:var(--mono);font-size:9px;letter-spacing:.12em;align-self:center;white-space:nowrap;}
+.mm{grid-column:1/-1;grid-row:2;font-size:11px;color:rgba(245,240,232,.4);font-family:var(--mono);line-height:1.6;}
+.ag{display:grid;gap:2px;grid-template-columns:1fr;margin:clamp(13px,2.5vw,22px) 0;}
+@media(min-width:520px){.ag{grid-template-columns:repeat(3,1fr)}}
+.ac{background:var(--navy2);border:1px solid rgba(201,168,76,.14);padding:clamp(15px,2.5vw,22px) clamp(12px,2vw,19px);display:flex;flex-direction:column;gap:8px;}
+.ai{font-family:var(--serif);font-size:clamp(18px,3.5vw,26px);font-weight:700;color:var(--gold);line-height:1.1;}
+.at{font-size:clamp(13px,1.4vw,15px);color:var(--white);font-weight:600;}
+.ab{font-size:12px;color:var(--cream2);line-height:1.55;}
+.cx{display:grid;gap:2px;grid-template-columns:1fr;margin:clamp(14px,2.5vw,24px) 0;}
+@media(min-width:560px){.cx{grid-template-columns:1fr 1fr}}
+.cs{padding:clamp(15px,2.5vw,22px) clamp(12px,2vw,19px);border:1px solid rgba(201,168,76,.12);}
+.cs.an{background:rgba(192,57,43,.08);border-color:rgba(192,57,43,.22);}
+.cs.dp{background:rgba(39,174,96,.08);border-color:rgba(39,174,96,.22);}
+.cx-t{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px;}
+.cx-t.r{color:var(--red)}.cx-t.v{color:var(--green)}
+.cx-h{font-family:var(--serif);font-size:clamp(17px,2.5vw,22px);font-weight:700;color:var(--white);margin-bottom:7px;}
+.cx-b{font-size:clamp(12px,1.3vw,14px);color:var(--cream2);line-height:1.6;}
+.et-w{margin:clamp(13px,2.5vw,20px) 0;}
+@media(max-width:540px){.et{display:none}.ec-l{display:flex;flex-direction:column;gap:2px}.ec{background:var(--navy2);border:1px solid rgba(201,168,76,.1);padding:12px 14px}.ec .en{font-family:var(--mono);font-size:10px;color:var(--gold);margin-bottom:3px}.ec .ed{font-size:13px;color:var(--cream);margin-bottom:3px}.ec .es{font-family:var(--mono);font-size:10px}}
+@media(min-width:541px){.ec-l{display:none}.et{width:100%;border-collapse:collapse}.et th{background:var(--navy2);color:var(--gold);font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid rgba(201,168,76,.18);text-align:left}.et td{padding:8px 12px;font-size:13px;border-bottom:1px solid rgba(201,168,76,.06);color:var(--cream2)}.et tr:hover td{background:rgba(201,168,76,.04)}.et .en{font-family:var(--mono);font-size:11px;color:var(--gold)}}
+.cfb{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--red);border:1px solid rgba(192,57,43,.32);padding:4px 11px;margin-bottom:clamp(16px,3vw,26px);}
+.scrl{position:absolute;bottom:clamp(12px,3vw,24px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;}
+.scrl-t{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(201,168,76,.2);text-transform:uppercase;}
+.scrl-a{width:14px;height:14px;border-right:1px solid rgba(201,168,76,.2);border-bottom:1px solid rgba(201,168,76,.2);transform:rotate(45deg);animation:bob 2.2s ease infinite;}
+@keyframes bob{0%,100%{transform:rotate(45deg) translateY(0)}55%{transform:rotate(45deg) translateY(5px)}}
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.fu{animation:fu .65s ease both;}
+.d1{animation-delay:.08s}.d2{animation-delay:.2s}.d3{animation-delay:.33s}.d4{animation-delay:.46s}.d5{animation-delay:.6s}
+@supports(padding:max(0px)){.slide{padding-left:max(var(--px),env(safe-area-inset-left));padding-right:max(var(--px),env(safe-area-inset-right));}#gate{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));}}
+</style>
+<script>
+(function(){
+  if (sessionStorage.getItem('_cotip_auth')==='ok') return;
+  var ok=false;
+  for(var i=0;i<3 && !ok;i++){
+    var p=prompt('JudX · Área Reservada\n\nInforme a senha:');
+    if(p===null){window.location='https://judx.com.br/';return;}
+    if(p==='cotiplas2026'){sessionStorage.setItem('_cotip_auth','ok');ok=true;break;}
+  }
+  if(!ok){document.documentElement.innerHTML='<head><meta charset="UTF-8"><title>Acesso não autorizado</title></head><body style="background:#0a1525;color:#6a8aa5;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center"><div><h1 style="color:#c8922a;font-weight:300;letter-spacing:.3em;font-size:14px">ACESSO NÃO AUTORIZADO</h1><p style="margin-top:1rem;font-size:12px;letter-spacing:.1em">Redirecionando...</p></div></body>';setTimeout(function(){window.location='https://judx.com.br/';},2500);}
+})();
+</script>
+
+</head>
+<body>
+
+<div id="gate" role="dialog" aria-modal="true" aria-label="Área Reservada JudX">
+  <div class="gbox">
+    <div class="g-logo">JudX — Inteligência Jurisprudencial</div>
+    <div class="g-h">Área Reservada</div>
+    <div class="g-sub">Briefing Estratégico · Cotiplás · Abril 2026</div>
+    <label class="g-lbl" for="pw">Senha de acesso</label>
+    <input class="g-inp" type="password" id="pw" placeholder="••••••••••"
+           autocomplete="current-password"
+           oninput="syncBtn()" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="g-terms" id="trow" onclick="toggleT()"
+         role="checkbox" aria-checked="false" tabindex="0">
+      <div class="g-cb" id="tcb"></div>
+      <span class="g-txt">Confirmo que sou destinatário autorizado e aceito os
+        <a href="#" onclick="return false">Termos de Confidencialidade JudX</a>.
+        Material protegido por NDA e direito autoral.
+        Proibida reprodução ou circulação sem autorização expressa.</span>
+    </div>
+    <div class="g-err" id="gerr" aria-live="polite"></div>
+    <button class="g-btn" id="gbtn" onclick="doLogin()" disabled>ACESSAR →</button>
+  </div>
+</div>
+
+<div id="chrome">
+  <div id="prog"><div id="pf"></div></div>
+  <div id="nav"><span class="nb">JudX · Área Reservada</span><span class="np" id="pager"></span></div>
+</div>
+
+<div id="deck">
+
+<section class="slide" id="s1">
+  <div class="cfb fu">⚑ CONFIDENCIAL · USO RESTRITO</div>
+  <div class="ey fu d1">Briefing Estratégico</div>
+  <h1 class="sh fu d2">Mapeamento<br>Decisório<br><em>4ª Turma STJ</em></h1>
+  <p class="ld fu d3">Análise de 380.093 acórdãos em 17 macrocategorias. Perfis decisórios, clusters de coalizão e inteligência acionável para o AgInt no AREsp 2971391/SP.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:clamp(14px,3vw,28px);" class="fu d4">
+    <div><div class="lb">Caso</div><div style="font-size:15px;color:var(--white);font-weight:600;">Cotiplás × Roma Jensen</div></div>
+    <div><div class="lb">Processo</div><div style="font-family:var(--mono);font-size:13px;color:var(--gold);">AREsp 2971391/SP</div></div>
+    <div><div class="lb">Status</div><div style="font-family:var(--mono);font-size:13px;color:var(--green);">Destacado · Aguarda Presencial</div></div>
+  </div>
+  <div class="scrl"><span class="scrl-t">rolar</span><div class="scrl-a"></div></div>
+  <div class="sf fu d5"><span>JudX — Inteligência Jurisprudencial · 21.04.2026</span><span>DataJud/CNJ · 380.093 acórdãos</span></div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="ey">Situação Processual</div>
+  <h2 class="sh">O caso em<br><em>quatro números</em></h2>
+  <div class="sg f">
+    <div class="sc"><div class="sn">2×0</div><div class="sl">Placar no virtual</div><div class="ss">Gallotti + Des. Conv. antes do destaque</div></div>
+    <div class="sc"><div class="sn">2 ★</div><div class="sl">Destaques obtidos</div><div class="ss">Antonio Carlos + Noronha · 30/03/2026</div></div>
+    <div class="sc"><div class="sn">1</div><div class="sl">Voto a acompanhar</div><div class="ss">Raul Araújo — posição não manifestada</div></div>
+    <div class="sc"><div class="sn">R$15M</div><div class="sl">Risco em execução</div><div class="ss">Execução sem título · erro material 2020</div></div>
+  </div>
+  <div class="hb v"><p><strong>O movimento decisivo:</strong> O destaque retirou o processo do virtual — onde o colegiado apenas referenda a monocrática — e o colocou no presencial, onde cada ministro precisa votar e fundamentar.</p></div>
+  <div class="sf"><span>Situação em 21.04.2026</span><span>2 / 9</span></div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="ey">Base Estatística</div>
+  <h2 class="sh">380.093 acórdãos.<br><em>17 macrocategorias.</em></h2>
+  <p class="ld">Toda a produção da 4ª Turma no DataJud, hierarquizada por macro de direito privado. Cobertura temática de 95,6%.</p>
+  <div class="sg t">
+    <div class="sc"><div class="sn">380k</div><div class="sl">Acórdãos</div><div class="ss">4ª Turma · 2010–2026</div></div>
+    <div class="sc"><div class="sn">95,6%</div><div class="sl">Cobertura temática</div><div class="ss">363.219 com macro identificada</div></div>
+    <div class="sc"><div class="sn">17</div><div class="sl">Macrocategorias</div><div class="ss">TPU v7 · hierarquia completa</div></div>
+  </div>
+  <div class="dv"></div>
+  <div class="lb">Volume por macrocategoria</div>
+  <div class="bl" id="ml">
+    <div class="br" data-v="259331" data-m="259331"><span class="bn">Processual</span><span class="bp">259.331</span><div class="bt"><div class="bf g"></div></div></div>
+    <div class="br" data-v="100449" data-m="259331"><span class="bn">Contratos</span><span class="bp">100.449</span><div class="bt"><div class="bf g"></div></div></div>
+    <div class="br" data-v="62519" data-m="259331"><span class="bn">Responsabilidade</span><span class="bp">62.519</span><div class="bt"><div class="bf g"></div></div></div>
+    <div class="br" data-v="61361" data-m="259331"><span class="bn">Bancário</span><span class="bp">61.361</span><div class="bt"><div class="bf g"></div></div></div>
+    <div class="br" data-v="18301" data-m="259331"><span class="bn">Propriedade / PI <small>Inclui Direito Marcário — tema do caso</small></span><span class="bp" style="color:var(--green)">18.301</span><div class="bt"><div class="bf v"></div></div></div>
+    <div class="br" data-v="17739" data-m="259331"><span class="bn">Execução <small>Núcleo da controvérsia atual</small></span><span class="bp" style="color:var(--green)">17.739</span><div class="bt"><div class="bf v"></div></div></div>
+  </div>
+  <div class="sf"><span>DataJud/CNJ · TPU v7 · 17 macrocategorias</span><span>3 / 9</span></div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="ey">Perfis Decisórios</div>
+  <h2 class="sh">Como cada ministro<br><em>decide como relator</em></h2>
+  <p class="ld">Taxa de êxito = provido + parcial sobre o total julgado no mérito. Mede a receptividade estrutural ao argumento do recorrente.</p>
+  <div class="lb">Taxa de êxito do recorrente — todos os temas</div>
+  <div class="bl" id="el">
+    <div class="br"><span class="bn">João Otávio de Noronha<small>Maior outlier do cluster · Destaque 30/03</small></span><span class="bp" style="color:var(--green)">40,1%</span><div class="bt"><div class="bf v" data-p="40.1"></div></div></div>
+    <div class="br"><span class="bn">Raul Araújo<small>Posição não manifestada — voto a acompanhar</small></span><span class="bp" style="color:var(--green)">34,0%</span><div class="bt"><div class="bf v" data-p="34.0"></div></div></div>
+    <div class="br"><span class="bn">Marco Buzzi<small>Afastado desde fev/2026 — dado histórico</small></span><span class="bp">28,2%</span><div class="bt"><div class="bf m" data-p="28.2"></div></div></div>
+    <div class="br"><span class="bn">Luis Felipe Salomão<small>Saiu da turma — dado histórico</small></span><span class="bp">25,5%</span><div class="bt"><div class="bf m" data-p="25.5"></div></div></div>
+    <div class="br"><span class="bn">Isabel Gallotti<small>Relatora do caso</small></span><span class="bp" style="color:var(--red)">24,1%</span><div class="bt"><div class="bf r" data-p="24.1"></div></div></div>
+    <div class="br"><span class="bn">Antonio Carlos Ferreira<small>Destaque 30/03</small></span><span class="bp" style="color:var(--red)">21,4%</span><div class="bt"><div class="bf r" data-p="21.4"></div></div></div>
+  </div>
+  <div class="hb"><p><strong>Diferença Noronha × Gallotti: 16pp no geral.</strong> Nos temas do caso: +4,5pp em Propriedade/PI e +4,1pp em Execução — Noronha consistentemente mais receptivo nos dois macros diretamente relevantes.</p></div>
+  <div class="sf"><span>380.093 acórdãos · TPU v7</span><span>4 / 9</span></div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="ey">Análise por Tema</div>
+  <h2 class="sh">Taxa de êxito<br><em>nos temas do caso</em></h2>
+  <p class="ld">Os dois macros diretamente relevantes: Propriedade/PI e Execução.</p>
+  <div class="lb" style="margin-bottom:4px;">Propriedade / PI — Direito Marcário</div>
+  <div class="tt-w"><table class="tt">
+    <thead><tr><th>Ministro</th><th>Êxito total</th><th>Não-provido</th><th>Não-conhecido</th></tr></thead>
+    <tbody>
+      <tr><td>Raul Araújo</td><td class="hi">15,6%</td><td>36,4%</td><td>48,0%</td></tr>
+      <tr><td>João Otávio Noronha</td><td class="hi">15,0%</td><td>30,5%</td><td>54,4%</td></tr>
+      <tr><td>Luis Felipe Salomão</td><td>10,2%</td><td class="mn">46,5%</td><td>43,3%</td></tr>
+      <tr><td>Isabel Gallotti</td><td class="lo">10,5%</td><td class="mn">50,9%</td><td>38,6%</td></tr>
+      <tr><td>Antonio Carlos Ferreira</td><td class="lo">9,2%</td><td class="mn">50,2%</td><td>40,6%</td></tr>
+    </tbody>
+  </table></div>
+  <div class="lb" style="margin-top:clamp(16px,2.5vw,22px);margin-bottom:4px;">Execução — Cumprimento de Sentença / Título</div>
+  <div class="tt-w"><table class="tt">
+    <thead><tr><th>Ministro</th><th>Êxito total</th><th>Não-provido</th><th>Não-conhecido</th></tr></thead>
+    <tbody>
+      <tr><td>Raul Araújo</td><td class="hi">18,4%</td><td>38,3%</td><td>43,3%</td></tr>
+      <tr><td>João Otávio Noronha</td><td class="hi">17,4%</td><td>33,3%</td><td>49,3%</td></tr>
+      <tr><td>Luis Felipe Salomão</td><td>12,9%</td><td class="mn">45,6%</td><td>41,6%</td></tr>
+      <tr><td>Antonio Carlos Ferreira</td><td>13,4%</td><td class="mn">52,6%</td><td>34,1%</td></tr>
+      <tr><td>Isabel Gallotti</td><td class="lo">13,3%</td><td class="mn">53,0%</td><td>33,6%</td></tr>
+    </tbody>
+  </table></div>
+  <div class="hb"><p><strong>Raul Araújo lidera em Execução com 18,4%</strong> — maior taxa da turma no macro que é o núcleo da controvérsia atual. O dado orienta diretamente a estratégia para o voto a acompanhar.</p></div>
+  <div class="sf"><span>Análise hierárquica macro × ministro · TPU v7</span><span>5 / 9</span></div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="ey">Clusters Decisórios</div>
+  <h2 class="sh">Alianças estruturais<br><em>na 4ª Turma</em></h2>
+  <p class="ld">Distância euclidiana entre perfis de votação. Menor distância = maior afinidade decisória.</p>
+  <div class="cl">
+    <div class="cc a"><div class="ct g">Bloco A · Núcleo</div><div class="cd g">5,08</div><div class="cn">Gallotti<br>+ Antonio Carlos</div><div class="cm">NÃO-PROVIMENTO ~43%<br>ÊXITO 21–24%<br>Perfis quase idênticos</div></div>
+    <div class="cc b"><div class="ct v">Bloco B · Alternativo</div><div class="cd v">10,07</div><div class="cn">Buzzi* + Raul Araújo</div><div class="cm">NÃO-PROVIMENTO 30–35%<br>ÊXITO 28–34%<br>*Buzzi afastado fev/2026</div></div>
+    <div class="cc o"><div class="ct r">Outlier · Máx. divergência</div><div class="cd r">27,44</div><div class="cn">Noronha ↔ Gallotti</div><div class="cm">MAIOR DISTÂNCIA DA TURMA<br>ÊXITO 40,1% vs 24,1%<br>NÃO-PROV. 20% vs 43%</div></div>
+  </div>
+  <div class="hb"><p><strong>O destaque é coerente com os dados:</strong> Noronha (maior outlier) e Antonio Carlos (Bloco A mobilizado por ordem pública) são exatamente os ministros que os dados apontariam como mais propensos a divergir neste caso concreto.</p></div>
+  <div class="sf"><span>Distância euclidiana · limiar 60%</span><span>6 / 9</span></div>
+</section>
+
+<section class="slide" id="s7">
+  <div class="ey">Mapa do Colegiado</div>
+  <h2 class="sh">O que sabemos<br><em>sobre cada ministro</em></h2>
+  <p class="ld">Posições verificadas em atos processuais públicos. Cada ministro e o alcance do seu voto, com precisão.</p>
+  <div class="bl">
+    <div class="mr"><span class="mn2">Isabel Gallotti <small>Relatora</small></span><span class="mb" style="color:var(--gold)">MANIFESTADA</span><span class="mm">Negou provimento (10/09/2025) · Rejeitou EDs (07/10/2025) · Êxito PI: 10,5% · Exec: 13,3%</span></div>
+    <div class="mr"><span class="mn2">Des. Conv. Gambogi <small>TJMG · substituto de Buzzi (afastado fev/2026)</small></span><span class="mb" style="color:rgba(201,168,76,.5)">VOTOU NO VIRTUAL</span><span class="mm">Votou com a relatora no julgamento virtual · O voto proferido no ambiente virtual não vincula o plenário presencial</span></div>
+    <div class="mr"><span class="mn2">Antonio Carlos Ferreira <small>Membro titular</small></span><span class="mb" style="color:var(--green)">DESTAQUE ★</span><span class="mm">Retirou do virtual em 30/03/2026 · Bloco A · Êxito PI: 9,2% · Exec: 13,4%</span></div>
+    <div class="mr"><span class="mn2">João Otávio de Noronha <small>Presidente da turma</small></span><span class="mb" style="color:var(--green)">DESTAQUE ★</span><span class="mm">Retirou do virtual em 30/03/2026 · Outlier máximo (27,44) · Exec: 17,4% · PI: 15,0%</span></div>
+    <div class="mr"><span class="mn2">Raul Araújo <small>Membro titular</small></span><span class="mb" style="color:rgba(201,168,76,.36)">A ACOMPANHAR</span><span class="mm">Posição não manifestada · Bloco B · Maior êxito em Execução: 18,4% · Jurisprudência própria alinhada à tese</span></div>
+  </div>
+  <div class="hb v" style="margin-top:clamp(13px,2.5vw,20px);"><p><strong>O destaque reinicia o julgamento:</strong> Os votos proferidos no ambiente virtual não vinculam o presencial. O Des. Gambogi — que votou com a relatora no virtual — precisa votar novamente. O placar formal parte do zero no plenário.</p></div>
+  <div class="sf"><span>Posições verificadas em atos processuais · 21.04.2026</span><span>7 / 9</span></div>
+</section>
+
+<section class="slide" id="s8">
+  <div class="ey">Jurisprudência do Pivô</div>
+  <h2 class="sh">Os dois precedentes<br><em>de Raul Araújo</em></h2>
+  <p class="ld">O território jurisprudencial do ministro a acompanhar está inteiramente mapeado. Dois precedentes próprios que convergem com precisão para o caso.</p>
+
+  <div style="display:grid;gap:2px;grid-template-columns:1fr;margin:clamp(13px,2.5vw,22px) 0;" id="prec-grid">
+    <!-- Precedente 1 -->
+    <div style="background:var(--navy2);border:1px solid rgba(201,168,76,.22);border-left:4px solid var(--gold);padding:clamp(18px,3vw,30px) clamp(16px,2.5vw,26px);">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Precedente I — Limites Objetivos do Título</div>
+      <div style="font-family:var(--serif);font-size:clamp(13px,1.8vw,16px);font-weight:700;color:var(--white);margin-bottom:8px;">REsp 1.243.701/BA · Rel. Min. Raul Araújo · 4ª Turma · j. 04/10/2011 · DJe 12/03/2012</div>
+      <div style="font-size:clamp(13px,1.4vw,15px);color:var(--cream2);line-height:1.75;margin-bottom:12px;">"<em>Inexequibilidade do título ou inexigibilidade da obrigação</em>" como matéria de defesa. A execução deve observar os limites objetivos do título — os litigantes ficam adstritos ao que consta da sentença condenatória e não podem executar o que nela não foi decidido.</div>
+      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:10px 14px;">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);">Conexão direta · </span>
+        <span style="font-size:13px;color:var(--cream2);">A sentença não condenou a Cotiplás → não há título → a execução de R$ 15M é inexequível.</span>
+      </div>
+    </div>
+
+    <!-- Precedente 2 -->
+    <div style="background:var(--navy2);border:1px solid rgba(201,168,76,.22);border-left:4px solid var(--gold);padding:clamp(18px,3vw,30px) clamp(16px,2.5vw,26px);">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">Precedente II — Ordem Pública sem Preclusão</div>
+      <div style="font-family:var(--serif);font-size:clamp(13px,1.8vw,16px);font-weight:700;color:var(--white);margin-bottom:8px;">AgInt nos EDcl no AREsp 1.665.187/RJ · Rel. Min. Raul Araújo · 4ª Turma · DJe 30/11/2021</div>
+      <div style="font-size:clamp(13px,1.4vw,15px);color:var(--cream2);line-height:1.75;margin-bottom:12px;">"Questões de ordem pública <em>não estão sujeitas à preclusão</em> e podem ser apreciadas a qualquer tempo, inclusive de ofício, desde que não tenham sido decididas de maneira definitiva anteriormente."</div>
+      <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:10px 14px;">
+        <span style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);">Conexão direta · </span>
+        <span style="font-size:13px;color:var(--cream2);">Derruba a tese de Gallotti de que não cabe reexame no STJ por ausência de prequestionamento. O erro material é ordem pública — cognoscível de ofício.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hb" style="margin-top:clamp(14px,2.5vw,20px);">
+    <p>Dois precedentes do próprio ministro-pivô. Dois vetores da mesma jurisprudência apontando na mesma direção. O mapeamento JudX não apenas identifica o voto que decide — <strong>localiza com precisão o argumento que o move.</strong></p>
+  </div>
+  <div class="sf"><span>Precedentes do ministro-pivô · STJ 4ª Turma · DJe verificado</span><span>8 / 9</span></div>
+</section>
+
+<section class="slide" id="s9">
+  <div class="ey">Inteligência Acionável</div>
+  <h2 class="sh">O que este mapeamento<br><em>permite fazer</em></h2>
+  <p class="ld">A análise estatística não prevê o resultado — orienta as decisões táticas que maximizam as condições de julgamento favorável.</p>
+  <div class="ag">
+    <div class="ac"><div class="ai">Identificar<br>o pivô</div><div class="at">Foco decisório</div><div class="ab">O ministro cuja posição não está definida é o alvo correto da estratégia — não o relator contrário.</div></div>
+    <div class="ac"><div class="ai">Calibrar<br>o argumento</div><div class="at">Por tema e por ministro</div><div class="ab">Raul lidera em Execução com 18,4%. A segmentação por macro revela o argumento que mais mobiliza cada perfil.</div></div>
+    <div class="ac"><div class="ai">Monitorar<br>o ambiente</div><div class="at">Composição na sessão</div><div class="ab">A composição exata no dia do julgamento pode alterar a dinâmica. Monitoramento contínuo ativo.</div></div>
+  </div>
+  <div class="dv"></div>
+  <div class="lb">O que o destaque mudou</div>
+  <div class="cx">
+    <div class="cs an"><div class="cx-t r">Antes · Virtual</div><div class="cx-h">Referendo</div><div class="cx-b">Colegiado referenda a monocrática. Sem deliberação real. Sem sustentação oral.</div></div>
+    <div class="cs dp"><div class="cx-t v">Após · Presencial</div><div class="cx-h">Deliberação</div><div class="cx-b">Cada ministro vota e fundamenta. Sustentação oral garantida. A coalizão pode se expressar.</div></div>
+  </div>
+  <div class="dv"></div>
+  <div class="lb">Próximas etapas · Protocolo DNA Decisório</div>
+  <div class="et-w">
+    <table class="et">
+      <thead><tr><th>#</th><th>Ação</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="en">6</td><td>Matriz de coalizão real — acórdãos com votação dividida</td><td class="en" style="color:#f0c040">Em andamento</td></tr>
+        <tr><td class="en">7</td><td>Segmentação por assunto CNJ — padrão de admissibilidade</td><td class="en" style="color:#f0c040">Em andamento</td></tr>
+        <tr><td class="en">8</td><td>Estratégia de sustentação oral — após Etapas 6 e 7</td><td class="en" style="color:rgba(245,240,232,.26)">Aguardando</td></tr>
+        <tr><td class="en">⟳</td><td>Monitoramento da composição da 4ª Turma</td><td class="en" style="color:var(--green)">Contínuo</td></tr>
+      </tbody>
+    </table>
+    <div class="ec-l">
+      <div class="ec"><div class="en">ETAPA 6</div><div class="ed">Matriz de coalizão real</div><div class="es" style="color:#f0c040">Em andamento</div></div>
+      <div class="ec"><div class="en">ETAPA 7</div><div class="ed">Segmentação por assunto CNJ</div><div class="es" style="color:#f0c040">Em andamento</div></div>
+      <div class="ec"><div class="en">ETAPA 8</div><div class="ed">Estratégia de sustentação oral</div><div class="es" style="color:rgba(245,240,232,.26)">Aguardando</div></div>
+      <div class="ec"><div class="en">⟳ CONTÍNUO</div><div class="ed">Monitoramento da 4ª Turma</div><div class="es" style="color:var(--green)">Ativo</div></div>
+    </div>
+  </div>
+  <div class="sf"><span>JudX — Inteligência Jurisprudencial · Área Reservada · Cotiplás · 2026</span><span>AREsp 2971391/SP · 9 / 9</span></div>
+</section>
+
+</div>
+
+<script>
+'use strict';
+const HASH='68ff38b384e1b56caae2c537a5b275ca69fe4f2a674c28377c3bc6474e4f6f94';
+async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+let termsOn=false;
+function toggleT(){termsOn=!termsOn;document.getElementById('tcb').classList.toggle('on',termsOn);document.getElementById('trow').setAttribute('aria-checked',String(termsOn));syncBtn();}
+document.getElementById('trow').addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleT();}});
+function syncBtn(){const ok=document.getElementById('pw').value.trim().length>=4&&termsOn;const b=document.getElementById('gbtn');b.disabled=!ok;b.classList.toggle('on',ok);}
+async function doLogin(){
+  const btn=document.getElementById('gbtn'),err=document.getElementById('gerr'),pw=document.getElementById('pw').value.trim();
+  if(!termsOn){err.textContent='Aceite os termos para prosseguir.';return;}
+  if(!pw){err.textContent='Informe a senha de acesso.';return;}
+  btn.textContent='VERIFICANDO…';btn.disabled=true;err.textContent='';
+  const h=await sha256(pw);
+  const ok=h.length===HASH.length&&[...h].reduce((r,c,i)=>r&(c===HASH[i]),1);
+  if(ok){
+    const g=document.getElementById('gate');g.style.transition='opacity .4s';g.style.opacity='0';
+    setTimeout(()=>{g.style.display='none';document.getElementById('chrome').classList.add('on');document.getElementById('deck').classList.add('on');updateChrome();animBars('#ml');observeS4();},400);
+  } else {
+    err.textContent='Senha incorreta.';btn.textContent='ACESSAR →';btn.disabled=false;btn.classList.add('on');
+    const box=document.querySelector('.gbox');box.classList.remove('sk');void box.offsetWidth;box.classList.add('sk');
+    document.getElementById('pw').value='';syncBtn();
+  }
+}
+function updateChrome(){const sl=document.querySelectorAll('.slide');const dh=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('pf').style.width=(dh>0?Math.min(100,window.scrollY/dh*100):0)+'%';let c=1;sl.forEach((s,i)=>{if(s.getBoundingClientRect().top<=window.innerHeight*.55)c=i+1;});document.getElementById('pager').textContent=c+' / '+sl.length;}
+window.addEventListener('scroll',updateChrome,{passive:true});
+function animBars(sel){document.querySelectorAll(sel+' .br').forEach(r=>{const f=r.querySelector('.bf');if(f&&r.dataset.v&&r.dataset.m)requestAnimationFrame(()=>f.style.width=(+r.dataset.v/+r.dataset.m*100)+'%');});}
+function observeS4(){const s4=document.getElementById('s4');if(!s4)return;new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;document.querySelectorAll('#el .bf[data-p]').forEach(f=>requestAnimationFrame(()=>f.style.width=f.dataset.p+'%'));});},{threshold:.2}).observe(s4);}
+</script>
+</body>
+</html>
