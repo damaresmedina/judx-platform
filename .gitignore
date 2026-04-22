@@ -41,3 +41,28 @@ data/raw/
 .vercel
 .claude/settings.local.json
 docs/env.local
+
+# memorias e prompts locais (não vão para o repo)
+/MEMORIA_*
+/MEMÓRIA*
+/PROMPT_CODE_*
+
+# scratch/logs na raiz
+/hyperd.log
+/test_*.mjs
+/data_ministros.js
+/ministros_all.json
+
+# logs de scraper/shard/cardinality (os outros logs/ já rastreados continuam)
+logs/scraper-*.log
+logs/tjsp-shard-*.log
+logs/orgaos-*.log
+
+# docs/planilhas privadas
+/public/proposta_judx_pulse.docx
+/docs/LACUNAS CRITICAS JUDX PRODUTO.docx
+/docs/RAIO X DO BANCO SUPABASE 06_04_2026.txt
+/documentação/
+
+# arquivos ICONS soltos no repo JudX (REGRA: JudX e ICONS nunca se misturam)
+/MODELO_ONTOLOGICO_ICONS.sql
