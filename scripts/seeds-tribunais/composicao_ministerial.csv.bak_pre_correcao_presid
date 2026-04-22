@@ -1,0 +1,171 @@
+tribunal_sigla,ministro_nome_canonico,codigo_orgao,valid_from,valid_to,ordem_historico,tipo_ancoragem,motivo_mudanca,fonte,validado
+# STJ — composição ancorada no tempo (uma linha por período em cada órgão; um ministro pode ter N linhas)
+# valid_to vazio = vigente até hoje. valid_from vazio = desde posse no tribunal
+STJ,BENEDITO GONCALVES,TURMA_1,2008-07-01,,1,ingresso_no_tribunal,Nomeação para 1ª Turma desde a posse,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,GURGEL DE FARIA,TURMA_1,2014-08-21,,1,ingresso_no_tribunal,Direta na 1ª Turma,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,SERGIO LUIZ KUKINA,TURMA_1,2013-09-04,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,REGINA HELENA COSTA,TURMA_1,2013-08-16,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,PAULO SERGIO DOMINGUES,TURMA_1,2023-03-22,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,NAPOLEAO NUNES MAIA FILHO,TURMA_1,2007-12-12,2020-05-29,1,permaneceu_ate_aposentadoria,Aposentadoria compulsória,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,HERMAN BENJAMIN,TURMA_2,2006-09-06,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MAURO CAMPBELL MARQUES,TURMA_2,2008-07-16,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,FRANCISCO FALCAO,TURMA_2,2013-08-01,,2,troca_turma,Vindo da 1ª Turma (anterior),https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,OG FERNANDES,TURMA_2,2011-10-26,,1,ingresso_no_tribunal,Inicialmente 6ª Turma; migrou para 2ª (verificar data exata),https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,AFRANIO VILELA,TURMA_2,2023-11-22,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,ASSUSETE MAGALHAES,TURMA_2,2012-09-04,2023-11-01,1,aposentadoria,Aposentadoria compulsória,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,NANCY ANDRIGHI,TURMA_3,1999-12-09,,1,ingresso_no_tribunal,Mais antiga em exercício,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,RICARDO VILLAS BOAS CUEVA,TURMA_3,2011-07-29,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MARCO AURELIO BELLIZZE,TURMA_3,2011-09-06,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MOURA RIBEIRO,TURMA_3,2013-08-22,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,HUMBERTO MARTINS,TURMA_3,2006-06-14,,2,troca_turma,Vindo da 2ª Turma após promoção na Presidência,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,PAULO DE TARSO SANSEVERINO,TURMA_3,2011-11-16,2023-09-04,1,falecido_em_exercicio,Falecimento em exercício,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,JOAO OTAVIO DE NORONHA,TURMA_4,2002-12-11,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MARIA ISABEL GALLOTTI,TURMA_4,2010-11-24,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,RAUL ARAUJO FILHO,TURMA_4,2010-10-08,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,ANTONIO CARLOS FERREIRA,TURMA_4,2011-10-11,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MARCO BUZZI,TURMA_4,2011-12-13,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,LUIS FELIPE SALOMAO,TURMA_4,2008-06-17,2023-05-12,1,aposentadoria_foi_tse,Foi para TSE/aposentou,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,RIBEIRO DANTAS,TURMA_5,2015-05-13,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,REYNALDO SOARES DA FONSECA,TURMA_5,2015-08-26,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,JOEL ILAN PACIORNIK,TURMA_5,2017-06-01,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MESSOD AZULAY NETO,TURMA_5,2022-12-14,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,DANIELA TEIXEIRA,TURMA_5,2023-11-22,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,LAURITA HILARIO VAZ,TURMA_5,2001-06-06,2022-10-27,1,aposentadoria,Aposentadoria compulsória,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,FELIX FISCHER,TURMA_5,1996-06-13,2022-07-01,1,aposentadoria,Aposentadoria compulsória,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,SEBASTIAO REIS JUNIOR,TURMA_6,2011-08-01,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,ROGERIO SCHIETTI,TURMA_6,2013-06-05,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,ANTONIO SALDANHA PALHEIRO,TURMA_6,2017-06-01,,1,ingresso_no_tribunal,,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,NEFI CORDEIRO,TURMA_6,2014-06-19,2020-06-26,1,aposentadoria,Aposentadoria voluntária,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,JESUINO RISSATO,TURMA_5,2023-01-01,,1,convocacao,Desembargador TRF convocado,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+# --- Adicional: Corte Especial (15 mais antigos por antiguidade automática)
+# Quando um ministro atinge antiguidade e há vaga: assume linha adicional TURMA + CORTE_ESPECIAL
+# Exemplo: NANCY ANDRIGHI (mais antiga) tem linha em TURMA_3 e outra em CORTE_ESPECIAL
+STJ,NANCY ANDRIGHI,CORTE_ESPECIAL,1999-12-09,,2,acumulacao,Por antiguidade — Corte Especial em paralelo à Turma,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,HUMBERTO MARTINS,CORTE_ESPECIAL,2020-09-02,2022-08-27,3,presidencia,Presidente STJ biênio 2020-2022,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,MARIA THEREZA DE ASSIS MOURA,PRESIDENCIA,2022-08-27,2024-08-30,1,presidencia,Presidente STJ biênio 2022-2024,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+STJ,HERMAN BENJAMIN,PRESIDENCIA,2024-08-30,2026-08-30,1,presidencia,Presidente STJ biênio 2024-2026,https://www.stj.jus.br/sites/portalp/Institucional/Composicao,rascunho_validar
+# --- STF — composição temporal completa (122 linhas) extraída de stf_composicao_temporal (backup 17/abr)
+# Fonte: STF Portal Histórico. Inclui Presidentes, Vice-Presidentes, Presidentes de Turma e Ministros em Turma
+# valid_to NULL = em exercício. Cada ministro tem N linhas se trocou de cargo/turma durante o mandato
+STF,ALEXANDRE DE MORAES,TURMA_1,2017-03-22,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ALEXANDRE DE MORAES,TURMA_1_PRESID,2018-02-01,2020-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ALEXANDRE DE MORAES,VICE_PRESIDENCIA,2025-10-23,,3,vice_presidencia,Vice-Presidente STF — inferido por antiguidade após posse de Fachin na presidência. Verificar data exata.,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ALIOMAR BALEEIRO,PRESIDENCIA,1971-02-10,1973-02-09,1,presidencia,Posse 10/02/1971 — DJ a localizar; defensor das liberdades públicas sob AI-5,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ANDRÉ CAVALCANTI,PRESIDENCIA,1924-01-01,1927-12-31,1,presidencia,Datas aproximadas — mandato 1924–1927,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ANDRÉ MENDONÇA,TURMA_2,2021-12-16,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ANTONIO NEDER,PRESIDENCIA,1979-02-10,1981-02-09,1,presidencia,Posse fev/1979 — DJ a localizar,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,AQUINO E CASTRO,PRESIDENCIA,1894-01-01,1906-12-31,1,presidencia,Datas aproximadas — mandato 1894–1906,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,AYRES BRITTO,TURMA_2,2003-06-25,2012-11-17,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,AYRES BRITTO,TURMA_2_PRESID,2010-02-01,2012-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,AYRES BRITTO,VICE_PRESIDENCIA,2010-04-23,2012-04-11,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,AYRES BRITTO,PRESIDENCIA,2012-04-12,2012-11-16,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,BARROS BARRETO,PRESIDENCIA,1960-01-01,1962-12-31,1,presidencia,Primeiro presidente do STF instalado em Brasília (1960),stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,BENTO DE FARIA,PRESIDENCIA,1937-01-01,1940-12-31,1,presidencia,Datas aproximadas — mandato 1937–1940; presidente indicado por Vargas,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CARLOS VELLOSO,TURMA_2,1990-06-13,2006-01-19,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CARLOS VELLOSO,PRESIDENCIA,1999-04-15,2001-05-23,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,TURMA_1,1989-08-17,2020-10-13,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,PRESIDENCIA,1997-04-23,1999-04-14,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,TURMA_1_PRESID,2000-02-01,2002-02-01,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,TURMA_1_PRESID,2006-02-01,2008-02-01,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,TURMA_2_PRESID,2008-02-01,2010-02-01,5,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CELSO DE MELLO,TURMA_1_PRESID,2016-02-01,2018-02-01,6,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CEZAR PELUSO,TURMA_2,2003-06-25,2012-08-31,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CEZAR PELUSO,VICE_PRESIDENCIA,2008-04-23,2010-04-22,2,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CEZAR PELUSO,PRESIDENCIA,2010-04-23,2012-04-11,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CORDEIRO GUERRA,PRESIDENCIA,1983-02-21,1985-02-24,1,presidencia,Posse 21/02/1983 — plaqueta digitalizada,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CRISTIANO ZANIN,TURMA_1,2023-06-22,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CRISTIANO ZANIN,TURMA_1_PRESID,2024-02-01,2026-01-31,2,presidencia,Presidência passou para Flávio Dino conforme Presidentes_stf_turmas.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CÁRMEN LÚCIA,TURMA_2,2006-06-21,2023-09-27,1,saiu,Migrou para 1ª Turma com nova composição,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CÁRMEN LÚCIA,TURMA_1_PRESID,2010-02-01,2012-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CÁRMEN LÚCIA,VICE_PRESIDENCIA,2014-09-10,2016-10-11,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CÁRMEN LÚCIA,PRESIDENCIA,2016-10-12,2018-10-12,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,CÁRMEN LÚCIA,TURMA_1,2023-09-28,,5,em_exercicio,Migrou para 1ª Turma — composição atual confirmada em Presidentes_stf_turmas.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DIAS TOFFOLI,TURMA_2,2009-10-23,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DIAS TOFFOLI,TURMA_2_PRESID,2016-02-01,2018-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DIAS TOFFOLI,VICE_PRESIDENCIA,2016-10-12,2018-10-11,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DIAS TOFFOLI,PRESIDENCIA,2018-10-12,2020-10-22,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DIAS TOFFOLI,TURMA_2_PRESID,2020-02-01,2022-02-01,5,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,DJACI FALCÃO,PRESIDENCIA,1975-02-10,1977-02-09,1,presidencia,Plaqueta institucional disponível,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDMUNDO LINS,PRESIDENCIA,1931-02-01,1937-12-31,1,presidencia,Datas aproximadas — mandato 1931–1937,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDSON FACHIN,TURMA_1,2015-06-16,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDSON FACHIN,TURMA_2_PRESID,2018-02-01,2020-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDSON FACHIN,VICE_PRESIDENCIA,2023-09-28,2025-10-22,3,vice_presidencia,Assumiu Presidência STF em out/2025,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDSON FACHIN,PRESIDENCIA,2025-10-23,,4,presidencia,Fonte: Presidentes_stf.docx STF oficial. Mandato 2025-2027.,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EDUARDO ESPÍNOLA,PRESIDENCIA,1940-01-01,1945-12-31,1,presidencia,Datas aproximadas — mandato 1940–1945,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ELLEN GRACIE,TURMA_2,2000-12-14,2011-08-05,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ELLEN GRACIE,PRESIDENCIA,2006-04-20,2008-04-22,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ELOY DA ROCHA,PRESIDENCIA,1973-02-10,1975-02-09,1,presidencia,Posse 10/02/1973 — DJ a localizar,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,EROS GRAU,TURMA_1,2004-06-30,2010-07-30,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,FLÁVIO DINO,TURMA_1,2024-01-22,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,FLÁVIO DINO,TURMA_1_PRESID,2026-02-01,,2,presidencia,Fonte: Presidentes_stf_turmas.docx — presidente atual da 1ª Turma,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,FREITAS HENRIQUES,PRESIDENCIA,1891-02-28,1892-09-10,1,presidencia,Primeiro presidente do STF republicano,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GILMAR MENDES,TURMA_2,2002-06-20,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GILMAR MENDES,TURMA_2_PRESID,2004-02-01,2006-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GILMAR MENDES,TURMA_2_PRESID,2006-02-01,2008-02-01,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GILMAR MENDES,PRESIDENCIA,2008-04-23,2010-04-22,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GILMAR MENDES,TURMA_2_PRESID,2026-02-01,,5,presidencia,Fonte: Presidentes_stf_turmas.docx — presidente atual da 2ª Turma,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GODOFREDO CUNHA,PRESIDENCIA,1927-01-01,1931-12-31,1,presidencia,Datas aproximadas — mandato 1927–1931,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,GONÇALVES DE OLIVEIRA,PRESIDENCIA,1968-01-01,1969-02-09,1,presidencia,Renunciou à presidência; encaminhou aposentadoria,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,HERMÍNIO DO ESPÍRITO SANTO,PRESIDENCIA,1911-01-01,1924-12-31,1,presidencia,Presidência mais longa da história — 13 anos,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ILMAR GALVÃO,TURMA_1,1991-06-26,2003-05-03,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOAQUIM BARBOSA,TURMA_2,2003-06-25,2014-07-31,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOAQUIM BARBOSA,TURMA_2_PRESID,2012-02-01,2014-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOAQUIM BARBOSA,VICE_PRESIDENCIA,2012-04-12,2012-11-21,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOAQUIM BARBOSA,PRESIDENCIA,2012-11-22,2014-07-31,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOSÉ LINHARES,PRESIDENCIA,1945-10-29,1949-12-31,1,presidencia,Exerceu a Presidência da República interinamente em 1945,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,JOSÉ LINHARES,PRESIDENCIA,1951-01-01,1956-12-31,2,presidencia,Segundo mandato — 1951–1956,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LAFAYETTE DE ANDRADA,PRESIDENCIA,1962-01-01,1963-12-31,1,presidencia,Datas aproximadas — mandato 1962–1963,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LAUDO DE CAMARGO,PRESIDENCIA,1949-01-01,1951-12-31,1,presidencia,Datas aproximadas — mandato 1949–1951,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LEONI RAMOS,PRESIDENCIA,1931-01-01,1931-01-23,1,presidencia,Presidência mais breve — 23 dias,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,TURMA_1,2011-03-03,2024-09-30,1,saiu,Transferido para 2ª Turma em out/2024 — data a confirmar,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,TURMA_1_PRESID,2012-02-01,2014-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,VICE_PRESIDENCIA,2018-10-12,2020-10-21,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,PRESIDENCIA,2020-10-22,2022-10-12,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,TURMA_2_PRESID,2022-02-01,2024-02-01,5,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ FUX,TURMA_2,2024-10-01,,6,em_exercicio,Mudou da 1ª para 2ª Turma em 2024. Data exata a confirmar — marcado para auditoria.,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUIZ GALLOTTI,PRESIDENCIA,1966-01-01,1968-12-31,1,presidencia,Datas aproximadas — mandato 1966–1968,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUÍS ROBERTO BARROSO,TURMA_1,2013-06-26,2025-10-15,1,aposentadoria,Aposentadoria voluntária em 15/10/2025,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb) + correção manual,validado_com_correcao
+STF,LUÍS ROBERTO BARROSO,TURMA_1_PRESID,2022-02-01,2024-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUÍS ROBERTO BARROSO,VICE_PRESIDENCIA,2022-10-12,2023-09-27,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,LUÍS ROBERTO BARROSO,PRESIDENCIA,2023-09-28,2025-10-15,4,presidencia,Presidente STF até aposentadoria em 15/10/2025,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb) + correção manual,validado_com_correcao
+STF,MARCO AURÉLIO,TURMA_1,1990-06-13,2021-07-05,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MARCO AURÉLIO,PRESIDENCIA,2001-05-24,2003-05-14,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MARCO AURÉLIO,TURMA_1_PRESID,2002-02-01,2004-02-01,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MARCO AURÉLIO,TURMA_1_PRESID,2008-02-01,2010-02-01,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MARCO AURÉLIO,TURMA_1_PRESID,2014-02-01,2016-02-01,5,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MAURÍCIO CORRÊA,TURMA_2,1994-12-15,2004-04-21,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MAURÍCIO CORRÊA,TURMA_2_PRESID,2002-02-01,2004-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MAURÍCIO CORRÊA,PRESIDENCIA,2003-05-15,2004-04-21,3,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MENEZES DIREITO,TURMA_1,2007-09-05,2009-09-01,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,MOREIRA ALVES,PRESIDENCIA,1985-02-25,1987-03-01,1,presidencia,Presidiu sessão de abertura da ANC 1987; plaqueta digitalizada,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NELSON JOBIM,TURMA_2,1997-04-15,2006-03-29,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NELSON JOBIM,TURMA_2_PRESID,2000-02-01,2002-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NELSON JOBIM,PRESIDENCIA,2004-04-22,2006-03-29,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NUNES MARQUES,TURMA_2,2020-11-05,,1,em_exercicio,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NUNES MARQUES,TURMA_2_PRESID,2024-02-01,2026-01-31,2,presidencia,Presidência passou para Gilmar Mendes conforme Presidentes_stf_turmas.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NÉRI DA SILVEIRA,TURMA_1,1981-09-01,2002-04-24,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,NÉRI DA SILVEIRA,PRESIDENCIA,1989-10-01,1991-04-02,2,presidencia,Fonte: Presidentes_stf.docx. Data exata de início a verificar.,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,OCTAVIO GALLOTTI,TURMA_2,1984-11-20,2000-10-28,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,OCTAVIO GALLOTTI,PRESIDENCIA,1993-04-08,1995-04-04,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,OROZIMBO NONATO,PRESIDENCIA,1956-01-01,1960-12-31,1,presidencia,Datas aproximadas — mandato 1956–1960,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,OSWALDO TRIGUEIRO,PRESIDENCIA,1969-02-10,1971-02-09,1,presidencia,Posse 10/02/1969 — DJ 11/02/1969 p.333,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,PINDAHIBA DE MATTOS,PRESIDENCIA,1908-01-01,1910-12-31,1,presidencia,Datas aproximadas — mandato 1908–1910,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,PIZA E ALMEIDA,PRESIDENCIA,1906-01-01,1908-12-31,1,presidencia,Datas aproximadas — mandato 1906–1908,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RAFAEL MAYER,PRESIDENCIA,1987-03-02,1989-10-30,1,presidencia,Plaqueta digitalizada,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RIBEIRO DA COSTA,PRESIDENCIA,1963-02-01,1966-12-31,1,presidencia,Discurso de posse publicado no DJ — a localizar,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RICARDO LEWANDOWSKI,TURMA_2,2006-03-16,2024-04-30,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RICARDO LEWANDOWSKI,VICE_PRESIDENCIA,2012-11-22,2014-09-09,2,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RICARDO LEWANDOWSKI,TURMA_2_PRESID,2014-02-01,2016-02-01,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,RICARDO LEWANDOWSKI,PRESIDENCIA,2014-09-10,2016-10-11,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ROSA WEBER,TURMA_1,2011-12-19,2023-09-30,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ROSA WEBER,TURMA_1_PRESID,2020-02-01,2022-02-01,2,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ROSA WEBER,VICE_PRESIDENCIA,2020-10-22,2022-10-11,3,vice_presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,ROSA WEBER,PRESIDENCIA,2022-10-12,2023-09-27,4,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,SEPÚLVEDA PERTENCE,TURMA_1,1989-05-17,2007-08-17,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,SEPÚLVEDA PERTENCE,PRESIDENCIA,1995-04-05,1997-04-22,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,SEPÚLVEDA PERTENCE,TURMA_1_PRESID,2004-02-01,2006-02-01,3,presidencia,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,SYDNEY SANCHES,TURMA_1,1984-08-31,2003-04-27,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,SYDNEY SANCHES,PRESIDENCIA,1991-04-03,1993-04-07,2,presidencia,Fonte: Presidentes_stf.docx,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,TEORI ZAVASCKI,TURMA_2,2012-11-29,2017-01-19,1,saiu,,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,THOMPSON FLORES,PRESIDENCIA,1977-02-10,1979-02-09,1,presidencia,Plaqueta institucional disponível,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal
+STF,XAVIER DE ALBUQUERQUE,PRESIDENCIA,1981-02-16,1983-02-20,1,presidencia,Posse 16/02/1981 — plaqueta digitalizada handle/123456789/3542,stf_composicao_temporal (backup G:/supabase_backup/judx_17abr.duckdb),validado_backup_stf_composicao_temporal

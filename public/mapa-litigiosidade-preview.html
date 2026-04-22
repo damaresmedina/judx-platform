@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>JudX — Onde sua ação vai tramitar</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1628;--navy2:#12233d;--navy3:#1a3055;--gold:#c8922a;--gold2:#e8b44a;--gold-dim:rgba(200,146,42,.15);--cream:#f5f0e8;--white:#fff;--muted:#6b7280;--glass:rgba(255,255,255,.03);--crit:#d94a6a}
+*{margin:0;padding:0;box-sizing:border-box}
+::selection{background:var(--gold);color:var(--navy)}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 3.5rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.logo{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.02em}.logo span{color:var(--gold)}
+.nav-r{display:flex;align-items:center;gap:1.5rem}
+.nav-link{font-size:.62rem;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:color .2s}.nav-link:hover{color:var(--gold)}
+.nav-badge{font-size:.54rem;background:var(--gold-dim);color:var(--gold);padding:.2rem .5rem;border-radius:2px;letter-spacing:.08em;font-weight:600}
+
+.hero{padding:2.5rem 3.5rem 1.8rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-50px;width:400px;height:400px;background:radial-gradient(circle,rgba(200,146,42,.04) 0%,transparent 70%);pointer-events:none}
+.hero-tag{font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem;font-weight:500}
+.hero-tag::before{content:'';width:28px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:900;line-height:1.06;letter-spacing:-.025em;margin-bottom:.55rem}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:.8rem;color:rgba(255,255,255,.32);line-height:1.65;max-width:720px;margin-bottom:1.5rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1.5rem;border-top:1px solid rgba(255,255,255,.05);padding-top:1.2rem;max-width:920px}
+.kpi{position:relative;padding-left:.8rem}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);opacity:.2}
+.kpi-n{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--gold);line-height:1.1}
+.kpi-l{font-size:.54rem;color:rgba(255,255,255,.22);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem;line-height:1.3}
+
+.tabs-wrap{border-bottom:1px solid rgba(255,255,255,.04);background:var(--glass);padding:1rem 3.5rem}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tab{padding:.7rem 1rem;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.28);cursor:pointer;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);transition:all .2s;letter-spacing:.03em;text-align:center}
+.tab:hover{color:rgba(255,255,255,.55);background:rgba(200,146,42,.06);border-color:rgba(200,146,42,.15)}
+.tab.on{color:var(--gold);background:rgba(200,146,42,.1);border-color:rgba(200,146,42,.3)}
+
+.insight-wrap{padding:.8rem 3.5rem;background:rgba(200,146,42,.03);border-bottom:1px solid rgba(200,146,42,.08)}
+.insight{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.65;max-width:960px;position:relative;padding-left:1rem}
+.insight::before{content:'';position:absolute;left:0;top:.15rem;bottom:.15rem;width:2px;background:var(--gold);border-radius:1px}
+.insight strong{color:var(--gold);font-weight:600}
+
+.map-stage{padding:1.2rem 3.5rem 1.5rem;display:grid;grid-template-columns:1fr;gap:1.6rem}
+@media(min-width:1100px){.map-stage{grid-template-columns:1.55fr 1fr;gap:2rem;padding:1.4rem 3.5rem 2rem}}
+.map-title{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:.8rem;font-weight:500}
+.map-box{position:relative}
+.map-svg{width:100%;height:auto;display:block}
+.region-label{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;fill:rgba(232,221,200,.045);letter-spacing:.3em;text-transform:uppercase;pointer-events:none;text-anchor:middle;font-weight:400}
+.region-aur{pointer-events:none}
+.pt{cursor:pointer;transition:filter .25s;transform-box:fill-box;transform-origin:center}
+.pt:hover{filter:brightness(1.3) drop-shadow(0 0 8px var(--gold))}
+.pt.r1{animation:ptbreath 3.8s ease-in-out infinite}
+.pt.r2{animation:ptbreath 4.4s ease-in-out infinite;animation-delay:.7s}
+.pt.r3{animation:ptbreath 4.9s ease-in-out infinite;animation-delay:1.6s}
+.pt.r4{animation:ptbreath 4.1s ease-in-out infinite;animation-delay:2.3s}
+@keyframes ptbreath{
+  0%,100%{transform:scale(.985);filter:brightness(.95)}
+  50%{transform:scale(1.025);filter:brightness(1.1)}
+}
+
+/* Halo externo — muito sutil, quase uma aura respirando */
+.pt-halo{fill:none;stroke-width:.9;pointer-events:none;transform-box:fill-box;transform-origin:center;opacity:.15}
+.pt-halo.r1{animation:pthalo 3.8s ease-in-out infinite}
+.pt-halo.r2{animation:pthalo 4.4s ease-in-out infinite;animation-delay:.5s}
+.pt-halo.r3{animation:pthalo 4.9s ease-in-out infinite;animation-delay:1.3s}
+.pt-halo.r4{animation:pthalo 4.1s ease-in-out infinite;animation-delay:2s}
+@keyframes pthalo{
+  0%,100%{transform:scale(1);opacity:.06}
+  50%{transform:scale(1.18);opacity:.22}
+}
+
+/* Onda expansiva desligada — era exagero */
+.pt-wave{display:none}
+
+/* Sub-pontos (comarcas/varas) — textura de campo vivo */
+.pt-sub{fill:#e8b44a;transform-box:fill-box;transform-origin:center;pointer-events:none}
+.pt-sub.s1{animation:subbreath 4.5s ease-in-out infinite;opacity:.25}
+.pt-sub.s2{animation:subbreath 5.2s ease-in-out infinite;animation-delay:.9s;opacity:.25}
+.pt-sub.s3{animation:subbreath 4.8s ease-in-out infinite;animation-delay:1.8s;opacity:.25}
+.pt-sub.s4{animation:subbreath 4.1s ease-in-out infinite;animation-delay:.4s;opacity:.25}
+.pt-sub.s5{animation:subbreath 5.5s ease-in-out infinite;animation-delay:2.8s;opacity:.25}
+@keyframes subbreath{
+  0%,100%{transform:scale(.85);opacity:.18}
+  50%{transform:scale(1.12);opacity:.5}
+}
+
+/* Filamentos sutis ligando raízes aos troncos — sistema nervoso */
+.filament{stroke:rgba(200,146,42,.06);stroke-width:.5;fill:none;pointer-events:none}
+.pt-label{font-family:'DM Mono',monospace;font-size:10px;fill:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;pointer-events:none;font-weight:500}
+.pt-label.sub{font-size:8px;fill:var(--gold);font-weight:400}
+
+.cards{display:flex;flex-direction:column;gap:1rem}
+.card{border:1px solid rgba(255,255,255,.06);padding:1.15rem 1.3rem;background:rgba(200,146,42,.02);position:relative;border-left:3px solid var(--gold)}
+.card.crit{border-left-color:var(--crit);background:rgba(217,74,106,.04)}
+.card.accel{border-left-color:var(--gold2)}
+.card .sup{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:.45rem}
+.card .loc{font-family:'Playfair Display',serif;font-size:1.15rem;color:#fff;font-weight:700;letter-spacing:-.015em;margin-bottom:.35rem}
+.card .big{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);line-height:1;letter-spacing:-.02em;font-weight:700}
+.card .tag-sym{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);display:inline-flex;align-items:baseline;gap:.45rem;margin-top:.1rem}
+.card .tag-sym b{color:var(--gold);font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;letter-spacing:0;font-weight:400}
+.card .spark{display:block;margin-top:.25rem;opacity:.92}
+.card .lock-row{display:flex;align-items:center;gap:.5rem;margin-top:.35rem;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.card .lock-row::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px rgba(200,146,42,.15);animation:ptpulse 2s ease-in-out infinite}
+@keyframes ptpulse{0%,100%{opacity:.55;box-shadow:0 0 0 3px rgba(200,146,42,.15)}50%{opacity:1;box-shadow:0 0 0 5px rgba(200,146,42,.25)}}
+.card .desc{font-family:'DM Sans',sans-serif;font-size:.72rem;color:rgba(255,255,255,.4);margin-top:.55rem;line-height:1.55}
+.card .badge{display:inline-block;margin-top:.75rem;padding:3px 10px;font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:var(--navy);background:var(--gold)}
+.card .badge.crit{background:var(--crit);color:#fff}
+
+.leg-map{display:flex;gap:1rem;flex-wrap:wrap;padding:.8rem 0 0}
+.leg-i{display:flex;align-items:center;gap:.35rem;font-size:.6rem;color:rgba(255,255,255,.3);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+.summary{padding:.5rem 3.5rem;display:flex;gap:2rem;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.03)}
+.sum-item{font-size:.62rem;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace}
+.sum-item strong{color:var(--gold)}
+.sum-item a{color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(200,146,42,.4)}
+.sum-item a:hover{border-bottom-color:var(--gold)}
+
+.fonte{text-align:center;padding:.5rem 3.5rem;font-size:.52rem;color:rgba(255,255,255,.1);font-family:'DM Mono',monospace;letter-spacing:.05em}
+footer{padding:1.2rem 3.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.03)}
+.fl{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:-.02em;display:inline-flex;align-items:baseline;gap:.55rem}
+.fl span.xgold{color:var(--gold)}
+.fl-tag{font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:400;color:rgba(255,255,255,.4);letter-spacing:.14em;text-transform:uppercase}
+.ft{font-size:.56rem;color:rgba(255,255,255,.25);letter-spacing:.05em;line-height:1.6}
+
+.tip{position:fixed;background:var(--navy2);border:1px solid rgba(255,255,255,.06);color:#fff;padding:.75rem 1rem;pointer-events:none;opacity:0;transition:opacity .12s;z-index:999;max-width:280px;border-left:3px solid var(--gold);font-size:.74rem;line-height:1.5;border-radius:3px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.tip.on{opacity:1}
+.tip-nome{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.1rem}
+.tip-tipo{font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.4rem}
+.tip-grid{display:grid;grid-template-columns:1fr auto;gap:.15rem .6rem}
+.tip-lbl{color:rgba(255,255,255,.4);font-size:.68rem}
+.tip-val{font-family:'DM Mono',monospace;color:var(--gold);font-weight:500;font-size:.7rem;text-align:right}
+
+@media(max-width:768px){
+  nav,.hero,.insight-wrap,.map-stage,.summary,.fonte,footer,.tabs-wrap{padding-left:1rem;padding-right:1rem}
+  nav{flex-wrap:wrap;gap:.6rem}
+  .nav-r{gap:.8rem;flex-wrap:wrap}
+  .nav-link{font-size:.56rem}
+  .hero{padding:1.8rem 1rem 1.2rem}
+  .hero h1{font-size:1.6rem;line-height:1.08}
+  .hero-sub{font-size:.74rem;line-height:1.6}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:.8rem;padding-top:.9rem}
+  .kpi-n{font-size:1rem}
+  .kpi-l{font-size:.5rem}
+  .tabs-wrap{padding:.7rem 1rem}
+  .tabs{grid-template-columns:repeat(2,1fr);gap:4px}
+  .tab{padding:.55rem .6rem;font-size:.6rem}
+  .insight{font-size:.72rem;line-height:1.55}
+  .map-stage{padding:1rem;gap:1.2rem}
+  .map-title{font-size:.54rem}
+  .card{padding:.95rem 1rem}
+  .card .sup{font-size:.54rem}
+  .card .loc{font-size:1rem}
+  .card .big{font-size:1.35rem}
+  .card .desc{font-size:.68rem}
+  .card .badge{font-size:.5rem;letter-spacing:.14em}
+  .leg-map{gap:.5rem}
+  .leg-i{font-size:.54rem}
+  .summary{gap:.8rem;padding:.6rem 1rem}
+  .sum-item{font-size:.58rem}
+  .tip{max-width:240px;font-size:.68rem}
+  footer{flex-direction:column;gap:.5rem;text-align:center;align-items:center}
+  .ft{font-size:.5rem;line-height:1.5}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Jud<span>X</span></a>
+  <div class="nav-r">
+    <span class="nav-badge">CNJ 2025 · DATAJUD</span>
+    <a href="/rede-de-acesso" class="nav-link">Rede de acesso →</a>
+    <a href="/" class="nav-link">← Voltar</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">Volume · risco · previsibilidade</div>
+  <h1>Onde sua ação<br><em>vai tramitar</em></h1>
+  <p class="hero-sub">Nem todo tribunal trata do mesmo jeito. Volume, tempo e orçamento variam — e o risco também. Conheça o território <em>antes de protocolar</em>.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-n">329,7M</div><div class="kpi-l">Documentos<br>no Datajud</div></div>
+    <div class="kpi"><div class="kpi-n">91</div><div class="kpi-l">Endpoints<br>mapeados</div></div>
+    <div class="kpi"><div class="kpi-n">TJSP</div><div class="kpi-l">22% de todo<br>o sistema</div></div>
+    <div class="kpi"><div class="kpi-n">5 + 6 + 24</div><div class="kpi-l">Superiores ·<br>TRFs · TRTs</div></div>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+<div class="tabs">
+  <div class="tab on" data-v="all" onclick="go('all',this)">Sistema inteiro</div>
+  <div class="tab" data-v="estadual" onclick="go('estadual',this)">Justiça Estadual</div>
+  <div class="tab" data-v="federal" onclick="go('federal',this)">Justiça Federal</div>
+  <div class="tab" data-v="trabalho" onclick="go('trabalho',this)">Justiça do Trabalho</div>
+</div>
+</div>
+
+<div class="insight-wrap"><div class="insight" id="insight"></div></div>
+
+<div class="map-stage">
+  <div class="map-box">
+    <div class="map-title" id="maptitle">Distribuição geográfica · casos novos por Tribunal de Justiça — 2024</div>
+    <svg class="map-svg" viewBox="0 0 420 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="aur-n" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8b6cc1" stop-opacity=".11"/><stop offset="1" stop-color="#8b6cc1" stop-opacity="0"/></radialGradient>
+        <radialGradient id="aur-ne" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#d4701e" stop-opacity=".09"/><stop offset="1" stop-color="#d4701e" stop-opacity="0"/></radialGradient>
+        <radialGradient id="aur-co" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#c8922a" stop-opacity=".08"/><stop offset="1" stop-color="#c8922a" stop-opacity="0"/></radialGradient>
+        <radialGradient id="aur-se" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#228c50" stop-opacity=".11"/><stop offset="1" stop-color="#228c50" stop-opacity="0"/></radialGradient>
+        <radialGradient id="aur-s" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#3a8fc4" stop-opacity=".09"/><stop offset="1" stop-color="#3a8fc4" stop-opacity="0"/></radialGradient>
+      </defs>
+      <!-- Aureolas regionais (fundo suave indicando território) -->
+      <circle class="region-aur" cx="135" cy="155" r="130" fill="url(#aur-n)"/>
+      <circle class="region-aur" cx="305" cy="205" r="110" fill="url(#aur-ne)"/>
+      <circle class="region-aur" cx="190" cy="275" r="115" fill="url(#aur-co)"/>
+      <circle class="region-aur" cx="240" cy="335" r="100" fill="url(#aur-se)"/>
+      <circle class="region-aur" cx="180" cy="420" r="90" fill="url(#aur-s)"/>
+
+      <!-- Labels regionais em marca d'água -->
+      <text class="region-label" x="135" y="155">Norte</text>
+      <text class="region-label" x="305" y="205">Nordeste</text>
+      <text class="region-label" x="190" y="275">Centro-Oeste</text>
+      <text class="region-label" x="245" y="335">Sudeste</text>
+      <text class="region-label" x="180" y="420">Sul</text>
+
+      <g id="pontos"></g>
+      <g id="labels"></g>
+    </svg>
+    <div class="leg-map">
+      <div class="leg-i"><span class="leg-dot" style="background:#c8922a"></span>Superiores (STF · STJ · TST · TSE · STM)</div>
+      <div class="leg-i"><span class="leg-dot" style="background:#228c50"></span>Just. Estadual (27 TJs)</div>
+      <div class="leg-i"><span class="leg-dot" style="background:#d4701e"></span>Just. Federal (6 TRFs)</div>
+      <div class="leg-i"><span class="leg-dot" style="background:#b53020"></span>Just. Trabalho (24 TRTs)</div>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+</div>
+
+<div class="summary" id="summary"></div>
+<div class="fonte">FONTE: DATAJUD/CNJ — AGREGAÇÃO DE 91 ENDPOINTS · CNJ JUSTIÇA EM NÚMEROS 2025 (COMPLEMENTAR)</div>
+<footer>
+  <div class="fl"><span>Jud<span class="xgold">X</span></span><span class="fl-tag">Inteligência Jurisprudencial</span></div>
+  <div class="ft">&copy; 2026 Damares Medina &middot; JudX &middot; Todos os direitos reservados. Dados sujeitos a verificação. Não constitui aconselhamento jurídico.</div>
+</footer>
+
+<div class="tip" id="tip">
+  <div class="tip-nome" id="tn"></div>
+  <div class="tip-tipo" id="tt"></div>
+  <div class="tip-grid" id="tgrid"></div>
+</div>
+
+<script>
+// Dataset Datajud — volumes reais por endpoint (Nota Técnica 17/abr/2026)
+const TRIBUNAIS=[
+  // SUPERIORES — todos em Brasília (pequenos deslocamentos para não sobrepor)
+  {sigla:'STF',tipo:'superior',nome:'Supremo Tribunal Federal',cidade:'Brasília/DF',docs:2927525,x:218,y:256},
+  {sigla:'STJ',tipo:'superior',nome:'Superior Tribunal de Justiça',cidade:'Brasília/DF',docs:3390010,x:224,y:256},
+  {sigla:'TST',tipo:'superior',nome:'Tribunal Superior do Trabalho',cidade:'Brasília/DF',docs:4773267,x:218,y:262},
+  {sigla:'TSE',tipo:'superior',nome:'Tribunal Superior Eleitoral',cidade:'Brasília/DF',docs:89000,x:224,y:262},
+  {sigla:'STM',tipo:'superior',nome:'Superior Tribunal Militar',cidade:'Brasília/DF',docs:59560,x:221,y:250},
+  // FEDERAL — 6 TRFs
+  {sigla:'TRF1',tipo:'federal',nome:'TRF 1ª Região',cidade:'Brasília/DF',docs:5063566,x:215,y:268},
+  {sigla:'TRF2',tipo:'federal',nome:'TRF 2ª Região',cidade:'Rio de Janeiro/RJ',docs:4202908,x:254,y:344},
+  {sigla:'TRF3',tipo:'federal',nome:'TRF 3ª Região',cidade:'São Paulo/SP',docs:16871517,x:217,y:348},
+  {sigla:'TRF4',tipo:'federal',nome:'TRF 4ª Região',cidade:'Porto Alegre/RS',docs:13966944,x:174,y:437},
+  {sigla:'TRF5',tipo:'federal',nome:'TRF 5ª Região',cidade:'Recife/PE',docs:6537373,x:327,y:224},
+  {sigla:'TRF6',tipo:'federal',nome:'TRF 6ª Região',cidade:'Belo Horizonte/MG',docs:4245582,x:241,y:308},
+  // TRABALHO — principais TRTs (top 8 por volume)
+  {sigla:'TRT2',tipo:'trabalho',nome:'TRT 2ª Região',cidade:'São Paulo/SP capital',docs:4980727,x:209,y:347},
+  {sigla:'TRT3',tipo:'trabalho',nome:'TRT 3ª Região',cidade:'Belo Horizonte/MG',docs:4062024,x:234,y:307},
+  {sigla:'TRT15',tipo:'trabalho',nome:'TRT 15ª Região',cidade:'Campinas/SP interior',docs:3585258,x:202,y:342},
+  {sigla:'TRT4',tipo:'trabalho',nome:'TRT 4ª Região',cidade:'Porto Alegre/RS',docs:2800000,x:167,y:437},
+  {sigla:'TRT1',tipo:'trabalho',nome:'TRT 1ª Região',cidade:'Rio de Janeiro/RJ',docs:2400000,x:247,y:343},
+  {sigla:'TRT9',tipo:'trabalho',nome:'TRT 9ª Região',cidade:'Curitiba/PR',docs:1400000,x:190,y:387},
+  {sigla:'TRT5',tipo:'trabalho',nome:'TRT 5ª Região',cidade:'Salvador/BA',docs:1300000,x:293,y:272},
+  {sigla:'TRT6',tipo:'trabalho',nome:'TRT 6ª Região',cidade:'Recife/PE',docs:900000,x:322,y:220},
+  // ESTADUAL — 27 TJs
+  {sigla:'TJSP',tipo:'estadual',nome:'TJ São Paulo',cidade:'São Paulo/SP',docs:71899024,x:212,y:345},
+  {sigla:'TJMG',tipo:'estadual',nome:'TJ Minas Gerais',cidade:'Belo Horizonte/MG',docs:35376520,x:238,y:305},
+  {sigla:'TJRJ',tipo:'estadual',nome:'TJ Rio de Janeiro',cidade:'Rio de Janeiro/RJ',docs:16485053,x:250,y:340},
+  {sigla:'TJBA',tipo:'estadual',nome:'TJ Bahia',cidade:'Salvador/BA',docs:14640270,x:295,y:270},
+  {sigla:'TJRS',tipo:'estadual',nome:'TJ Rio G. do Sul',cidade:'Porto Alegre/RS',docs:13419220,x:170,y:435},
+  {sigla:'TJPR',tipo:'estadual',nome:'TJ Paraná',cidade:'Curitiba/PR',docs:12382336,x:193,y:385},
+  {sigla:'TJSC',tipo:'estadual',nome:'TJ Santa Catarina',cidade:'Florianópolis/SC',docs:10267930,x:195,y:410},
+  {sigla:'TJGO',tipo:'estadual',nome:'TJ Goiás',cidade:'Goiânia/GO',docs:6675441,x:215,y:275},
+  {sigla:'TJPE',tipo:'estadual',nome:'TJ Pernambuco',cidade:'Recife/PE',docs:6250191,x:324,y:220},
+  {sigla:'TJCE',tipo:'estadual',nome:'TJ Ceará',cidade:'Fortaleza/CE',docs:4431686,x:300,y:175},
+  {sigla:'TJAM',tipo:'estadual',nome:'TJ Amazonas',cidade:'Manaus/AM',docs:4319062,x:115,y:170},
+  {sigla:'TJMT',tipo:'estadual',nome:'TJ Mato Grosso',cidade:'Cuiabá/MT',docs:4278499,x:165,y:260},
+  {sigla:'TJMA',tipo:'estadual',nome:'TJ Maranhão',cidade:'São Luís/MA',docs:4074375,x:257,y:155},
+  {sigla:'TJDFT',tipo:'estadual',nome:'TJ DFT',cidade:'Brasília/DF',docs:3453628,x:228,y:260},
+  {sigla:'TJMS',tipo:'estadual',nome:'TJ Mato G. do Sul',cidade:'Campo Grande/MS',docs:3372661,x:160,y:305},
+  {sigla:'TJPA',tipo:'estadual',nome:'TJ Pará',cidade:'Belém/PA',docs:3312872,x:225,y:135},
+  {sigla:'TJSE',tipo:'estadual',nome:'TJ Sergipe',cidade:'Aracaju/SE',docs:3005878,x:305,y:253},
+  {sigla:'TJES',tipo:'estadual',nome:'TJ Espírito Santo',cidade:'Vitória/ES',docs:2949131,x:258,y:320},
+  {sigla:'TJAL',tipo:'estadual',nome:'TJ Alagoas',cidade:'Maceió/AL',docs:2943227,x:318,y:237},
+  {sigla:'TJPB',tipo:'estadual',nome:'TJ Paraíba',cidade:'João Pessoa/PB',docs:2500000,x:332,y:205},
+  {sigla:'TJRN',tipo:'estadual',nome:'TJ Rio G. do Norte',cidade:'Natal/RN',docs:2300000,x:328,y:190},
+  {sigla:'TJPI',tipo:'estadual',nome:'TJ Piauí',cidade:'Teresina/PI',docs:2100000,x:275,y:180},
+  {sigla:'TJTO',tipo:'estadual',nome:'TJ Tocantins',cidade:'Palmas/TO',docs:1800000,x:220,y:205},
+  {sigla:'TJRO',tipo:'estadual',nome:'TJ Rondônia',cidade:'Porto Velho/RO',docs:1500000,x:105,y:225},
+  {sigla:'TJAC',tipo:'estadual',nome:'TJ Acre',cidade:'Rio Branco/AC',docs:700000,x:65,y:225},
+  {sigla:'TJAP',tipo:'estadual',nome:'TJ Amapá',cidade:'Macapá/AP',docs:650000,x:215,y:100},
+  {sigla:'TJRR',tipo:'estadual',nome:'TJ Roraima',cidade:'Boa Vista/RR',docs:350000,x:145,y:85},
+];
+const TCOR={superior:'#c8922a',federal:'#d4701e',trabalho:'#b53020',estadual:'#228c50',eleitoral:'#8b6cc1',militar:'#7b3fa0'};
+const TLABEL={superior:'Tribunais Superiores',federal:'Justiça Federal',trabalho:'Justiça do Trabalho',estadual:'Justiça Estadual',eleitoral:'Justiça Eleitoral',militar:'Justiça Militar'};
+const INSIGHTS={
+  all:'<strong>329,7 milhões</strong> de documentos processuais mapeados no Datajud · 91 endpoints, 5 ramos de justiça. O <strong>TJSP</strong> sozinho responde por <strong>22%</strong> do total nacional — mais que toda a Justiça do Trabalho somada. <em>The first the best</em> — conhecer o terreno é antecipar o risco.',
+  estadual:'<strong>237 milhões</strong> de documentos nos 27 TJs. <strong>TJSP</strong> com <strong>71,9M</strong> (30% só dele), <strong>TJMG</strong> com 35,4M. SP+MG+RJ+BA+RS+PR = <strong>71%</strong> de toda a Justiça Estadual. Onde sua ação entra, quanta concorrência enfrenta, e o custo de oportunidade — tudo muda por território.',
+  federal:'<strong>50,9 milhões</strong> de documentos nos 6 TRFs. <strong>TRF3 (São Paulo)</strong> concentra 33% — os <strong>16,9M</strong> cobrem SP+MS, com massa executiva fiscal inédita. <strong>TRF4</strong> (RS+SC+PR) vem logo atrás com 14M. Federal é recursal por natureza: chegar aqui é caro, atravessar é mais.',
+  trabalho:'<strong>28,3 milhões</strong> de documentos nos 24 TRTs. <strong>TRT2 (SP capital)</strong> e <strong>TRT15 (SP interior)</strong> somam 8,6M — <strong>30% do trabalho nacional em um único estado</strong>. TRT3 (MG) é o terceiro. A Justiça do Trabalho tem a maior média de movimentos por processo do país (78,6) — cada caso pulsa mais vezes.'
+};
+const CARDS={
+  all:[
+    {sup:'TJSP · Justiça Estadual',loc:'São Paulo',val:'71,9M',desc:'Sozinho responde por 22% de todo o sistema. Maior acervo do Brasil e, provavelmente, da América Latina. Sua ação entra aqui em fila com milhões.',badge:'Epicentro do sistema'},
+    {sup:'Cúpula recursal · Brasília',loc:'STF · STJ · TST · TSE · STM',desc:'Cinco tribunais superiores em uma cidade. Todo recurso termina aqui — ou é barrado aqui. 11,1M documentos nos 5 somados.',badge:'Funil recursal'},
+    {sup:'TRF3 · Justiça Federal',loc:'São Paulo · TRF 3ª Região',val:'16,9M',desc:'Maior TRF do país. Cobre SP e MS com massa executiva fiscal inédita. Tempo médio de tramitação é ditado por esse tribunal.',badge:'Maior TRF',crit:true},
+    {sup:'Antecipação de reações',loc:'Vetor emergente',locker:true,desc:'Um tribunal cresce num ritmo que o mercado ainda não leu. <em>The first the best</em> — identifique o vetor antes que ele se materialize em risco.',badge:'Acesso estendido'},
+  ],
+  estadual:[
+    {sup:'TJSP · Justiça Estadual',loc:'São Paulo',val:'71,9M',desc:'Um quarto de tudo que é protocolado no país passa aqui. Maior acervo estadual da América Latina — a fila é longa e a concorrência, densa.',badge:'Maior volume do país'},
+    {sup:'TJMG · Justiça Estadual',loc:'Minas Gerais',val:'35,4M',desc:'Segundo maior volume estadual. Giro de acervo entre os mais lentos — entrar aqui é aceitar esperar.',badge:'Represa crítica',crit:true},
+    {sup:'TJRJ · Justiça Estadual',loc:'Rio de Janeiro',val:'16,5M',desc:'Terceiro maior. Produção por magistrado é a mais alta do país — decisões saem rápido, mas o funil recursal é agressivo.',badge:'Alto ritmo'},
+    {sup:'Antecipação por estado',loc:'Vetor emergente',locker:true,desc:'Nem toda concentração é óbvia. Alguns TJs crescem num ritmo que ainda não virou notícia. <em>The first the best</em> — antecipe.',badge:'Acesso estendido'},
+  ],
+  federal:[
+    {sup:'TRF3 · 3ª Região',loc:'São Paulo · cobre SP+MS',val:'16,9M',desc:'O maior TRF do país. Concentra 33% de toda a Justiça Federal. Executivo fiscal da União passa fortemente por aqui.',badge:'Maior TRF'},
+    {sup:'TRF4 · 4ª Região',loc:'Porto Alegre · cobre RS+SC+PR',val:'14M',desc:'Segunda maior região federal. Alto volume de previdenciário e execução fiscal — tempo médio alto.',badge:'Alto volume',crit:true},
+    {sup:'TRF5 · 5ª Região',loc:'Recife · cobre PE+CE+PB+RN+AL+SE',val:'6,5M',desc:'Federal do Nordeste. Massa previdenciária expressiva, INSS como parte contumaz.',badge:'Previdenciário'},
+    {sup:'Padrões ocultos · TRFs',loc:'Vetor emergente',locker:true,desc:'A distribuição de classes por TRF esconde assimetrias de enforcement. <em>The first the best</em> — antecipe onde seu processo vai cair.',badge:'Acesso estendido'},
+  ],
+  trabalho:[
+    {sup:'TRT2 · SP capital',loc:'São Paulo · Grande SP',val:'5,0M',desc:'Maior TRT do país. Concentra relações de trabalho da maior economia urbana do Brasil.',badge:'Maior TRT'},
+    {sup:'TRT15 · SP interior',loc:'Campinas · SP interior',val:'3,6M',desc:'Terceiro maior TRT — e o único que cobre só o interior de um estado. Combina agroindústria, logística e serviços.',badge:'TRT do interior'},
+    {sup:'TRT3 · Minas Gerais',loc:'Belo Horizonte · MG inteiro',val:'4,1M',desc:'Segundo maior TRT. Cobre MG inteiro, com forte massa de mineração e siderurgia.',badge:'Segundo TRT',crit:true},
+    {sup:'Mapa oculto do trabalho',loc:'Vetor emergente',locker:true,desc:'Padrão por tipo de empregador, setor e classe é invisível agregado. <em>The first the best</em> — antecipe o risco trabalhista por região.',badge:'Acesso estendido'},
+  ],
+};
+
+let view='all';
+const totDocs=TRIBUNAIS.reduce((a,d)=>a+d.docs,0);
+function filteredTribs(){
+  if(view==='all')return TRIBUNAIS;
+  if(view==='estadual')return TRIBUNAIS.filter(d=>d.tipo==='estadual');
+  if(view==='federal')return TRIBUNAIS.filter(d=>d.tipo==='federal');
+  if(view==='trabalho')return TRIBUNAIS.filter(d=>d.tipo==='trabalho' || d.sigla==='TST');
+  return TRIBUNAIS;
+}
+function maxV(arr){return Math.max(...arr.map(d=>d.docs))}
+function fmtN(n){if(n>=1e9)return (n/1e9).toFixed(2)+'B';if(n>=1e6)return (n/1e6).toFixed(1)+'M';if(n>=1e3)return (n/1e3).toFixed(0)+'k';return n}
+
+function go(v,el){
+  view=v;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  document.getElementById('insight').innerHTML=INSIGHTS[v]||'';
+  const titles={
+    all:'Sistema inteiro · distribuição Datajud por tribunal',
+    estadual:'Justiça Estadual · 27 TJs (Datajud)',
+    federal:'Justiça Federal · 6 TRFs (Datajud)',
+    trabalho:'Justiça do Trabalho · TRTs + TST (Datajud)'
+  };
+  document.getElementById('maptitle').textContent=titles[v];
+  renderMap();
+  renderCards();
+  renderSummary();
+}
+
+// pseudo-aleatório determinístico para distribuir sub-pontos consistentes
+function seeded(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0}return ()=>{h=(h*48271)%2147483647;return (h>>>0)/2147483647}}
+
+function renderMap(){
+  const arr=filteredTribs();
+  const mx=maxV(arr);
+  const minR=3, maxR=28;
+  const pontos=document.getElementById('pontos');
+  const labels=document.getElementById('labels');
+  pontos.innerHTML='';labels.innerHTML='';
+  const NS='http://www.w3.org/2000/svg';
+
+  // Constelação de sub-pontos (comarcas) — textura do campo vivo
+  const frag=document.createDocumentFragment();
+  arr.forEach((d,i)=>{
+    const rnd=seeded(d.sigla);
+    const r=Math.max(minR,Math.sqrt(d.docs/mx)*maxR);
+    const n=Math.max(3,Math.min(9,Math.round(r*0.6)));
+    for(let k=0;k<n;k++){
+      const angle=rnd()*Math.PI*2;
+      const dist=r+6+rnd()*12;
+      const sx=d.x+Math.cos(angle)*dist;
+      const sy=d.y+Math.sin(angle)*dist;
+      if(k<3){
+        const ln=document.createElementNS(NS,'line');
+        ln.setAttribute('class','filament');
+        ln.setAttribute('x1',d.x);ln.setAttribute('y1',d.y);
+        ln.setAttribute('x2',sx);ln.setAttribute('y2',sy);
+        frag.appendChild(ln);
+      }
+      const sub=document.createElementNS(NS,'circle');
+      sub.setAttribute('class','pt-sub s'+((k%5)+1));
+      sub.setAttribute('cx',sx);sub.setAttribute('cy',sy);
+      sub.setAttribute('r',1.4);
+      frag.appendChild(sub);
+    }
+  });
+  pontos.appendChild(frag);
+
+  arr.forEach((d,i)=>{
+    const r=Math.max(minR,Math.sqrt(d.docs/mx)*maxR);
+    const color=TCOR[d.tipo];
+    const rythm='r'+((i%4)+1);
+    if(r>11){
+      const wave=document.createElementNS(NS,'circle');
+      wave.setAttribute('class','pt-wave');
+      wave.setAttribute('cx',d.x);wave.setAttribute('cy',d.y);wave.setAttribute('r',r);
+      wave.setAttribute('stroke',color);wave.style.animationDelay=(i*0.18)+'s';
+      pontos.appendChild(wave);
+    }
+    const halo=document.createElementNS(NS,'circle');
+    halo.setAttribute('class','pt-halo '+rythm);halo.setAttribute('cx',d.x);halo.setAttribute('cy',d.y);halo.setAttribute('r',r+4);halo.setAttribute('stroke',color);
+    pontos.appendChild(halo);
+    const c=document.createElementNS(NS,'circle');
+    c.setAttribute('class','pt '+rythm);c.setAttribute('cx',d.x);c.setAttribute('cy',d.y);c.setAttribute('r',r);c.setAttribute('fill',color);c.setAttribute('fill-opacity','.85');c.setAttribute('stroke',color);c.setAttribute('stroke-width','1');
+    c.addEventListener('mouseover',ev=>showTip(ev,d));
+    c.addEventListener('mousemove',moveTip);
+    c.addEventListener('mouseout',hideTip);
+    pontos.appendChild(c);
+    if(r>8){
+      const t=document.createElementNS(NS,'text');
+      t.setAttribute('class','pt-label');
+      t.setAttribute('x',d.x);t.setAttribute('y',d.y - r - 4);
+      t.setAttribute('text-anchor','middle');
+      t.textContent=d.sigla;
+      labels.appendChild(t);
+    }
+  });
+  // label "BRASÍLIA" só no view 'all'
+  if(view==='all'){
+    const bras=document.createElementNS(NS,'text');
+    bras.setAttribute('class','pt-label sub');
+    bras.setAttribute('x',222);bras.setAttribute('y',242);
+    bras.setAttribute('text-anchor','middle');
+    bras.textContent='BRASÍLIA · cúpula recursal';
+    labels.appendChild(bras);
+  }
+}
+
+function renderCards(){
+  const box=document.getElementById('cards');
+  const blocks=CARDS[view]||[];
+  box.innerHTML=blocks.map(b=>{
+    let mid='';
+    if(b.locker){
+      mid=`<div class="lock-row">Acesso estendido · antecipação de reações</div>
+           <svg class="spark" width="100" height="24" viewBox="0 0 100 24"><defs><linearGradient id="g${Math.random().toString(36).slice(2,7)}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c8922a" stop-opacity=".25"/><stop offset="1" stop-color="#e8b44a" stop-opacity="1"/></linearGradient></defs><polyline points="0,20 14,18 28,16 42,13 56,10 70,6 84,3 99,1" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+    } else if(b.val){
+      mid=`<div class="big">${b.val}</div>`;
+    }
+    return `
+    <div class="card ${b.crit?'crit':''} ${b.locker?'accel':''}">
+      <div class="sup">${b.sup}</div>
+      <div class="loc">${b.loc}</div>
+      ${mid}
+      <div class="desc">${b.desc}</div>
+      <div class="badge ${b.crit?'crit':''}">${b.badge}</div>
+    </div>
+    `;
+  }).join('');
+}
+
+function renderSummary(){
+  const arr=filteredTribs();
+  const sorted=[...arr].sort((a,b)=>b.docs-a.docs);
+  const top5=sorted.slice(0,5);
+  const tot=arr.reduce((a,d)=>a+d.docs,0);
+  const top5v=top5.reduce((a,d)=>a+d.docs,0);
+  const pct=tot?(top5v/tot*100).toFixed(0):0;
+  const html=`<span class="sum-item">Top 5: <strong>${top5.map(d=>d.sigla).join(', ')}</strong> = ${pct}% do total</span>
+        <span class="sum-item">Universo: <strong>${fmtN(tot)}</strong> documentos · ${arr.length} tribunais</span>
+        <span class="sum-item"><a href="/rede-de-acesso">detalhamento por métrica CNJ →</a></span>`;
+  document.getElementById('summary').innerHTML=html;
+}
+
+function showTip(ev,d){
+  document.getElementById('tn').textContent=d.sigla+' — '+d.nome;
+  document.getElementById('tt').textContent=TLABEL[d.tipo]+(d.cidade?' · '+d.cidade:'');
+  document.getElementById('tgrid').innerHTML=`
+    <span class="tip-lbl">Documentos Datajud</span><span class="tip-val">${fmtN(d.docs)}</span>
+    <span class="tip-lbl">Participação no ramo</span><span class="tip-val">${(d.docs/TRIBUNAIS.filter(t=>t.tipo===d.tipo).reduce((a,t)=>a+t.docs,0)*100).toFixed(1)}%</span>
+    <span class="tip-lbl">Participação total</span><span class="tip-val">${(d.docs/totDocs*100).toFixed(1)}%</span>
+    ${d.cidade?`<span class="tip-lbl">Sede</span><span class="tip-val">${d.cidade}</span>`:''}
+  `;
+  moveTip(ev);
+  document.getElementById('tip').classList.add('on');
+}
+function moveTip(ev){
+  const t=document.getElementById('tip');
+  const w=t.offsetWidth,h=t.offsetHeight;
+  let x=ev.clientX+14, y=ev.clientY+14;
+  if(x+w>innerWidth-10)x=ev.clientX-w-14;
+  if(y+h>innerHeight-10)y=ev.clientY-h-14;
+  t.style.left=x+'px';t.style.top=y+'px';
+}
+function hideTip(){document.getElementById('tip').classList.remove('on')}
+
+// Init
+go('all',document.querySelector('.tab.on'));
+</script>
+</body>
+</html>
