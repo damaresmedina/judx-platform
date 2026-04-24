@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<title>JudX · Painel de Risco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#081427;--bg2:#0d1f35;--bg3:#111e30;--gold:#c8922a;--gold-s:#e0b558;--gold-dim:rgba(200,146,42,.35);--red:#c4513a;--red-s:#e06b52;--green:#4a9;--ink:#e8ddc8;--ink-b:#f4ecd9;--ink-d:#a89a82;--ink-f:#5d5644;--line:rgba(232,221,200,.08);--line-s:rgba(232,221,200,.20)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.doc{max-width:900px;margin:0 auto;padding:10vh 5vw 16vh}
+@media(min-width:900px){.doc{padding:12vh 3rem 18vh}}
+.mast{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:1rem;margin-bottom:6vh;border-bottom:1px solid var(--line-s);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-d)}
+.mast .mk{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;letter-spacing:.02em;color:var(--gold);text-transform:none}
+.sec{margin-top:12vh}.sec:first-of-type{margin-top:0}
+.eye{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:2.5rem;display:flex;align-items:center;gap:1rem}
+.eye::before{content:'';width:2rem;height:1px;background:var(--gold)}
+.lede{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(1.8rem,4.5vw,3rem);line-height:1.1;letter-spacing:-.02em;color:var(--ink-b);margin-bottom:2rem}
+.lede em{font-style:italic;color:var(--gold-s)}
+.sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.05rem,1.8vw,1.3rem);color:var(--ink-d);max-width:42ch;margin-bottom:3rem;line-height:1.5}
+.prose{font-size:clamp(1rem,1.3vw,1.12rem);line-height:1.75}.prose p{margin-bottom:1.4rem}.prose em{color:var(--ink-b)}.prose strong{color:var(--ink-b);font-weight:500}
+.placar{display:flex;align-items:center;gap:2rem;margin:3rem 0;padding:2rem;background:var(--bg2);border:1px solid var(--line-s)}
+.placar .side{text-align:center;flex:1}.placar .side .num{font-family:'Playfair Display',serif;font-size:3rem;line-height:1}
+.placar .side .lbl{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;margin-top:.5rem}
+.placar .vs{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink-d)}
+.placar .pro .num{color:var(--red)}.placar .pro .lbl{color:var(--red-s)}
+.placar .contra .num{color:var(--green)}.placar .contra .lbl{color:var(--green)}
+.ministers{display:grid;grid-template-columns:1fr;gap:1px;margin:3rem 0;background:var(--line-s);border:1px solid var(--line-s)}
+@media(min-width:600px){.ministers{grid-template-columns:1fr 1fr}}
+.mcard{background:var(--bg2);padding:1.5rem;cursor:default;transition:background .3s}
+.mcard:hover{background:var(--bg3)}
+.mcard .nm{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--ink-b);margin-bottom:.2rem}
+.mcard .turma{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-d);margin-bottom:.6rem;line-height:1.4}
+.mcard .stats{display:flex;gap:1.2rem;flex-wrap:wrap}
+.mcard .stat{display:flex;flex-direction:column;gap:.1rem}
+.mcard .stat .v{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);line-height:1}
+.mcard .stat .l{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-f)}
+.mcard .docs{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-d);margin-top:.5rem}
+.mcard .note{font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--ink-d);margin-top:.5rem;font-style:italic;line-height:1.4}
+.mcard.yes{border-left:3px solid var(--red)}.mcard.no{border-left:3px solid var(--green)}.mcard.absent{border-left:3px solid var(--ink-f);opacity:.7}
+.risk-card{margin:3rem 0;padding:2rem;background:linear-gradient(135deg,rgba(196,81,58,.08),rgba(196,81,58,.02));border:1px solid rgba(196,81,58,.25);border-left:3px solid var(--red)}
+.risk-card .rh{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--red-s);margin-bottom:1rem}
+.risk-card .rb{font-size:.95rem;color:var(--ink);line-height:1.7}.risk-card .rb strong{color:var(--red-s);font-weight:500}
+.verdict{margin-top:3rem;padding:1.5rem 0 0;border-top:2px solid var(--gold);max-width:42ch}
+.verdict .vl{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
+.verdict p{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2vw,1.6rem);color:var(--ink-b);line-height:1.3}
+.verdict em{font-style:italic;color:var(--gold-s)}
+.coal{display:flex;flex-wrap:wrap;gap:1rem;margin:3rem 0}
+.coal-group{background:var(--bg2);border:1px solid var(--line-s);padding:1.5rem;flex:1;min-width:220px}
+.coal-group .gh{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--ink-b);margin-bottom:.2rem}
+.coal-group .gsub{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--ink-d);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.8rem}
+.coal-group .members{font-size:.9rem;color:var(--ink);line-height:1.7}
+.coal-group .aff{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);margin-top:.6rem}
+.bar-wrap{margin:2rem 0}.bar-item{display:grid;grid-template-columns:auto 1fr auto;gap:.8rem;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--line)}
+.bar-item .bl{font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--ink);min-width:7rem}
+.bar-item .bb{height:18px;background:var(--bg3);position:relative;overflow:hidden}
+.bar-item .bf{height:100%;background:var(--gold)}
+.bar-item .bv{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);min-width:3.5rem;text-align:right}
+.repo{margin:3rem 0;border-top:1px solid var(--line-s)}
+.repo .rl{padding:1.2rem 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr;gap:.3rem}
+@media(min-width:600px){.repo .rl{grid-template-columns:1fr 1.5fr;gap:2rem;align-items:baseline}}
+.repo .neg{font-family:'DM Mono',monospace;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-d)}
+.repo .pos{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.02rem,1.4vw,1.2rem);color:var(--gold-s);line-height:1.3}
+.phase{padding:1.5rem 0;border-top:1px solid var(--line-s)}
+.phase .ph{display:flex;align-items:baseline;gap:1.5rem;margin-bottom:.5rem}
+.phase .pn{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;color:var(--gold)}
+.phase .pt{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-b)}
+.phase .pd{font-size:.88rem;color:var(--ink-d);max-width:55ch;line-height:1.6}
+.creds{list-style:none;margin-top:2rem;border-top:1px solid var(--line-s)}
+.creds li{padding:.7rem 0;border-bottom:1px solid var(--line);font-family:'Playfair Display',serif;font-size:clamp(.92rem,1.2vw,1.05rem);color:var(--ink);display:grid;grid-template-columns:4.5rem 1fr;gap:1rem;align-items:baseline}
+.creds .yr{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.1em;color:var(--gold)}
+.closing{margin-top:14vh;padding-top:3rem;border-top:1px solid var(--line-s)}
+.signoff{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--ink-d);letter-spacing:.08em;line-height:1.7;margin-top:2rem}
+.signoff .sn{display:block;font-family:'Playfair Display',serif;font-style:italic;font-size:1.2rem;color:var(--ink);letter-spacing:0;margin-bottom:.4rem}
+.leg{display:flex;gap:1.2rem;flex-wrap:wrap;margin:1.5rem 0;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.08em;color:var(--ink-f);text-transform:uppercase}
+.leg span{display:inline-flex;align-items:center;gap:.3rem}.leg i{width:.5rem;height:.5rem;display:inline-block;font-style:normal}
+.leg i.red{background:var(--red)}.leg i.green{background:var(--green)}.leg i.grey{background:var(--ink-f)}
+/* Simulator */
+.sim{margin:4rem 0;padding:2.5rem;background:var(--bg2);border:1px solid var(--line-s)}
+.sim-head{margin-bottom:2rem}
+.sim-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--ink-b);margin-bottom:.4rem}
+.sim-sub{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--ink-d);letter-spacing:.1em}
+.sim-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:2rem}
+@media(max-width:600px){.sim-board{grid-template-columns:1fr;gap:1.5rem}}
+.sim-col-head{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.sim-count{font-family:'Playfair Display',serif;font-size:1.5rem;line-height:1}
+.sim-drop{min-height:120px;padding:.5rem;border:1px dashed var(--line-s);transition:background .2s}
+.sim-drop.over{background:rgba(200,146,42,.08);border-color:var(--gold)}
+.sim-chip{padding:.6rem .8rem;margin-bottom:.4rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);background:var(--bg);border:1px solid var(--line-s);transition:transform .15s,box-shadow .15s}
+.sim-chip.fixed{opacity:.6;color:var(--ink-d)}
+.sim-chip.movable{cursor:grab;border-color:var(--gold-dim);color:var(--gold-s)}
+.sim-chip.movable:active{cursor:grabbing;transform:scale(1.04);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.sim-chip .arrow{color:var(--gold);font-size:.7rem;margin-left:.3rem}
+.sim-result{text-align:center;padding:1.5rem 0 0;border-top:1px solid var(--line-s)}
+.sim-placar{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:1rem}
+.sim-n{font-family:'Playfair Display',serif;font-size:3.5rem;line-height:1;transition:all .4s cubic-bezier(.16,1,.3,1)}
+.sim-x{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink-d)}
+.sim-verdict{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.1rem,1.8vw,1.4rem);color:var(--ink-b);line-height:1.4;max-width:40ch;margin:0 auto;transition:opacity .3s}
+
+.fade{opacity:0;transform:translateY(16px);transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1)}.fade.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<article class="doc">
+
+  <header class="mast fade in">
+    <span class="mk">JudX</span>
+    <span>Painel de risco · Confidencial · Abril 2026</span>
+  </header>
+
+  <!-- 1. EXPOSIÇÃO -->
+  <section class="sec">
+    <div class="eye fade">A exposição</div>
+    <h1 class="lede fade">R$ 4,8 bilhões em passivo de empréstimo compulsório.<br>Uma única tese sustenta o ecossistema de créditos.<br>Essa tese está <em>em revisão agora</em>.</h1>
+    <p class="sub fade">PET 17.904/RJ · Relator: Min. Teodoro Silva Santos · 1ª Seção do STJ · Temas Repetitivos 65, 66 e 67.</p>
+  </section>
+
+  <!-- 2. EVENTO -->
+  <section class="sec">
+    <div class="eye fade">O que aconteceu</div>
+    <div class="prose fade">
+      <p>Em outubro de 2025, a 1ª Seção do STJ admitiu, por <strong>6 votos a 3</strong>, a revisão das teses que afastaram a prescrição dos juros remuneratórios reflexos devidos sobre os empréstimos compulsórios da Eletrobras.</p>
+      <p>A revisão não alterou a tese. <em>Ainda não.</em> Mas a composição que admitiu é a mesma que julgará o mérito. Admitir a revisão é o primeiro passo — o segundo é decidir se a tese muda.</p>
+    </div>
+    <div class="placar fade">
+      <div class="side pro"><div class="num">6</div><div class="lbl">Admitem revisão</div></div>
+      <div class="vs">×</div>
+      <div class="side contra"><div class="num">3</div><div class="lbl">Contra revisão</div></div>
+    </div>
+    <div class="leg fade">
+      <span><i class="red"></i> Votou por admitir (risco para o credor)</span>
+      <span><i class="green"></i> Votou contra (protege a tese)</span>
+      <span><i class="grey"></i> Ausente</span>
+    </div>
+  </section>
+
+  <!-- 3. TRIBUNAL — composição verificada -->
+  <section class="sec">
+    <div class="eye fade">O tribunal que decide</div>
+    <h2 class="lede fade" style="font-size:clamp(1.5rem,3vw,2.2rem)">1ª Seção do STJ · <em>681.051 decisões mapeadas</em></h2>
+    <p class="sub fade">10 ministros. DNA decisório completo. Duas métricas por card: taxa geral (todas as matérias) e taxa em tributário federal (a matéria do caso). Fonte: DataJud/CNJ, flat v3.</p>
+
+    <div class="ministers fade">
+      <!-- 2ª TURMA — 4 de 5 votaram pró-revisão -->
+      <div class="mcard yes">
+        <div class="nm">Teodoro Silva Santos</div>
+        <div class="turma">2ª Turma · Relator PET 17.904 · Pres. 2ª Turma 2026</div>
+        <div class="stats">
+          <div class="stat"><span class="v">30,0%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">81,1%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,239%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">23.896 decisões · 2014–2026</div>
+      </div>
+      <div class="mcard yes">
+        <div class="nm">Afrânio Vilela</div>
+        <div class="turma">2ª Turma</div>
+        <div class="stats">
+          <div class="stat"><span class="v">27,8%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">77,0%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,244%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">29.151 decisões · 2014–2026</div>
+      </div>
+      <div class="mcard yes">
+        <div class="nm">Francisco Falcão</div>
+        <div class="turma">2ª Turma</div>
+        <div class="stats">
+          <div class="stat"><span class="v">23,4%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">83,1%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,099%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">75.084 decisões · 2014–2026</div>
+      </div>
+      <div class="mcard yes">
+        <div class="nm">Marco Aurélio Bellizze</div>
+        <div class="turma">2ª Turma · Vaga Campbell · Titular desde nov/2024</div>
+        <div class="stats">
+          <div class="stat"><span class="v">—</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">—</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">—</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">Sem histórico na 1ª Seção · veio da 3ª Turma (direito privado)</div>
+        <div class="note">Variável nova. Substituiu Campbell (82,7% trib. federal, afinidade 0,984 com Herman Benjamin). Sem dados em matéria de direito público — o ministro menos mapeável da Seção.</div>
+      </div>
+      <div class="mcard no">
+        <div class="nm">Maria Thereza de Assis Moura</div>
+        <div class="turma">2ª Turma · Ex-Presidente STJ 2022–2024</div>
+        <div class="stats">
+          <div class="stat"><span class="v">—</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">—</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">—</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">Membro desde ago/2024 · veio da 3ª Seção (penal)</div>
+        <div class="note">Votou contra a revisão. Perfil de estabilidade institucional — presidiu o STJ, defende segurança jurídica dos precedentes.</div>
+      </div>
+
+      <!-- 1ª TURMA — 2 pró, 2 contra, 1 ausente -->
+      <div class="mcard yes">
+        <div class="nm">Benedito Gonçalves</div>
+        <div class="turma">1ª Turma</div>
+        <div class="stats">
+          <div class="stat"><span class="v">23,6%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">82,0%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,076%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">74.731 decisões · 2013–2026</div>
+        <div class="note">Membro da tríade (afinidade 0,98 com Gurgel e Regina Helena) — mas votou pró-revisão. Ruptura interna a monitorar.</div>
+      </div>
+      <div class="mcard yes">
+        <div class="nm">Paulo Sérgio Domingues</div>
+        <div class="turma">1ª Turma · Pres. 1ª Seção anterior</div>
+        <div class="stats">
+          <div class="stat"><span class="v">31,6%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">74,6%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,187%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">36.901 decisões · 2014–2026</div>
+      </div>
+      <div class="mcard no">
+        <div class="nm">Gurgel de Faria</div>
+        <div class="turma">1ª Turma · Presidente da 1ª Seção 2026–2028</div>
+        <div class="stats">
+          <div class="stat"><span class="v">27,8%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">88,4%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,085%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">85.383 decisões · 2014–2026</div>
+        <div class="note">Abriu divergência em voto-vista. O mais favorável ao credor em tributário federal. Defendeu que a revisão abre "caos jurídico".</div>
+      </div>
+      <div class="mcard no">
+        <div class="nm">Sérgio Kukina</div>
+        <div class="turma">1ª Turma · Pres. 1ª Turma 2025–2027</div>
+        <div class="stats">
+          <div class="stat"><span class="v">21,5%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">49,0%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,066%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">78.948 decisões · 2014–2026</div>
+      </div>
+      <div class="mcard absent">
+        <div class="nm">Regina Helena Costa</div>
+        <div class="turma">1ª Turma · Ausente na votação</div>
+        <div class="stats">
+          <div class="stat"><span class="v">26,0%</span><span class="l">Êxito geral</span></div>
+          <div class="stat"><span class="v">83,3%</span><span class="l">Trib. federal</span></div>
+          <div class="stat"><span class="v">0,043%</span><span class="l">Vista</span></div>
+        </div>
+        <div class="docs">72.662 decisões · 2014–2026</div>
+        <div class="note">Tríade com Gurgel (afinidade 0,98). Ausente no placar — mas provavelmente votaria contra revisão. No mérito, será voto-chave.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. ZONA DE RISCO -->
+  <section class="sec">
+    <div class="eye fade">A zona de risco</div>
+    <div class="risk-card fade">
+      <div class="rh">A substituição que pode ter virado o placar</div>
+      <div class="rb">
+        Mauro Campbell Marques — que tinha <strong>82,7% de êxito em tributário federal</strong> e afinidade de 0,984 com Herman Benjamin — saiu da 1ª Seção em setembro de 2024 para a Corregedoria Nacional. Foi substituído por <strong>Marco Aurélio Bellizze</strong>, que vem do direito privado (3ª Turma) e não tem histórico em matéria tributária federal.<br><br>
+        Bellizze votou pró-revisão. <strong>Campbell provavelmente teria votado contra.</strong> Se assim fosse, o placar seria 5×4 — não 6×3. Uma substituição de ministro pode ter sido o evento que abriu a porta para a revisão de R$ 4,8 bilhões em passivo de empréstimo compulsório.
+      </div>
+    </div>
+    <div class="risk-card fade" style="margin-top:1rem">
+      <div class="rh">Min. Teodoro Silva Santos · Relator da PET 17.904</div>
+      <div class="rb">
+        Taxa de vista <strong>0,239%</strong> — três vezes a média da Seção. Taxa de candidato a vencido <strong>0,10%</strong> — a mais alta entre os titulares. Ambos sinalizam um perfil que gera divergência interna. Mas a taxa dele em tributário federal é <strong>81,1%</strong> — paradoxalmente alta para quem quer revisar a tese pró-credor.<br><br>
+        A Eletrobras pagou <strong>R$ 690 milhões</strong> desde 2018 em juros reflexos (730 ações) e provisiona <strong>R$ 4,8 bilhões</strong> para outros 2.700 processos.
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. COALIZÃO -->
+  <section class="sec">
+    <div class="eye fade">A coalizão</div>
+    <h2 class="lede fade" style="font-size:clamp(1.4rem,2.5vw,2rem)">Quem vota com quem — e onde está a fissura</h2>
+    <div class="coal fade">
+      <div class="coal-group" style="border-left:3px solid var(--red)">
+        <div class="gh">Bloco 2ª Turma</div>
+        <div class="gsub">4 de 5 votaram pró-revisão</div>
+        <div class="members">Teodoro Silva Santos<br>Afrânio Vilela<br>Francisco Falcão<br>Marco Aurélio Bellizze</div>
+        <div class="aff">Teodoro + Afrânio: afinidade 0,951 · Vista alta</div>
+      </div>
+      <div class="coal-group" style="border-left:3px solid var(--green)">
+        <div class="gh">Tríade da 1ª Turma</div>
+        <div class="gsub">Bloco coeso — mas Benedito rompeu</div>
+        <div class="members">Gurgel de Faria ✓ contra<br>Regina Helena Costa (ausente)<br>Benedito Gonçalves ✗ pró-revisão</div>
+        <div class="aff">Afinidade ≥ 0,98 entre os três — ruptura de Benedito a monitorar</div>
+      </div>
+      <div class="coal-group">
+        <div class="gh">Os periféricos</div>
+        <div class="gsub">Sem bloco consolidado</div>
+        <div class="members">Paulo S. Domingues (1ª T) — pró<br>Kukina (1ª T) — contra<br>Maria Thereza (2ª T) — contra</div>
+        <div class="aff">Kukina: o mais restritivo da Seção (49% trib. federal)</div>
+      </div>
+    </div>
+    <div class="verdict fade">
+      <div class="vl">A pergunta que importa</div>
+      <p>O placar da admissibilidade <em>não é o placar do mérito</em>. Mova os ministros entre os blocos e veja como o cenário muda.</p>
+    </div>
+
+    <!-- SIMULADOR DE CENÁRIO -->
+    <div class="sim fade" id="sim">
+      <div class="sim-head">
+        <div class="sim-title">Simulador de cenário · mérito</div>
+        <div class="sim-sub">Arraste os ministros entre os blocos para simular o placar do julgamento de mérito.</div>
+      </div>
+
+      <div class="sim-board">
+        <div class="sim-col sim-pro" id="col-pro">
+          <div class="sim-col-head" style="color:var(--red)">Pró-revisão <span class="sim-count" id="count-pro">6</span></div>
+          <div class="sim-drop" id="drop-pro">
+            <div class="sim-chip fixed">Teodoro</div>
+            <div class="sim-chip fixed">Afrânio Vilela</div>
+            <div class="sim-chip fixed">Falcão</div>
+            <div class="sim-chip fixed">Bellizze</div>
+            <div class="sim-chip movable" draggable="true" data-name="Benedito" id="chip-benedito">Benedito Gonçalves ⇄</div>
+            <div class="sim-chip movable" draggable="true" data-name="Paulo" id="chip-paulo">Paulo S. Domingues ⇄</div>
+          </div>
+        </div>
+
+        <div class="sim-col sim-contra" id="col-contra">
+          <div class="sim-col-head" style="color:var(--green)">Contra revisão <span class="sim-count" id="count-contra">3</span></div>
+          <div class="sim-drop" id="drop-contra">
+            <div class="sim-chip fixed">Gurgel de Faria</div>
+            <div class="sim-chip fixed">Kukina</div>
+            <div class="sim-chip fixed">Maria Thereza</div>
+          </div>
+        </div>
+
+        <div class="sim-col sim-absent" id="col-absent">
+          <div class="sim-col-head" style="color:var(--ink-f)">Ausente <span class="sim-count" id="count-absent">1</span></div>
+          <div class="sim-drop" id="drop-absent">
+            <div class="sim-chip movable" draggable="true" data-name="Regina" id="chip-regina">Regina Helena Costa ⇄</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sim-result" id="sim-result">
+        <div class="sim-placar">
+          <span class="sim-n" id="sim-pro" style="color:var(--red)">6</span>
+          <span class="sim-x">×</span>
+          <span class="sim-n" id="sim-contra" style="color:var(--green)">3</span>
+        </div>
+        <div class="sim-verdict" id="sim-verdict">Revisão admitida — risco elevado para o credor.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. TAXA TRIBUTÁRIO FEDERAL -->
+  <section class="sec">
+    <div class="eye fade">Taxa de êxito em tributário federal</div>
+    <h2 class="lede fade" style="font-size:clamp(1.3rem,2.3vw,1.8rem)">101.896 decisões · a matéria que decide o empréstimo compulsório</h2>
+    <p class="sub fade">Taxa calculada sobre decisões de mérito (provido + parcial / total com mérito). Fonte: stj_matriz_ministro_macro, Supabase.</p>
+    <div class="bar-wrap fade">
+      <div class="bar-item"><span class="bl" style="color:var(--green)">Gurgel de Faria</span><div class="bb"><div class="bf" style="width:88.4%;background:var(--green)"></div></div><span class="bv">88,4%</span></div>
+      <div class="bar-item"><span class="bl" style="color:var(--ink-f)">Regina Helena</span><div class="bb"><div class="bf" style="width:83.3%"></div></div><span class="bv">83,3%</span></div>
+      <div class="bar-item"><span class="bl">Francisco Falcão</span><div class="bb"><div class="bf" style="width:83.1%"></div></div><span class="bv">83,1%</span></div>
+      <div class="bar-item"><span class="bl">Benedito Gonçalves</span><div class="bb"><div class="bf" style="width:82%"></div></div><span class="bv">82,0%</span></div>
+      <div class="bar-item"><span class="bl" style="color:var(--red)">Teodoro Santos</span><div class="bb"><div class="bf" style="width:81.1%;background:var(--red)"></div></div><span class="bv">81,1%</span></div>
+      <div class="bar-item"><span class="bl">Herman Benjamin*</span><div class="bb"><div class="bf" style="width:79.5%"></div></div><span class="bv">79,5%</span></div>
+      <div class="bar-item"><span class="bl" style="color:var(--red)">Afrânio Vilela</span><div class="bb"><div class="bf" style="width:77%;background:var(--red)"></div></div><span class="bv">77,0%</span></div>
+      <div class="bar-item"><span class="bl">Paulo S. Domingues</span><div class="bb"><div class="bf" style="width:74.6%"></div></div><span class="bv">74,6%</span></div>
+      <div class="bar-item"><span class="bl" style="color:var(--green)">Sérgio Kukina</span><div class="bb"><div class="bf" style="width:49%;background:var(--green)"></div></div><span class="bv">49,0%</span></div>
+      <div class="bar-item"><span class="bl" style="color:var(--ink-f)">Bellizze / M. Thereza</span><div class="bb"><div class="bf" style="width:0%"></div></div><span class="bv">s/d</span></div>
+    </div>
+    <p class="prose fade" style="font-size:.85rem;color:var(--ink-d);margin-top:1rem">* Herman Benjamin: presidente do STJ, não compõe mais a 1ª Seção. Dado histórico (2014–2024). Bellizze e Maria Thereza sem histórico em tributário federal — ambos vieram de outras Seções.</p>
+  </section>
+
+  <!-- 7. O QUE A JUDX ACRESCENTA -->
+  <section class="sec">
+    <div class="eye fade">O que a JudX acrescenta</div>
+    <div class="repo fade">
+      <div class="rl"><div class="neg">A gestão de risco mapeia</div><div class="pos">Volume de processos e provisão contábil.</div></div>
+      <div class="rl"><div class="neg">A JudX acrescenta</div><div class="pos">O DNA decisório dos 10 ministros que decidem o destino de R$ 4,8 bilhões em passivo de empréstimo compulsório.</div></div>
+      <div class="rl"><div class="neg">O escritório produz</div><div class="pos">Memoriais e sustentação oral.</div></div>
+      <div class="rl"><div class="neg">A JudX complementa</div><div class="pos">Calibragem por ministro — incluindo os dois sem histórico em direito público (Bellizze, Maria Thereza).</div></div>
+      <div class="rl"><div class="neg">A leitura disponível hoje</div><div class="pos">Um placar 6×3 como dado estático.</div></div>
+      <div class="rl"><div class="neg">A camada que falta</div><div class="pos">A leitura dinâmica: a substituição Campbell→Bellizze, a fissura de Benedito, o voto provável de Regina Helena.</div></div>
+    </div>
+  </section>
+
+  <!-- 8. AUTORIA + PROPOSTA + FECHO -->
+  <section class="sec">
+    <div class="eye fade">Autoria</div>
+    <h2 class="fade" style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.5rem,2.5vw,2rem);color:var(--ink-b)">Damares Medina</h2>
+    <p class="sub fade" style="margin-top:.6rem;font-style:normal;font-family:'DM Sans',sans-serif">Pesquisadora e consultora em estrutura decisória dos tribunais superiores brasileiros.</p>
+    <ul class="creds fade">
+      <li><span class="yr">2016</span><span>Autora de <em>A repercussão geral no Supremo Tribunal Federal</em></span></li>
+      <li><span class="yr">2014–26</span><span>Fundadora ICONS/PROJUS · 3,4 milhões de processos do STJ mapeados</span></li>
+      <li><span class="yr">STF</span><span>Consultada na primeira consulta pública sobre precedentes</span></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <div class="eye fade">A proposta</div>
+    <h2 class="lede fade" style="font-size:clamp(1.4rem,2.5vw,2rem)">Inteligência preditiva da Seção + <em>blindagem processual</em>.</h2>
+    <div class="phase fade">
+      <div class="ph"><span class="pn">Fase 1</span><span class="pt">Inteligência preditiva · 60 dias</span></div>
+      <div class="pd">DNA decisório dos 6 ministros pró-revisão em empréstimo compulsório e prescrição. Mapeamento de Bellizze e Maria Thereza (sem histórico em direito público). Identificação de argumentos-chave e pontos de fissura na coalizão. Placar estimado do mérito.</div>
+    </div>
+    <div class="phase fade">
+      <div class="ph"><span class="pn">Fase 2</span><span class="pt">Blindagem processual · contínuo</span></div>
+      <div class="pd">Monitoramento da PET 17.904 em tempo real. Memoriais calibrados por ministro. Leitura antecipada de pedidos de vista, redistribuição e movimentos monocráticos. Alerta imediato em caso de mudança de cenário.</div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h1 class="fade" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3rem);line-height:1.15;letter-spacing:-.02em;color:var(--ink-b)">
+      Quem antecipa o comportamento<br>
+      transforma o <span style="font-style:italic;color:var(--gold-s)">irreversível</span><br>
+      em <span style="font-style:italic;color:var(--gold-s)">decisão</span>.
+    </h1>
+    <div class="signoff fade">
+      <span class="sn">Damares Medina</span>
+      JudX · judx.com.br<br>
+      Painel de risco · Confidencial<br>
+      Abril de 2026
+    </div>
+  </section>
+
+</article>
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');obs.unobserve(x.target)}})},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
+
+// ─── Scenario simulator ───
+const drops = document.querySelectorAll('.sim-drop');
+const verdicts = {
+  '10-0': 'Revisão unânime — cenário extremo, improvável.',
+  '9-1': 'Revisão quase unânime — cenário de risco máximo.',
+  '8-2': 'Revisão ampla — risco muito elevado para o credor.',
+  '7-3': 'Revisão confortável — risco elevado para o credor.',
+  '6-4': 'Revisão por margem estreita — cenário disputado.',
+  '6-3': 'Revisão admitida — risco elevado para o credor.',
+  '5-5': 'Empate — presidente da Seção desempata. Gurgel de Faria (contra revisão) preside.',
+  '5-4': 'Revisão por 1 voto — cenário mais provável se Benedito mantiver posição.',
+  '4-5': 'Tese mantida por 1 voto — cenário se Benedito voltar ao bloco.',
+  '4-6': 'Tese mantida — credor protegido.',
+  '3-6': 'Tese mantida com folga — cenário favorável ao credor.',
+  '3-7': 'Tese mantida amplamente — cenário improvável.',
+};
+function updateSim(){
+  const pro = document.querySelectorAll('#drop-pro .sim-chip').length;
+  const contra = document.querySelectorAll('#drop-contra .sim-chip').length;
+  const absent = document.querySelectorAll('#drop-absent .sim-chip').length;
+  document.getElementById('count-pro').textContent = pro;
+  document.getElementById('count-contra').textContent = contra;
+  document.getElementById('count-absent').textContent = absent;
+  document.getElementById('sim-pro').textContent = pro;
+  document.getElementById('sim-contra').textContent = contra;
+  const key = pro + '-' + contra;
+  const v = verdicts[key] || (pro > contra ? 'Revisão aprovada — risco para o credor.' : pro < contra ? 'Tese mantida — credor protegido.' : 'Empate — presidente desempata.');
+  document.getElementById('sim-verdict').textContent = v;
+  // pulse animation
+  document.getElementById('sim-pro').style.transform = 'scale(1.15)';
+  document.getElementById('sim-contra').style.transform = 'scale(1.15)';
+  setTimeout(()=>{
+    document.getElementById('sim-pro').style.transform = 'scale(1)';
+    document.getElementById('sim-contra').style.transform = 'scale(1)';
+  }, 300);
+}
+
+// Desktop drag
+let draggedChip = null;
+document.querySelectorAll('.sim-chip.movable').forEach(chip => {
+  chip.addEventListener('dragstart', e => {
+    draggedChip = chip;
+    chip.style.opacity = '0.5';
+  });
+  chip.addEventListener('dragend', e => {
+    chip.style.opacity = '1';
+    draggedChip = null;
+    document.querySelectorAll('.sim-drop').forEach(d => d.classList.remove('over'));
+  });
+});
+drops.forEach(drop => {
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault();
+    drop.classList.remove('over');
+    if (draggedChip) { drop.appendChild(draggedChip); updateSim(); }
+  });
+});
+
+// Mobile touch
+let touchChip = null, touchClone = null, touchOffX = 0, touchOffY = 0;
+document.querySelectorAll('.sim-chip.movable').forEach(chip => {
+  chip.addEventListener('touchstart', e => {
+    e.preventDefault();
+    touchChip = chip;
+    const r = chip.getBoundingClientRect();
+    touchOffX = e.touches[0].clientX - r.left;
+    touchOffY = e.touches[0].clientY - r.top;
+    touchClone = chip.cloneNode(true);
+    touchClone.style.cssText = 'position:fixed;z-index:999;pointer-events:none;opacity:0.8;width:'+r.width+'px;';
+    document.body.appendChild(touchClone);
+  }, {passive: false});
+});
+document.addEventListener('touchmove', e => {
+  if (!touchClone) return;
+  e.preventDefault();
+  touchClone.style.left = (e.touches[0].clientX - touchOffX) + 'px';
+  touchClone.style.top = (e.touches[0].clientY - touchOffY) + 'px';
+}, {passive: false});
+document.addEventListener('touchend', e => {
+  if (!touchClone || !touchChip) return;
+  document.body.removeChild(touchClone);
+  const x = e.changedTouches[0].clientX, y = e.changedTouches[0].clientY;
+  let landed = false;
+  drops.forEach(drop => {
+    const r = drop.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+      drop.appendChild(touchChip);
+      landed = true;
+    }
+  });
+  if (landed) updateSim();
+  touchClone = null; touchChip = null;
+});
+
+// ─── Silent tracking ───
+const _SB='https://ejwyguskoiraredinqmb.supabase.co';
+const _AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqd3lndXNrb2lyYXJlZGlucW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI5NjcsImV4cCI6MjA4OTU5ODk2N30.YJvuOqXThPk_XQLLY63Cy-5KlJUQMQX0aZMjXke0x8s';
+const _SID=crypto.randomUUID();
+const _T0=Date.now();
+let _lastSec=1,_lastT=Date.now(),_secIdx=0;
+const _secs=document.querySelectorAll('.sec');
+const _labels=['Exposição','Evento','Tribunal','Zona de risco','Coalizão','Taxa tributária','JudX acrescenta','Autoria','Proposta','Fechamento'];
+
+function _ev(type,data={}){
+  const body={doc_slug:'6w3t-7hcd-av2j',session_id:_SID,event_type:type,
+    total_seconds:Math.round((Date.now()-_T0)/1000),
+    user_agent:navigator.userAgent.substring(0,200),
+    referrer:(document.referrer||'').substring(0,200),
+    screen_w:screen.width,screen_h:screen.height,...data};
+  try{fetch(_SB+'/rest/v1/doc_view_events',{method:'POST',
+    headers:{'Content-Type':'application/json','apikey':_AK,'Authorization':'Bearer '+_AK,'Prefer':'return=minimal'},
+    body:JSON.stringify(body),keepalive:true});}catch(e){}
+}
+
+_ev('open',{slide_number:1,slide_label:'Exposição'});
+
+const _scrollObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.4){
+      const idx=[...document.querySelectorAll('.sec, .closing')].indexOf(e.target);
+      if(idx>=0 && idx!==_secIdx){
+        const sec=Math.round((Date.now()-_lastT)/1000);
+        _ev('slide',{slide_number:_secIdx+1,slide_label:_labels[_secIdx]||'',seconds_on_slide:sec});
+        _secIdx=idx;_lastT=Date.now();
+      }
+    }
+  });
+},{threshold:0.4});
+document.querySelectorAll('.sec, .closing').forEach(s=>_scrollObs.observe(s));
+
+function _close(){
+  const sec=Math.round((Date.now()-_lastT)/1000);
+  const scrollPct=Math.round((window.scrollY+window.innerHeight)/(document.body.scrollHeight)*100);
+  _ev('close',{slide_number:_secIdx+1,slide_label:_labels[_secIdx]||'',seconds_on_slide:sec,scroll_depth_pct:scrollPct});
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')_close();});
+window.addEventListener('pagehide',_close);
+</script>
+</body>
+</html>
