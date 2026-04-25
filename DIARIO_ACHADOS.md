@@ -192,3 +192,45 @@
 ---
 
 *Próxima sessão: adicionar novos achados ABAIXO desta linha, com data e identificador de sessão.*
+
+## 22/04/2026 — Reconciliação canônica dos números da Caixa (deck privado)
+
+### Incidente
+A rota privada `/d/x8jv-amtw-4b3r` (proposta CEF) teve **três conjuntos de números diferentes** sob o mesmo rótulo "Caixa como ré" em sessões distintas do próprio Claude:
+- DECK_CEF.md 13/abr: 1.396.265 pendentes · "1,4 milhão"
+- HTML 14/abr: 954.243 pendentes · 543.450 novos
+- HTML 22/abr: 625.174 pendentes · 444.422 novos
+
+### Rastreamento (registro interno — 4 elementos)
+- **Fonte**: CNJ Grandes Litigantes
+- **Data**: fev/2026 (extração publicada pelo CNJ)
+- **Amostra/filtro** testados:
+  | Filtro aplicado | NOVOS | PEND LÍQUIDO |
+  |---|---|---|
+  | CNPJ 00360305, polo A (autora) | 98.322 | 327.175 |
+  | CNPJ 00360305, polo P (ré) | 441.014 | 619.955 |
+  | CNPJ 00360305, A+P total | 539.336 | 947.130 |
+  | polo P expandido por nome (mapa_regional) | **444.422** | **625.174** |
+  | pendentes bruto A+P (antes de deduzir suspensos) | — | 1.385.754 |
+- **Limitação**: CSV do CNJ é snapshot fev/2026; não captura movimento intra-mês; expansão por nome absorve linhas com CNPJ inválido mas pode incluir entidades coligadas
+
+### Diagnóstico
+Não houve fontes diferentes. Foi **mesma fonte + filtros diferentes + mesmo rótulo**.
+- Deck 14/abr: filtro A+P, rotulou "como ré" → **filtro errado para o label**
+- Deck 22/abr: polo P expandido por nome → **filtro correto para o label**
+- DECK 13/abr: pendentes bruto → **métrica diferente, não comparável**
+
+### Canônico fixado — Caixa fev/2026
+Para uso em qualquer material a partir de 22/04/2026:
+- **Pendentes líquidos, Caixa como ré**: 625.174
+- **Novos processos/ano, Caixa como ré**: 444.422
+- **Fonte**: CNJ Grandes Litigantes · fev/2026
+- **Arquivo canônico**: `Desktop\backup_judx\resultados\2026-04-13_cef_mapa_regional_completo.csv`
+- **Filtro**: polo=P (passivo); expansão por nome "CAIXA ECONOMICA FEDERAL"
+- **Limitação**: exclui Caixa como autora (98.322 novos / 327.175 pendentes)
+- **Métrica alternativa explicitada** ("volume total da carteira, sem separar polo"): pendentes bruto 1.385.754 — rotular sempre como "carteira total", nunca como "ré"
+
+### Regra consolidada
+- **Material comercial (cliente vê)**: declarar só fonte + data
+- **Registros internos (diário, memória, doc técnica)**: sempre os 4 elementos (fonte, data, amostra/filtro, limitação)
+- Sem os 4 elementos registrados, nenhum número entra em material comercial

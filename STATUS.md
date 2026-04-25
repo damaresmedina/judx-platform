@@ -131,7 +131,6 @@
 - [x] Scraper portal STF testado: funciona (`listarProcessos.asp` → redirect `detalhe.asp?incidente=N`)
 - [x] 828 incidentes recuperados via requests antes de bloqueio 403
 - [x] Playwright instalado para retomada
-- [ ] **BLOQUEADO**: IP bloqueado pelo WAF do STF (403 em portal + transparencia) — aguardar desbloqueio
 
 #### Partes Corte Aberta
 - [x] Export partes via Qlik: 1.000.000 linhas (limite do Qlik), 5 colunas
@@ -232,12 +231,6 @@
 ---
 
 ## RETOMAR AQUI APÓS REINÍCIO
-
-### DESISTIDO — Scraper partes portal STF
-- **Status**: Desistido definitivamente em 16/abr/2026 — WAF do STF bloqueia, scraper não funciona
-- **Checkpoint final**: 6.177.641 | 411.288 processos recuperados
-- **Dados salvos**: `Desktop\backup_judx\resultados\partes_portal_FINAL.csv` + `html_raw_partes/`
-- **Nota**: dados já coletados (411K) permanecem disponíveis para uso. Não haverá novas tentativas.
 
 ### CONCLUÍDO — UPDATE judx_case.decided_at
 - 2.212.761/2.212.761 rows atualizadas (100%)
@@ -602,6 +595,122 @@ stf_decisoes, stf_processos, stf_partes, stf_partes_favoraveis, stf_amostra_part
 - [ ] Revalidar universo de TST, TSE, STM com o mesmo método (bater `unique_ids` do raw contra `track_total_hits`)
 - [ ] Reprocessar `stj_partes_norm_v2`, `stj_processos_consolidado`, `stj_resultado_por_processo` a partir da v2 canônica
 - [ ] Retomar pipeline prediction market (pausado desde 19/abr)
+
+---
+
+### 25/abr/2026 — Higidez informacional & Composição temporal STJ
+
+**Tema**: aplicação canônica da Derivação I dos Objetos Ancorados ao corpus STJ.
+Sessão anterior (24/04) terminou abruptamente com 3 patches pendentes. Esta sessão executou tudo + descobriu pontos estruturais novos.
+
+**Patches no flat `G:\staging_local\stj_flat.duckdb` (3 passes aplicados)**
+- [x] Passe 1: 51 registros temporais, UPDATE em 3,4M docs (Bellizze, Herman, Campbell, Salomão, Assusete, Teodoro, Noronha)
+- [x] Passe 2: Sanseverino data_fim 03/12/2023 + audit de 40 gabinetes sem cobertura (CSV `stj_composicao_GAPS_20260425.csv`)
+- [x] Passe 3: Buzzi/Gambogi sob mesmo orgao_codigo 76762 (achado: convocados-substitutos não geram código novo)
+- [x] Passe 4 CANCELADO — respeitando arquitetura do raw (não inventar "Predecessor desconhecido")
+
+**Achado central — Bellizze splitado**
+- 3aT/2aS pré-22/11/2024: 55.590 docs · tx_êxito 28,47% (privado)
+- 2aT/1aS pós-22/11/2024: 12.717 docs · tx_êxito 36,58% (público)
+- Diferença de 8,11pp mascarada pelo dict ORGAOS_STJ estático
+
+**Achados estruturais**
+- Códigos STJ: bloco `76747-76778` em ordem alfabética dos titulares 2013/14, demais cronológicos por posse (85153/85154 = posse 06/12/2022; 87912/87913/87914 = posse 22/11/2023)
+- Datajud faz BACKFILL retroativo: ~135k docs pré-posse sob códigos novos = redistribuição/heranca de cadeira (não erro do flat)
+- Tese cadeira × pessoa: literatura jurídica tem dois polos. Comportamento empírico do Datajud é híbrido com backfill, achatando temporalidade decisória
+- Crash do flat STF em 24/04: causa raiz era ESPAÇO scratch em C: (DuckDB usa AppData\Local\Temp), não USB stress como eu havia inferido
+
+**Entregas Beltramo stj (8 artefatos v3)**
+- `judx_transito_1secao_v3_20260425.xlsx`
+- `judx_1secao_analise_hierarquica_v3_20260425.xlsx`
+- `RELATORIO_BELLIZZE_PRE_POS_PATCH_v3_20260425.xlsx` ← NOVO
+- `stj_composicao_temporal_v3_20260425.xlsx` (54 registros)
+- `DIAGNOSTICO_ESTRUTURAL_RAW_STJ_v3.txt`
+- `stj_composicao_GAPS_20260425.csv`
+- 4 CSVs schema-correto + 4 SQLs em `sql_reupload\`
+
+**Supabase — 5 tabelas atualizadas**
+- `stj_ministros_metricas`: 85→94 (PK estendida pra `(ministro, turma_secao)`)
+- `stj_composicao_turmas`: 460→637 (PK estendida pra `(ministro, turma_secao, ano)`)
+- `stj_matriz_ministro_macro`: 6.132→6.335
+- `stj_taxa_anual`: 1.872→1.884
+- `stj_composicao_temporal`: NOVA, 54 registros, base da futura linha sucessória
+- `stj_datajud_drift_log`: NOVA, vazia, alimentada pelo agente semanal
+
+**Caminho de acesso ao Supabase consolidado**
+- Postgres direto (`db.*.supabase.co:5432`) é IPv6-only desde 2024 — `psycopg2` não funciona desta máquina
+- Caminho válido: REST API HTTPS via `requests` Python + `SUPABASE_SERVICE_ROLE_KEY` (`reupload_supabase_rest.py`)
+- DDL pontual: MCP execute_sql
+
+**Agente remoto criado**
+- ID: `trig_01SZMUHAzwzE3X3KmyB5HLaw` ("JudX — Drift Datajud STJ semanal")
+- Cron: toda segunda 09:00 BRT (`0 12 * * 1`)
+- Próxima: 27/04/2026 09:03 BRT
+- Função: snapshot Datajud STJ → diff vs `stj_composicao_temporal` → grava em `stj_datajud_drift_log` → relatório com novos códigos, drift, periodicidade Datajud, caso especial Gambogi
+
+**Memórias canônicas salvas (4 novas)**
+- `feedback_composicao_temporal_canonica.md` — auto-aplicação obrigatória em qualquer tribunal
+- `feedback_stf_flat_obstaculos_canonicos.md` — causa raiz crash + checklist
+- `reference_arquitetura_codigos_orgao_stj.md` — mapa empírico dos códigos
+- `feedback_cadeira_vs_pessoa_movimentacao_estrategica.md` — tese teórica + lista priorizada
+
+**Princípio mestre consolidado**
+> "Hoje higidez informacional do banco. Amanhã identificação de movimento estratégico." (Damares Medina, 25/04/2026)
+
+**Pendente para próxima sessão**
+- [ ] Investigação dos 1.492 docs de Daniela Teixeira em 3ª Turma pré-posse (movimento estratégico?)
+- [ ] Investigação dos 2.253 docs de Teodoro em 6ª Turma pré-migração (idem)
+- [ ] Reconstrução da linha sucessória das 33 cadeiras STJ (futura página `/linha-sucessoria-stj` análoga à do STF)
+- [ ] Retomada do flat STF a partir de `judx_case_stf` + `judx_decision_raw` já salvos (corrigindo causa raiz: configurar TEMP em outro disco antes do build)
+- [ ] Aplicar composição temporal canônica ao STF após retomada do flat
+- [ ] Acompanhar primeiras execuções do agente drift Datajud (procurar Gambogi com código próprio, novos convocados)
+
+**Relatório completo da sessão**: `Desktop\backup_judx\resultados\2026-04-25_RELATORIO_SESSAO_HIGIDEZ_TEMPORAL.md`
+
+---
+
+### 25/abr/2026 (tarde) — Sessão 2: Refazer flat STJ canônico (definitivo)
+
+Retomada com decisão estrutural: **flat STJ tem que ser pronto, sem patches futuros**. Pipeline único, idempotente.
+
+**Linha documental dos PDFs**
+- 18 PDFs históricos baixados (Wayback + STJ + Mattos Filho)
+- Cobertura 2015-09 → 2026-04 (11 anos, 18 fotografias)
+
+**Parser refatorado (v4)**
+- Bounds dinâmicos pelos cabeçalhos PLENÁRIO/CORTE/SEÇÃO — funciona em qualquer page size
+- Regex Ingresso aceita "1º/MM/YYYY"
+- Strip prefixo de data invadindo coluna CORTE_ESPECIAL
+
+**Consolidação canônica v7**
+- 1.697 linhas, 87 ministros distintos
+- TRUNCADOS_KNOWN unificado consolida formas curtas e completas
+- + 54 entradas históricas do seed antigo (pré-2015)
+
+**Dicionário STJ v10**
+- 239 códigos categorizados (99,98% do volume de pulsos)
+- 226 manuais + 2 inferidos via flat + 11 NAO_DOCUMENTADO (0,016%)
+
+**Build do flat canônico (28 min)**
+- `G:/staging_local/stj_flat_canonical.duckdb` (5,13 GB, paralelo ao original)
+- 12 tabelas: 3,39M processos × (113 + 16 cols), 78M pulsos
+- 100% ministro_key resolvido, 87,85% flag_consistente_orgao
+- 14 tipos de tipo_consistencia (multi-órgão legítimo classificado)
+
+**stj_eventos_ministros (idempotente)**
+- 82 eventos únicos, 42 ministros — zero duplicação
+- Trânsitos críticos validados: Salomão→Vice→Pres, Campbell→CNJ→Vice, Bellizze 3T→2T, Daniela 5T→3T, Saldanha aposentadoria 2026-04-21, Sanseverino falecimento 2023-12-03, Buzzi afastamento 2026-02-09
+- 13 tipos: POSSE_STJ, TRANSITO_TURMA, PRESIDENCIA, VICE_PRESIDENCIA, CORREGEDORIA_CNJ, APOSENTADORIA, FALECIMENTO, CONVOCACAO, ACUMULACAO + SAIDAs explícitas
+
+**Supabase — 9 tabelas v2/canonical (17s, 0 falhas)**
+- stj_composicao_temporal_v7 (1.697), stj_alias_ministros (108), stj_dicionario_movimentos (239)
+- stj_eventos_ministros (82), stj_composicao_gaps_canonical (117)
+- stj_taxa_anual_v2 (9.036), stj_ministros_metricas_v2 (170)
+- stj_tribunal_origem_resultado_v2 (19.567), stj_matriz_ministro_macro_v2 (52.290)
+
+**Versionado em `scripts/seeds-tribunais/stj-flat-canonical-25abr/`** — 11 scripts + 5 artefatos + README com pipeline em ordem.
+
+**Princípio reforçado**: "Output estável, independente de patch. Fonte canônica única. Roda 100x dá mesmo resultado."
 
 ---
 

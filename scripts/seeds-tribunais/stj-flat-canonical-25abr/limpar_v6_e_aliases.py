@@ -1,0 +1,346 @@
+"""Limpa v6 (remove nomes-lixo) e regenera aliases.
+Filtros:
+- nome com < 2 palavras → lixo
+- nome terminando com / ou . ou , → lixo
+- nome em blacklist → lixo
+- nome com palavras administrativas misturadas → lixo
+"""
+import sys, re, csv
+sys.stdout.reconfigure(encoding='utf-8')
+import pandas as pd
+import duckdb
+from pathlib import Path
+
+DIR = Path(r'C:\Users\medin\Desktop\backup_judx\flat_stj_20260424\exports')
+V6_IN = DIR / 'composicao_stj_canonical_v6.csv'
+V6_OUT = DIR / 'composicao_stj_canonical_v6_limpa.csv'
+ALIAS_OUT = DIR / 'stj_alias_ministros.csv'
+
+ACCENT = str.maketrans(
+    'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ',
+    'AAAAAAACEEEEIIIIDNOOOOOOUUUUYBSaaaaaaaceeeeiiiidnoooooouuuuyby'
+)
+def norm(s):
+    if not s or pd.isna(s): return ''
+    s = re.sub(r'\s*\(.*?\)','',str(s)).upper().translate(ACCENT)
+    s = re.sub(r'[\d\*\.\,/]+', ' ', s)
+    return re.sub(r'\s+',' ',s).strip()
+
+# Blacklist de palavras/expressões que indicam não-ministro
+BLACKLIST = {
+    'DUAS', 'DISPONIVEIS', 'MEMBROS', 'PRESIDENTE', 'TRIPLICES',
+    'VAGO', 'VAGOS', 'AGUARDANDO', 'POSSE', 'ATIVOS',
+    'OUTRAS', 'OUTROS', 'PRESIDENTES', 'PRESIDENTA',
+    'TURMA', 'SECAO', 'PLENARIO', 'CORTE', 'ESPECIAL',
+    'CONSELHO', 'JUSTICA', 'FEDERAL', 'PRIMEIRA', 'SEGUNDA',
+    'TERCEIRA', 'QUARTA', 'QUINTA', 'SEXTA',
+    'EFETIVO', 'SUPLENTE', 'EFETIVA', 'SUPLENTES',
+    'CORREGEDOR', 'CORREGEDORA', 'GERAL', 'NACIONAL',
+    'COORDENADORA', 'COORDENADOR', 'COORDENADORA-GERAL',
+    'OUVIDOR', 'OUVIDORA', 'DIRETOR', 'DIRETORA',
+    'CADEIRAS', 'BIENIO', 'BIÊNIO', 'TRIPLICES',
+    'STJ', 'NUGEP', 'NUCLEO', 'PRECEDENTES', 'GABINETE',
+    'CAMPOS MARQUES',  # truncamento de MAURO CAMPBELL
+}
+
+# Frases substring que indicam linha-lixo
+SUBSTRING_BAD_EXTRA = {
+    'PRESIDENTE DA Ã', 'PRESIDENTE DA \xaa', 'PRESIDENTE DA Aª',
+    'NUGEP', 'NUCLEO', 'GABINETE VAGO',
+}
+
+# Frases-substring que indicam captura inválida
+SUBSTRING_BAD = ['STJ APROVOU', 'APROVOU AS', 'AGUARDAM INDICACAO',
+                 'INDICACAO DO PRESIDENTE', 'AGUARDANDO POSSE']
+
+def eh_nome_valido(nome_raw, nome_key):
+    if not nome_raw or pd.isna(nome_raw): return False, 'vazio'
+    # Re-normalizar para garantir: remove acentos, dígitos, barras, pontos
+    s = norm(nome_raw)
+    if not s: return False, 'vazio_apos_norm'
+    if len(s) < 5: return False, 'muito_curto'
+    palavras = s.split()
+    if len(palavras) < 2: return False, 'so_uma_palavra'
+    # Blacklist exata
+    if s in BLACKLIST: return False, 'blacklist_exato'
+    # Todas as palavras blacklisted (ex: "DUAS MEMBROS")
+    if all(p in BLACKLIST for p in palavras): return False, 'blacklist_total'
+    # Substring inválida no nome_raw original
+    nu = str(nome_raw).upper().translate(ACCENT)
+    for bad in SUBSTRING_BAD:
+        if bad in nu: return False, f'substring:{bad}'
+    for bad in SUBSTRING_BAD_EXTRA:
+        if bad in str(nome_raw).upper(): return False, f'substring_extra:{bad[:20]}'
+    # Filtros adicionais
+    if 'PRESIDENTE DA' in s and ('SECAO' in s or 'TURMA' in s): return False, 'cargo_colegiado'
+    if 'GABINETE' in s: return False, 'gabinete_lixo'
+    if s.startswith('NUGEP'): return False, 'nugep'
+    return True, 'ok'
+
+# === Limpar v6 ===
+print('=== Limpando v6 ===')
+df = pd.read_csv(V6_IN)
+print(f'  Antes: {len(df)} linhas')
+
+removidos = []
+mantidos = []
+for _, r in df.iterrows():
+    ok, motivo = eh_nome_valido(r['nome_raw'], r.get('nome_key',''))
+    if ok:
+        mantidos.append(r)
+    else:
+        removidos.append({**r.to_dict(), 'motivo_remocao': motivo})
+
+df_lim = pd.DataFrame(mantidos)
+print(f'  Depois: {len(df_lim)} linhas mantidas, {len(removidos)} removidas')
+
+# Re-normalizar nome_key garantindo limpeza
+df_lim['nome_key'] = df_lim['nome_raw'].apply(norm)
+# Mapa CONSOLIDADO: nome_key normalizado → ministro_key canônico (forma completa unitária)
+TRUNCADOS_KNOWN = {
+    # Contemporâneos: consolidar todas as variações para a forma completa
+    'NANCY ANDRIGHI': 'FATIMA NANCY ANDRIGHI',
+    'FATIMA NANCY ANDRIGHI': 'FATIMA NANCY ANDRIGHI',
+    'OG FERNANDES': 'GERALDO OG NICEAS MARQUES FERNANDES',
+    'GERALDO OG NICEAS MARQUES FERNANDES': 'GERALDO OG NICEAS MARQUES FERNANDES',
+    'FRANCISCO FALCAO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+    'FRANCISCO CANDIDO DE M FALCAO NETO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+    'FRANCISCO CANDIDO DE MELO FALCAO NETO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+    'HUMBERTO MARTINS': 'HUMBERTO EUSTAQUIO SOARES MARTINS',
+    'HUMBERTO EUSTAQUIO SOARES MARTINS': 'HUMBERTO EUSTAQUIO SOARES MARTINS',
+    'MARIA THEREZA DE ASSIS MOURA': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'MARIA THEREZA ROCHA DE ASSIS MOURA': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'MARIA THEREZA': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'MARIA THEREZA DE ASSIS': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'HERMAN BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'ANTONIO HERMAN BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'ANTONIO HERMAN DE V E BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'ANTONIO HERMAN DE VASCONCELOS E BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'PAULO DE TARSO SANSEVERINO': 'PAULO DE TARSO VIEIRA SANSEVERINO',
+    'PAULO DE TARSO VIEIRA SANSEVERINO': 'PAULO DE TARSO VIEIRA SANSEVERINO',
+    'MOURA RIBEIRO': 'PAULO DIAS DE MOURA RIBEIRO',
+    'PAULO MOURA RIBEIRO': 'PAULO DIAS DE MOURA RIBEIRO',
+    'PAULO DIAS DE MOURA RIBEIRO': 'PAULO DIAS DE MOURA RIBEIRO',
+    'MARIA ISABEL GALLOTTI': 'MARIA ISABEL DINIZ GALLOTTI RODRIGUES',
+    'ISABEL GALLOTTI': 'MARIA ISABEL DINIZ GALLOTTI RODRIGUES',
+    'ISABEL GALLOTI': 'MARIA ISABEL DINIZ GALLOTTI RODRIGUES',
+    'MARIA ISABEL DINIZ GALLOTTI RODRIGUES': 'MARIA ISABEL DINIZ GALLOTTI RODRIGUES',
+    'MARCO BUZZI': 'MARCO AURELIO GASTALDI BUZZI',
+    'MARCOS BUZZI': 'MARCO AURELIO GASTALDI BUZZI',
+    'MARCO AURELIO GASTALDI BUZZI': 'MARCO AURELIO GASTALDI BUZZI',
+    'MARCO AURELIO BELLIZZE': 'MARCO AURELIO BELLIZZE OLIVEIRA',
+    'MARCO AURELIO BELLIZE': 'MARCO AURELIO BELLIZZE OLIVEIRA',
+    'MARCO AURELIO BELLIZZE OLIVEIRA': 'MARCO AURELIO BELLIZZE OLIVEIRA',
+    'MARCO AURELIO': 'MARCO AURELIO BELLIZZE OLIVEIRA',  # contemporâneo, sem ambiguidade
+    'RAUL ARAUJO': 'RAUL ARAUJO FILHO',
+    'RAUL ARAUJO FILHO': 'RAUL ARAUJO FILHO',
+    'ASSUSETE MAGALHAES': 'ASSUSETE DUMONT REIS MAGALHAES',
+    'ASSUSETE DUMONT REIS MAGALHAES': 'ASSUSETE DUMONT REIS MAGALHAES',
+    'ROGERIO SCHIETTI': 'ROGERIO SCHIETTI MACHADO CRUZ',
+    'ROGERIO SCHIETTI CRUZ': 'ROGERIO SCHIETTI MACHADO CRUZ',
+    'ROGERIO SCHIETTI MACHADO CRUZ': 'ROGERIO SCHIETTI MACHADO CRUZ',
+    'SEBASTIAO REIS JUNIOR': 'SEBASTIAO ALVES DOS REIS JUNIOR',
+    'SEBASTIAO REIS': 'SEBASTIAO ALVES DOS REIS JUNIOR',
+    'SEBASTIAO ALVES DOS REIS JUNIOR': 'SEBASTIAO ALVES DOS REIS JUNIOR',
+    'GURGEL DE FARIA': 'LUIZ ALBERTO GURGEL DE FARIA',
+    'LUIZ ALBERTO GURGEL DE FARIA': 'LUIZ ALBERTO GURGEL DE FARIA',
+    'SERGIO KUKINA': 'SERGIO LUIZ KUKINA',
+    'SERGIO LUIZ KUKINA': 'SERGIO LUIZ KUKINA',
+    'VILLAS BOAS CUEVA': 'RICARDO VILLAS BOAS CUEVA',
+    'VILAS BOAS CUEVA': 'RICARDO VILLAS BOAS CUEVA',
+    'RICARDO VILLAS BOAS CUEVA': 'RICARDO VILLAS BOAS CUEVA',
+    'LAURITA VAZ': 'LAURITA HILARIO VAZ',
+    'LAURITA HILARIO VAZ': 'LAURITA HILARIO VAZ',
+    'JOAO OTAVIO DE NORONHA': 'JOAO OTAVIO DE NORONHA',
+    'JOAO OTAVIO DE': 'JOAO OTAVIO DE NORONHA',
+    'JOAO OTAVIO': 'JOAO OTAVIO DE NORONHA',
+    'BENEDITO GONCALVES': 'BENEDITO GONCALVES',
+    'TEODORO SILVA SANTOS': 'TEODORO SILVA SANTOS',
+    'TEODORO SILVA': 'TEODORO SILVA SANTOS',
+    'REGINA HELENA COSTA': 'REGINA HELENA COSTA',
+    'REGINA HELENA': 'REGINA HELENA COSTA',
+    'CARLOS PIRES BRANDAO': 'CARLOS AUGUSTO PIRES BRANDAO',
+    'CARLOS AUGUSTO PIRES BRANDAO': 'CARLOS AUGUSTO PIRES BRANDAO',
+    'MARLUCE CALDAS': 'MARIA MARLUCE CALDAS BEZERRA',
+    'MARIA MARLUCE CALDAS': 'MARIA MARLUCE CALDAS BEZERRA',
+    'MARIA MARLUCE CALDAS BEZERRA': 'MARIA MARLUCE CALDAS BEZERRA',
+    'PAULO SERGIO DOMINGUES': 'PAULO SERGIO DOMINGUES',
+    'AFRANIO VILELA': 'AFRANIO VILELA',
+    'JOSE AFRANIO VILELA': 'AFRANIO VILELA',
+    'DANIELA TEIXEIRA': 'DANIELA TEIXEIRA',
+    'DANIELA RODRIGUES TEIXEIRA': 'DANIELA TEIXEIRA',
+    'CARLOS CINI MARCHIONATTI': 'CARLOS CINI MARCHIONATTI',
+    'LUIS CARLOS GAMBOGI': 'LUIS CARLOS BALBINO GAMBOGI',
+    'LUIS CARLOS BALBINO GAMBOGI': 'LUIS CARLOS BALBINO GAMBOGI',
+    'OTAVIO DE ALMEIDA TOLEDO': 'OTAVIO DE ALMEIDA TOLEDO',
+    'OTAVIO DE ALMEIDA': 'OTAVIO DE ALMEIDA TOLEDO',
+    'JESUINO RISSATO': 'JESUINO RISSATO',
+    'JESUINO APARECIDO RISSATO': 'JESUINO RISSATO',
+    'MESSOD AZULAY NETO': 'MESSOD AZULAY NETO',
+    'MESSOD AZULAY': 'MESSOD AZULAY NETO',
+    'JOEL ILAN PACIORNIK': 'JOEL ILAN PACIORNIK',
+    'JOEL ILLAN PACIORNIK': 'JOEL ILAN PACIORNIK',
+    'ANTONIO SALDANHA PALHEIRO': 'ANTONIO SALDANHA PALHEIRO',
+    'ANTONIO SALDANHA': 'ANTONIO SALDANHA PALHEIRO',
+    'REYNALDO SOARES DA FONSECA': 'REYNALDO SOARES DA FONSECA',
+    'REYNALDO SOARES': 'REYNALDO SOARES DA FONSECA',
+    'REYNALDO SOARES DA': 'REYNALDO SOARES DA FONSECA',
+    'NEFI CORDEIRO': 'NEFI CORDEIRO',
+    'FELIX FISCHER': 'FELIX FISCHER',
+    'NAPOLEAO NUNES MAIA FILHO': 'NAPOLEAO NUNES MAIA FILHO',
+    'NAPOLEAO NUNES MAIA': 'NAPOLEAO NUNES MAIA FILHO',
+    'JORGE MUSSI': 'JORGE MUSSI',
+    'LUIS FELIPE SALOMAO': 'LUIS FELIPE SALOMAO',
+    'MAURO CAMPBELL MARQUES': 'MAURO CAMPBELL MARQUES',
+    'MAURO LUIZ CAMPBELL MARQUES': 'MAURO CAMPBELL MARQUES',
+    'ANTONIO CARLOS FERREIRA': 'ANTONIO CARLOS FERREIRA',
+    'ANTONIO CARLOS': 'ANTONIO CARLOS FERREIRA',
+    'RIBEIRO DANTAS': 'RIBEIRO DANTAS',
+    'MARCELO NAVARRO RIBEIRO DANTAS': 'RIBEIRO DANTAS',
+    'DIVA MALERBI': 'DIVA MALERBI',
+    'DIVA PRESTES MARCONDES MALERBI': 'DIVA MALERBI',
+    'DIVA PRESTES MARCONDES': 'DIVA MALERBI',
+    'JOSE LAZARO ALFREDO GUIMARAES': 'LAZARO GUIMARAES',
+    'LAZARO GUIMARAES': 'LAZARO GUIMARAES',
+    'OLINDO HERCULANO DE': 'OLINDO HERCULANO DE MENEZES',
+    'OLINDO HERCULANO DE MENEZES': 'OLINDO HERCULANO DE MENEZES',
+}
+TRUNCADOS_KNOWN_OLD = {
+    'JOAO OTAVIO DE': 'JOAO OTAVIO DE NORONHA',
+    'JOAO OTAVIO': 'JOAO OTAVIO DE NORONHA',
+    'MARIA THEREZA DE ASSIS': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'MARIA THEREZA': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'REGINA HELENA': 'REGINA HELENA COSTA',
+    'MARCO AURELIO': 'MARCO AURELIO BELLIZZE OLIVEIRA',  # ambíguo, mas mais comum
+    'TEODORO SILVA': 'TEODORO SILVA SANTOS',
+    'MESSOD AZULAY': 'MESSOD AZULAY NETO',
+    'NAPOLEAO NUNES MAIA': 'NAPOLEAO NUNES MAIA FILHO',
+    'REYNALDO SOARES': 'REYNALDO SOARES DA FONSECA',
+    'REYNALDO SOARES DA': 'REYNALDO SOARES DA FONSECA',
+    'OTAVIO DE ALMEIDA': 'OTAVIO DE ALMEIDA TOLEDO',
+    'OLINDO HERCULANO DE': 'OLINDO HERCULANO DE MENEZES',
+    'JOSE LAZARO ALFREDO GUIMARAES': 'JOSE LAZARO ALFREDO GUIMARAES',
+    'JESUINO APARECIDO RISSATO': 'JESUINO RISSATO',
+    'SEBASTIAO REIS': 'SEBASTIAO ALVES DOS REIS JUNIOR',
+    'JOSE AFRANIO VILELA': 'AFRANIO VILELA',
+    'CARLOS PIRES BRANDAO': 'CARLOS AUGUSTO PIRES BRANDAO',
+    'DANIELA RODRIGUES TEIXEIRA': 'DANIELA TEIXEIRA',
+    'MARCELO NAVARRO RIBEIRO DANTAS': 'RIBEIRO DANTAS',
+    'DIVA PRESTES MARCONDES MALERBI': 'DIVA MALERBI',
+    'DIVA PRESTES MARCONDES': 'DIVA MALERBI',
+    'MARCO AURELIO BELLIZE': 'MARCO AURELIO BELLIZZE OLIVEIRA',
+    'FRANCISCO CANDIDO DE MELO FALCAO NETO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+    'FRANCISCO CANDIDO DE M FALCAO NETO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+}
+def resolve(k):
+    return TRUNCADOS_KNOWN.get(k, k)
+df_lim['ministro_key'] = df_lim['nome_key'].apply(resolve)
+
+# Salvar v6 limpo
+df_lim.to_csv(V6_OUT, index=False, encoding='utf-8-sig')
+print(f'  >>> {V6_OUT}')
+
+# Salvar removidos para auditoria
+DF_REM = DIR / 'composicao_stj_canonical_v6_removidos.csv'
+pd.DataFrame(removidos).to_csv(DF_REM, index=False, encoding='utf-8-sig')
+print(f'  >>> {DF_REM} ({len(removidos)} linhas removidas)')
+
+# === Construir alias_ministros ===
+print('\n=== Aliases ===')
+con = duckdb.connect(r'G:/staging_local/stj_flat.duckdb', read_only=True)
+flat = con.execute("""
+    SELECT ministro_canonical AS nome_raw, COUNT(*) AS n_docs
+    FROM stj_processos WHERE ministro_canonical IS NOT NULL
+    GROUP BY 1 ORDER BY 2 DESC
+""").fetchall()
+con.close()
+print(f'  Flat: {len(flat)} ministros únicos')
+
+# Aliases adicionais para o flat (que usa formas como "Mauro Campbell Marques")
+ALIAS_FLAT = {
+    'MAURO CAMPBELL MARQUES': 'MAURO CAMPBELL MARQUES',
+    'NANCY ANDRIGHI': 'FATIMA NANCY ANDRIGHI',
+    'OG FERNANDES': 'GERALDO OG NICEAS MARQUES FERNANDES',
+    'FRANCISCO FALCAO': 'FRANCISCO CANDIDO DE M FALCAO NETO',
+    'HUMBERTO MARTINS': 'HUMBERTO EUSTAQUIO SOARES MARTINS',
+    'MARIA THEREZA DE ASSIS MOURA': 'MARIA THEREZA ROCHA DE ASSIS MOURA',
+    'HERMAN BENJAMIN': 'ANTONIO HERMAN DE VASCONCELLOS E BENJAMIN',
+    'PAULO DE TARSO SANSEVERINO': 'PAULO DE TARSO VIEIRA SANSEVERINO',
+    'MOURA RIBEIRO': 'PAULO DIAS DE MOURA RIBEIRO',
+    'MARIA ISABEL GALLOTTI': 'MARIA ISABEL DINIZ GALLOTTI RODRIGUES',
+    'MARCO BUZZI': 'MARCO AURELIO GASTALDI BUZZI',
+    'MARCO AURELIO BELLIZZE': 'MARCO AURELIO BELLIZZE OLIVEIRA',
+    'RAUL ARAUJO': 'RAUL ARAUJO FILHO',
+    'ASSUSETE MAGALHAES': 'ASSUSETE DUMONT REIS MAGALHAES',
+    'ROGERIO SCHIETTI': 'ROGERIO SCHIETTI MACHADO CRUZ',
+    'SEBASTIAO REIS JUNIOR': 'SEBASTIAO ALVES DOS REIS JUNIOR',
+    'GURGEL DE FARIA': 'LUIZ ALBERTO GURGEL DE FARIA',
+    'SERGIO KUKINA': 'SERGIO LUIZ KUKINA',
+    'VILLAS BOAS CUEVA': 'RICARDO VILLAS BOAS CUEVA',
+    'LAURITA VAZ': 'LAURITA HILARIO VAZ',
+    'RIBEIRO DANTAS': 'RIBEIRO DANTAS',
+    'PAULO SERGIO DOMINGUES': 'PAULO SERGIO DOMINGUES',
+    'AFRANIO VILELA': 'AFRANIO VILELA',
+    'DANIELA TEIXEIRA': 'DANIELA TEIXEIRA',
+    'TEODORO SILVA SANTOS': 'TEODORO SILVA SANTOS',
+    'CARLOS CINI MARCHIONATTI': 'CARLOS CINI MARCHIONATTI',
+    'LUIS CARLOS GAMBOGI': 'LUIS CARLOS BALBINO GAMBOGI',
+    'CARLOS AUGUSTO PIRES BRANDAO': 'CARLOS AUGUSTO PIRES BRANDAO',
+    'MARIA MARLUCE CALDAS BEZERRA': 'MARIA MARLUCE CALDAS BEZERRA',
+    'JOEL ILAN PACIORNIK': 'JOEL ILAN PACIORNIK',
+    'ANTONIO SALDANHA PALHEIRO': 'ANTONIO SALDANHA PALHEIRO',
+    'REYNALDO SOARES DA FONSECA': 'REYNALDO SOARES DA FONSECA',
+    'NEFI CORDEIRO': 'NEFI CORDEIRO',
+    'FELIX FISCHER': 'FELIX FISCHER',
+    'NAPOLEAO NUNES MAIA FILHO': 'NAPOLEAO NUNES MAIA FILHO',
+    'JORGE MUSSI': 'JORGE MUSSI',
+    'LUIS FELIPE SALOMAO': 'LUIS FELIPE SALOMAO',
+    'ANTONIO CARLOS FERREIRA': 'ANTONIO CARLOS FERREIRA',
+    'JOAO OTAVIO DE NORONHA': 'JOAO OTAVIO DE NORONHA',
+    'BENEDITO GONCALVES': 'BENEDITO GONCALVES',
+    'REGINA HELENA COSTA': 'REGINA HELENA COSTA',
+    'MESSOD AZULAY NETO': 'MESSOD AZULAY NETO',
+    'PRESIDENCIA STJ': 'CARGO_CUPULA_PRESIDENCIA_STJ',
+    'VICE-PRESIDENCIA STJ': 'CARGO_CUPULA_VICE_PRESIDENCIA_STJ',
+    'JESUINO RISSATO': 'JESUINO RISSATO',
+    'PRESIDENCIA': 'CARGO_CUPULA_PRESIDENCIA_STJ',
+    'VICE-PRESIDENCIA': 'CARGO_CUPULA_VICE_PRESIDENCIA_STJ',
+}
+
+aliases = []
+for nome_raw, n_docs in flat:
+    k = norm(nome_raw)
+    canon = ALIAS_FLAT.get(k, k)
+    aliases.append({
+        'nome_raw': nome_raw,
+        'ministro_key': canon,
+        'fonte_origem': 'raw_flat',
+        'n_docs_flat': n_docs,
+        'validado': '25abr',
+    })
+
+# Adicionar nome_keys do v6 limpo que ainda não estão
+seen = {a['ministro_key'] for a in aliases}
+v6_unique = df_lim[['nome_raw','ministro_key']].drop_duplicates()
+for _, r in v6_unique.iterrows():
+    if r['ministro_key'] not in seen and r['ministro_key']:
+        aliases.append({
+            'nome_raw': r['nome_raw'],
+            'ministro_key': r['ministro_key'],
+            'fonte_origem': 'pdf_canonical',
+            'n_docs_flat': 0,
+            'validado': '25abr',
+        })
+        seen.add(r['ministro_key'])
+
+# Salvar
+pd.DataFrame(aliases).to_csv(ALIAS_OUT, index=False, encoding='utf-8-sig')
+print(f'  >>> {ALIAS_OUT}: {len(aliases)} aliases')
+
+# Stats
+import collections
+keys = [a['ministro_key'] for a in aliases]
+print(f'\n  ministros distintos (ministro_key): {len(set(keys))}')
+print(f'  do flat: {sum(1 for a in aliases if a["fonte_origem"]=="raw_flat")}')
+print(f'  só PDFs: {sum(1 for a in aliases if a["fonte_origem"]=="pdf_canonical")}')
